@@ -1,0 +1,33 @@
+{
+	"name": "staffbase/plugins-sdk-php",
+	"type": "library",
+	"description": "Staffbase php sdk library for plugins.",
+	"keywords": ["staffbase", "plugins", "library", "php", "sdk"],
+	"homepage": "https://github.com/Staffbase/plugins-sdk-php",
+	"license": "Apache 2.0",
+	"authors": [
+		{
+			"name": "Vitaliy Ivanov",
+			"email": "vitaliy@staffbase.com"
+		}
+	],
+	"require": {
+		"php": ">=5.5.9",
+		"lcobucci/jwt": "^3.2"
+
+	},
+	"require-dev": {
+		"cvuorinen/phpdoc-markdown-public": "^0.1.2",
+		"phpseclib/phpseclib": "^2.0",
+		"phpunit/phpunit": "^4.8"
+	},
+	"autoload": {
+		"psr-4": {
+			"Staffbase\\plugins\\sdk\\": "src",
+			"Staffbase\\plugins\\test\\": "test"
+		}
+	},
+	"scripts": {
+        "test": "phpunit"
+    }
+}
