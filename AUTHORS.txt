@@ -1,3 +1,4 @@
 # Authors ordered by first contribution
 
 Vitaliy Ivanov - https://github.com/viviivanov
+Stefan Staude - https://github.com/staust

@@ -281,7 +281,7 @@ class SSOToken {
 	/**
 	 * Get the locale of the requesting user in the format of language tags.
 	 *
-	 * @return null|string
+	 * @return string
 	 */	
 	public function getLocale() {
 		return $this->getClaim(self::CAIM_USER_LOCALE);
