@@ -2,3 +2,4 @@
 .rnd
 composer.lock
 vendor
+.idea

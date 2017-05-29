@@ -321,7 +321,7 @@ The color is represented as a CSS-HEX code.
 Get the locale of the requesting user in the format of language tags.
 
 ```php
-SSOToken::getLocale(  ): null|string
+SSOToken::getLocale(  ): string
 ```
 
 
@@ -369,4 +369,4 @@ SSOToken::getData(  ): array
 
 
 --------
-> This document was automatically generated from source code comments on 2017-03-03 using [phpDocumentor](http://www.phpdoc.org/) and [cvuorinen/phpdoc-markdown-public](https://github.com/cvuorinen/phpdoc-markdown-public)
+> This document was automatically generated from source code comments on 2017-05-23 using [phpDocumentor](http://www.phpdoc.org/) and [cvuorinen/phpdoc-markdown-public](https://github.com/cvuorinen/phpdoc-markdown-public)
