@@ -2,8 +2,7 @@
 
 ## Table of Contents
 
-* [SSOToken](#ssotoken)
-    * [__construct](#__construct)
+* [PluginSession](#pluginsession)
     * [getAudience](#getaudience)
     * [getExpireAtTime](#getexpireattime)
     * [getNotBeforeTime](#getnotbeforetime)
@@ -21,25 +20,378 @@
     * [getThemeTextColor](#getthemetextcolor)
     * [getThemeBackgroundColor](#getthemebackgroundcolor)
     * [getLocale](#getlocale)
+    * [getTags](#gettags)
     * [isEditor](#iseditor)
     * [getData](#getdata)
+    * [__construct](#__construct)
+    * [__destruct](#__destruct)
+    * [base64ToPEMPublicKey](#base64topempublickey)
+    * [getSessionVar](#getsessionvar)
+    * [getSessionData](#getsessiondata)
+    * [setSessionVar](#setsessionvar)
+* [SSOToken](#ssotoken)
+    * [getAudience](#getaudience-1)
+    * [getExpireAtTime](#getexpireattime-1)
+    * [getNotBeforeTime](#getnotbeforetime-1)
+    * [getIssuedAtTime](#getissuedattime-1)
+    * [getIssuer](#getissuer-1)
+    * [getInstanceId](#getinstanceid-1)
+    * [getInstanceName](#getinstancename-1)
+    * [getUserId](#getuserid-1)
+    * [getUserExternalId](#getuserexternalid-1)
+    * [getFullName](#getfullname-1)
+    * [getFirstName](#getfirstname-1)
+    * [getLastName](#getlastname-1)
+    * [getRole](#getrole-1)
+    * [getType](#gettype-1)
+    * [getThemeTextColor](#getthemetextcolor-1)
+    * [getThemeBackgroundColor](#getthemebackgroundcolor-1)
+    * [getLocale](#getlocale-1)
+    * [getTags](#gettags-1)
+    * [isEditor](#iseditor-1)
+    * [getData](#getdata-1)
+    * [__construct](#__construct-1)
 
-## SSOToken
+## PluginSession
 
-A container for the data transmitted from Staffbase app to a plugin
-using the Staffbase single-sign-on.
-
+A container which decrypts and stores the SSO data in a session for further requests.
 
 
-* Full name: \Staffbase\plugins\sdk\SSOToken
 
+* Full name: \Staffbase\plugins\sdk\PluginSession
+* Parent class: \Staffbase\plugins\sdk\SSOData
+
+
+### getAudience
+
+Get targeted audience of the token.
+
+```php
+PluginSession::getAudience(  ): null|string
+```
+
+
+
+
+
+
+
+---
+
+### getExpireAtTime
+
+Get the time when the token expires.
+
+```php
+PluginSession::getExpireAtTime(  ): integer
+```
+
+
+
+
+
+
+
+---
+
+### getNotBeforeTime
+
+Get the time when the token starts to be valid.
+
+```php
+PluginSession::getNotBeforeTime(  ): integer
+```
+
+
+
+
+
+
+
+---
+
+### getIssuedAtTime
+
+Get the time when the token was issued.
+
+```php
+PluginSession::getIssuedAtTime(  ): integer
+```
+
+
+
+
+
+
+
+---
+
+### getIssuer
+
+Get issuer of the token.
+
+```php
+PluginSession::getIssuer(  ): null|string
+```
+
+
+
+
+
+
+
+---
+
+### getInstanceId
+
+Get the (plugin) instance id for which the token was issued.
+
+```php
+PluginSession::getInstanceId(  ): string
+```
+
+The id will always be present.
+
+
+
+
+
+---
+
+### getInstanceName
+
+Get the (plugin) instance name for which the token was issued.
+
+```php
+PluginSession::getInstanceName(  ): null|string
+```
+
+
+
+
+
+
+
+---
+
+### getUserId
+
+Get the id of the authenticated user.
+
+```php
+PluginSession::getUserId(  ): null|string
+```
+
+
+
+
+
+
+
+---
+
+### getUserExternalId
+
+Get the id of the user in an external system.
+
+```php
+PluginSession::getUserExternalId(  ): null|string
+```
+
+Example use case would be to map user from an external store
+to the entry defined in the token.
+
+
+
+
+
+---
+
+### getFullName
+
+Get either the combined name of the user or the name of the token.
+
+```php
+PluginSession::getFullName(  ): null|string
+```
+
+
+
+
+
+
+
+---
+
+### getFirstName
+
+Get the first name of the user accessing.
+
+```php
+PluginSession::getFirstName(  ): null|string
+```
+
+
+
+
+
+
+
+---
+
+### getLastName
+
+Get the last name of the user accessing.
+
+```php
+PluginSession::getLastName(  ): null|string
+```
+
+
+
+
+
+
+
+---
+
+### getRole
+
+Get the role of the accessing user.
+
+```php
+PluginSession::getRole(  ): null|string
+```
+
+If this is set to “editor”, the requesting user may manage the contents
+of the plugin instance, i.e. she has administration rights.
+The type of the accessing entity can be either a “user” or a “editor”.
+
+
+
+
+
+---
+
+### getType
+
+Get the type of the token.
+
+```php
+PluginSession::getType(  ): null|string
+```
+
+The type of the accessing entity can be either a “user” or a “token”.
+
+
+
+
+
+---
+
+### getThemeTextColor
+
+Get text color used in the overall theme for this audience.
+
+```php
+PluginSession::getThemeTextColor(  ): null|string
+```
+
+The color is represented as a CSS-HEX code.
+
+
+
+
+
+---
+
+### getThemeBackgroundColor
+
+Get background color used in the overall theme for this audience.
+
+```php
+PluginSession::getThemeBackgroundColor(  ): null|string
+```
+
+The color is represented as a CSS-HEX code.
+
+
+
+
+
+---
+
+### getLocale
+
+Get the locale of the requesting user in the format of language tags.
+
+```php
+PluginSession::getLocale(  ): string
+```
+
+
+
+
+
+
+
+---
+
+### getTags
+
+Get the user tags.
+
+```php
+PluginSession::getTags(  ): array|null
+```
+
+
+
+
+
+
+
+---
+
+### isEditor
+
+Check if the user is an editor.
+
+```php
+PluginSession::isEditor(  ): boolean
+```
+
+Only when the editor role is explicitly
+provided the user will be marked as editor.
+
+
+
+
+
+---
+
+### getData
+
+Get all stored data.
+
+```php
+PluginSession::getData(  ): array
+```
+
+
+
+
+
+
+
+---
 
 ### __construct
 
 Constructor
 
 ```php
-SSOToken::__construct( string $appSecret, string $tokenData )
+PluginSession::__construct(  $pluginId,  $appSecret,  $sessionHandler = null )
 ```
 
 
@@ -49,13 +401,128 @@ SSOToken::__construct( string $appSecret, string $tokenData )
 
 | Parameter | Type | Description |
 |-----------|------|-------------|
-| `$appSecret` | **string** | Either a key or a file:// URL. |
-| `$tokenData` | **string** | The token text. |
+| `$pluginId` | **** | the unique name of the plugin |
+| `$appSecret` | **** | application public key |
+| `$sessionHandler` | **** | optional custom session handler |
 
 
 
 
 ---
+
+### __destruct
+
+Destructor
+
+```php
+PluginSession::__destruct(  )
+```
+
+
+
+
+
+
+
+---
+
+### base64ToPEMPublicKey
+
+Translate a base64 string to PEM encoded public key.
+
+```php
+PluginSession::base64ToPEMPublicKey( string $data ): string
+```
+
+
+
+* This method is **static**.
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `$data` | **string** | base64 encoded key |
+
+
+**Return Value:**
+
+PEM encoded key
+
+
+
+---
+
+### getSessionVar
+
+Get a previously set session variable.
+
+```php
+PluginSession::getSessionVar( mixed $key ): mixed|null
+```
+
+
+
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `$key` | **mixed** |  |
+
+
+
+
+---
+
+### getSessionData
+
+Get an array of all previously set session variables.
+
+```php
+PluginSession::getSessionData(  ): array
+```
+
+
+
+
+
+
+
+---
+
+### setSessionVar
+
+Set a session variable.
+
+```php
+PluginSession::setSessionVar( mixed $key, mixed $val )
+```
+
+
+
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `$key` | **mixed** |  |
+| `$val` | **mixed** |  |
+
+
+
+
+---
+
+## SSOToken
+
+A container which is able to decrypt and store the data transmitted
+from Staffbase app to a plugin using the Staffbase single-sign-on.
+
+
+
+* Full name: \Staffbase\plugins\sdk\SSOToken
+* Parent class: \Staffbase\plugins\sdk\SSOData
+
 
 ### getAudience
 
@@ -332,6 +799,22 @@ SSOToken::getLocale(  ): string
 
 ---
 
+### getTags
+
+Get the user tags.
+
+```php
+SSOToken::getTags(  ): array|null
+```
+
+
+
+
+
+
+
+---
+
 ### isEditor
 
 Check if the user is an editor.
@@ -340,8 +823,7 @@ Check if the user is an editor.
 SSOToken::isEditor(  ): boolean
 ```
 
-The user will always have a user role to prevent a bug class
-on missing values. Only when the editor role is explicitly
+Only when the editor role is explicitly
 provided the user will be marked as editor.
 
 
@@ -352,7 +834,7 @@ provided the user will be marked as editor.
 
 ### getData
 
-Get all data stored in the token.
+Get all stored data.
 
 ```php
 SSOToken::getData(  ): array
@@ -366,7 +848,30 @@ SSOToken::getData(  ): array
 
 ---
 
+### __construct
+
+Constructor
+
+```php
+SSOToken::__construct( string $appSecret, string $tokenData )
+```
+
+
+
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `$appSecret` | **string** | Either a PEM key or a file:// URL. |
+| `$tokenData` | **string** | The token text. |
+
+
+
+
+---
+
 
 
 --------
-> This document was automatically generated from source code comments on 2017-05-23 using [phpDocumentor](http://www.phpdoc.org/) and [cvuorinen/phpdoc-markdown-public](https://github.com/cvuorinen/phpdoc-markdown-public)
+> This document was automatically generated from source code comments on 2017-06-13 using [phpDocumentor](http://www.phpdoc.org/) and [cvuorinen/phpdoc-markdown-public](https://github.com/cvuorinen/phpdoc-markdown-public)
