@@ -44,7 +44,7 @@ try {
 ```
 
 To manage multiple instances easy and secure we provide a convenience class which abstracts the session.
-The `PluginSession` class has same data interface as SSOToken. It also provides the means to set a custom session save handler as the optional third parameter of __construct. `PluginSession` will automatically take care of reading the URL parameters and saving the SSO info in the session for further requests after the Token get invalid.
+The `PluginSession` class has the same data interface as `SSOToken`. It also provides the means to set a custom session save handler as the optional third parameter of `__construct`. `PluginSession` will automatically take care of reading the URL parameters and saving the SSO info in the session for further requests after the Token gets invalid.
 
 ```php
 use Exception;
@@ -56,8 +56,8 @@ try {
 	$appSecret = 'abcdef012345='; // the public key received from Staffbase.
 
 	$session = new PluginSession($pluginId, $appSecret);
-	print "Hello again ". $PluginSession->getFullName() . ', '. $PluginSession->getSessionVar('message');
 
+	print "Hello again ". $PluginSession->getFullName(). ', '. $PluginSession->getSessionVar('message');
 
 } catch (Exception $e) {
 
