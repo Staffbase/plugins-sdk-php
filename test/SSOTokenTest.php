@@ -16,7 +16,7 @@ namespace Staffbase\plugins\test;
 use Exception;
 use ReflectionClass;
 use phpseclib\Crypt\RSA;
-use PHPUnit\Framework\TestCase;
+use PHPUnit_Framework_TestCase as TestCase;
 use Lcobucci\JWT\Builder;
 use Lcobucci\JWT\Signer\Keychain;
 use Lcobucci\JWT\Signer\Rsa\Sha256;

@@ -16,7 +16,7 @@ namespace Staffbase\plugins\test;
 use Exception;
 use ReflectionClass;
 use phpseclib\Crypt\RSA;
-use PHPUnit\Framework\TestCase;
+use PHPUnit_Framework_TestCase as TestCase;
 use Staffbase\plugins\sdk\PluginSession;
 
 class PluginSessionTest extends TestCase {

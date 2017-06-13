@@ -13,7 +13,7 @@
  */
 namespace Staffbase\plugins\test;
 
-use PHPUnit\Framework\TestCase;
+use PHPUnit_Framework_TestCase as TestCase;
 use Staffbase\plugins\sdk\SSOData;
 
 class SSODataTest extends TestCase {
