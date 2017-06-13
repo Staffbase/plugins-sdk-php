@@ -76,7 +76,7 @@ class PluginSession extends SSOData
 		if ($jwt) {
 
 			// convert secret to PEM if its a plain base64 string
-			if(strpos(trim($appSecret),'-----') !== 0)
+			if(strpos(trim($appSecret),'-----') !== 0 && strpos(trim($appSecret), 'file://') !==0 )
 				$appSecret = self::base64ToPEMPublicKey($appSecret);
 
 			// decrypt the token
