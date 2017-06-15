@@ -29,6 +29,7 @@
     * [getSessionVar](#getsessionvar)
     * [getSessionData](#getsessiondata)
     * [setSessionVar](#setsessionvar)
+    * [isUserView](#isuserview)
 * [SSOToken](#ssotoken)
     * [getAudience](#getaudience-1)
     * [getExpireAtTime](#getexpireattime-1)
@@ -513,6 +514,22 @@ PluginSession::setSessionVar( mixed $key, mixed $val )
 
 ---
 
+### isUserView
+
+Test if userView is enabled.
+
+```php
+PluginSession::isUserView(  ): array
+```
+
+
+
+
+
+
+
+---
+
 ## SSOToken
 
 A container which is able to decrypt and store the data transmitted
@@ -874,4 +891,4 @@ SSOToken::__construct( string $appSecret, string $tokenData )
 
 
 --------
-> This document was automatically generated from source code comments on 2017-06-13 using [phpDocumentor](http://www.phpdoc.org/) and [cvuorinen/phpdoc-markdown-public](https://github.com/cvuorinen/phpdoc-markdown-public)
+> This document was automatically generated from source code comments on 2017-06-15 using [phpDocumentor](http://www.phpdoc.org/) and [cvuorinen/phpdoc-markdown-public](https://github.com/cvuorinen/phpdoc-markdown-public)

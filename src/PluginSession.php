@@ -26,6 +26,7 @@ class PluginSession extends SSOData
 {
 	const QUERY_PARAM_JWT = 'jwt';
 	const QUERY_PARAM_PID = 'pid';
+	const QUERY_PARAM_USERVIEW = 'userView';
 
 	const KEY_SSO  = 'sso';
 	const KEY_DATA = 'data';
@@ -34,6 +35,11 @@ class PluginSession extends SSOData
 	 * @var $pluginInstanceId the id of the currently used instance.
 	 */
 	private $pluginInstanceId  = null;
+
+	/** 
+	 * @var $userView flag for userView mode.
+	 */
+	private $userView = true;
 
 	/**
 	 * Constructor
@@ -94,6 +100,10 @@ class PluginSession extends SSOData
 		if (!isset($_SESSION[$this->pluginInstanceId][self::KEY_SSO]) 
 		|| empty($_SESSION[$this->pluginInstanceId][self::KEY_SSO]))
 			throw new Exception('Tried to access an instance without previous authentication.');
+
+		// decide if we are in user view or not
+		if($this->isEditor() && (!isset($_GET[self::QUERY_PARAM_USERVIEW]) || $_GET[self::QUERY_PARAM_USERVIEW] !== 'true'))
+			$this->userView = false;
 	}
 
 	/**
@@ -207,4 +217,14 @@ class PluginSession extends SSOData
 	public function setSessionVar($key, $val) {
 		$_SESSION[$this->pluginInstanceId][self::KEY_DATA][$key] = $val;
 	}
+
+	/**
+	 * Test if userView is enabled.
+	 *
+	 * @return array
+	 */
+	public function isUserView() {
+		return $this->userView;
+	}
+
 }
