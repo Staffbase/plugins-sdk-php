@@ -23,14 +23,41 @@ For the API reference of this SDK please consult the [docs](doc/api.md).
 
 ## Code Example
 
+You can try to create a token from the received jwt.
+
 ```php
 use Exception;
 use Staffbase\plugins\sdk\SSOToken;
 
 try {
 
-	$sso = new SSOToken('<rsa-public-key>', $_GET['jwt']);
+	$appSecret = 'abcdef012345='; // the public key received from Staffbase.
+
+	$sso = new SSOToken($appSecret, $_GET['jwt']);
 	print "Hello again ". $sso->getFullName();
+
+} catch (Exception $e) {
+
+	print "Sorry we could not authenticate You.";
+	exit;
+}
+```
+
+To manage multiple instances easy and secure we provide a convenience class which abstracts the session.
+The `PluginSession` class has the same data interface as `SSOToken`. It also provides the means to set a custom session save handler as the optional third parameter of `__construct`. `PluginSession` will automatically take care of reading the URL parameters and saving the SSO info in the session for further requests after the Token gets invalid.
+
+```php
+use Exception;
+use Staffbase\plugins\sdk\PluginSession;
+
+try {
+
+	$pluginId  = 'weatherplugin'; // the id you received from Staffbase.
+	$appSecret = 'abcdef012345='; // the public key received from Staffbase.
+
+	$session = new PluginSession($pluginId, $appSecret);
+
+	print "Hello again ". $PluginSession->getFullName(). ', '. $PluginSession->getSessionVar('message');
 
 } catch (Exception $e) {
 
