@@ -48,7 +48,7 @@ class SSODataTest extends TestCase {
 		$tokenData[SSOData::CLAIM_ENTITY_TYPE]            = 'user';
 		$tokenData[SSOData::CLAIM_THEME_TEXT_COLOR]       = '#00ABAB';
 		$tokenData[SSOData::CLAIM_THEME_BACKGROUND_COLOR] = '#FFAABB';
-		$tokenData[SSOData::CLAIM_USER_LOCALE]            = 'en-US';
+		$tokenData[SSOData::CLAIM_USER_LOCALE]            = 'en_US';
 		$tokenData[SSOData::CLAIM_USER_TAGS]              = ['profile:field1:val', 'profile:field2:val'];
 
 		return $tokenData;
