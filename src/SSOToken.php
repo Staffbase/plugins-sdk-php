@@ -61,7 +61,8 @@ class SSOToken extends SSOData {
 	 *
 	 * @param string $appSecret Either a PEM formatted key or a file:// URL of the same.
 	 * @param string $tokenData The token text.
-	 *
+	 * @param int $leeway count of seconds added to current timestamp 
+	 * 
 	 * @return Lcobucci\JWT\Token;
 	 *
 	 * @throws Exception if the parsing/verification/validation of the token fails.
