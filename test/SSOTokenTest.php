@@ -225,6 +225,50 @@ class SSOTokenTest extends TestCase {
 	/**
 	 * @test
 	 *
+	 * Test constructor throws exception on a token issued in the future.
+	 * 
+	 * @covers \Staffbase\plugins\sdk\SSOToken::__construct
+	 */
+	public function testConstructorToFailOnTokenIssedInTheFuture() {
+
+		$tokendata = SSODataTest::getTokenData();
+		$tokendata[SSOToken::CLAIM_ISSUED_AT] = strtotime("+10 second");
+
+		$token = self::createSignedTokenFromData($this->privKey, $tokendata);
+
+		try {
+
+			$ssotoken = new SSOToken($this->pubKey, $token);
+
+		} catch (Exception $e) {
+			return;
+		}
+
+		$this->fail();
+	}
+
+	/**
+	 * @test
+	 *
+	 * Test constructor accepts a token issued in the future, by providing a leeway.
+	 * 
+	 * @covers \Staffbase\plugins\sdk\SSOToken::__construct
+	 */
+	public function testConstructorAcceptsLeewayForTokenIssedInTheFuture() {
+
+		$leeway = 11;
+		$tokendata = SSODataTest::getTokenData();
+		$tokendata[SSOToken::CLAIM_ISSUED_AT] = strtotime("+10 second");
+
+		$token = self::createSignedTokenFromData($this->privKey, $tokendata);
+
+		$ssotoken = new SSOToken($this->pubKey, $token, $leeway);
+	}
+
+
+	/**
+	 * @test
+	 *
 	 * Test constructor throws exception on a token missing instance id.
 	 * 
 	 * @covers \Staffbase\plugins\sdk\SSOToken::__construct
@@ -305,7 +349,6 @@ class SSOTokenTest extends TestCase {
 
 		$token = self::createSignedTokenFromData($this->privKey, $tokendata);
 		$ssotoken = new SSOToken($this->pubKey, $token);
-
 
 		foreach ($accessors as $key => $fn) {
 			$this->assertEquals(

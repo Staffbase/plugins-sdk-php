@@ -256,7 +256,7 @@ class PluginSessionTest extends TestCase {
 
 		$session = new $mock($this->pluginId, $this->pubKey);
 
-		$this->assertEquals($session->getRole(),$this->tokendata[PluginSession::CLAIM_USER_ROLE]);
+		$this->assertEquals($session->getRole(), $this->tokendata[PluginSession::CLAIM_USER_ROLE]);
 
 		$tokendata = $this->tokendata;
 		$tokendata[PluginSession::CLAIM_USER_ROLE] = 'updatedRoleName';
@@ -265,8 +265,8 @@ class PluginSessionTest extends TestCase {
 		$this->setupEnvironment(null, $newtoken, false);
 		$newsession = new $mock($this->pluginId, $this->pubKey);
 
-		$this->assertEquals($newsession->getRole(),$tokendata[PluginSession::CLAIM_USER_ROLE]);
-		$this->assertEquals($session->getRole(),$newsession->getRole());
+		$this->assertEquals($newsession->getRole(), $tokendata[PluginSession::CLAIM_USER_ROLE]);
+		$this->assertEquals($session->getRole(), $newsession->getRole());
 	}
 
 	/** 
@@ -299,8 +299,8 @@ class PluginSessionTest extends TestCase {
 
 		$newsession = new $mock($this->pluginId, $this->pubKey);
 
-		$this->assertEquals($newsession->getRole(),$tokendata[PluginSession::CLAIM_USER_ROLE]);
-		$this->assertNotEquals($session->getRole(),$newsession->getRole());
+		$this->assertEquals($newsession->getRole(), $tokendata[PluginSession::CLAIM_USER_ROLE]);
+		$this->assertNotEquals($session->getRole(), $newsession->getRole());
 
 		$sessionVar  = 'myvariable';
 		$sessionVal  = 'mysessiontestvalue';
