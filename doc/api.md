@@ -392,7 +392,7 @@ PluginSession::getData(  ): array
 Constructor
 
 ```php
-PluginSession::__construct(  $pluginId,  $appSecret,  $sessionHandler = null )
+PluginSession::__construct( string $pluginId, string $appSecret,  $sessionHandler = null,  $leeway )
 ```
 
 
@@ -402,9 +402,10 @@ PluginSession::__construct(  $pluginId,  $appSecret,  $sessionHandler = null )
 
 | Parameter | Type | Description |
 |-----------|------|-------------|
-| `$pluginId` | **** | the unique name of the plugin |
-| `$appSecret` | **** | application public key |
+| `$pluginId` | **string** | the unique name of the plugin |
+| `$appSecret` | **string** | application public key |
 | `$sessionHandler` | **** | optional custom session handler |
+| `$leeway` | **** | [<description>] |
 
 
 
@@ -870,7 +871,7 @@ SSOToken::getData(  ): array
 Constructor
 
 ```php
-SSOToken::__construct( string $appSecret, string $tokenData )
+SSOToken::__construct( string $appSecret, string $tokenData, integer $leeway )
 ```
 
 
@@ -882,6 +883,7 @@ SSOToken::__construct( string $appSecret, string $tokenData )
 |-----------|------|-------------|
 | `$appSecret` | **string** | Either a PEM key or a file:// URL. |
 | `$tokenData` | **string** | The token text. |
+| `$leeway` | **integer** | count of seconds added to current timestamp |
 
 
 
@@ -891,4 +893,4 @@ SSOToken::__construct( string $appSecret, string $tokenData )
 
 
 --------
-> This document was automatically generated from source code comments on 2017-06-15 using [phpDocumentor](http://www.phpdoc.org/) and [cvuorinen/phpdoc-markdown-public](https://github.com/cvuorinen/phpdoc-markdown-public)
+> This document was automatically generated from source code comments on 2017-09-20 using [phpDocumentor](http://www.phpdoc.org/) and [cvuorinen/phpdoc-markdown-public](https://github.com/cvuorinen/phpdoc-markdown-public)
