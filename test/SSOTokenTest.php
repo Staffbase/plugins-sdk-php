@@ -354,8 +354,9 @@ class SSOTokenTest extends TestCase {
 			$this->assertEquals(
 				call_user_func([$ssotoken,$fn]),
 				$tokendata[$key],
-				"called $fn expected ". $tokendata[$key]
-			);
+				"called $fn expected ".
+				is_array($tokendata[$key]) ? print_r($tokendata[$key], true) : $tokendata[$key]);
+
 		}
 	}
 }

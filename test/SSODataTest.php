@@ -135,7 +135,8 @@ class SSODataTest extends TestCase {
 			$this->assertEquals(
 				call_user_func([$ssodata,$fn]),
 				$tokendata[$key], 
-				"called $fn expected ". $tokendata[$key]);
+				"called $fn expected ". 
+				is_array($tokendata[$key]) ? print_r($tokendata[$key], true) : $tokendata[$key]);
 		}
 	}
 
@@ -179,7 +180,7 @@ class SSODataTest extends TestCase {
 			$this->assertEquals(
 				$ssodata->isEditor(),
 				$expect,
-				"called isEditor on role [$arg] expected [$res]");
+				"called isEditor on role [$arg] expected [$expect]");
 		}
 	}
 
