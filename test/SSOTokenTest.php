@@ -229,7 +229,7 @@ class SSOTokenTest extends TestCase {
 	 * 
 	 * @covers \Staffbase\plugins\sdk\SSOToken::__construct
 	 */
-	public function testConstructorToFailOnTokenIssedInTheFuture() {
+	public function testConstructorToFailOnTokenIssuedInTheFuture() {
 
 		$tokendata = SSODataTest::getTokenData();
 		$tokendata[SSOToken::CLAIM_ISSUED_AT] = strtotime("+10 second");
@@ -254,7 +254,7 @@ class SSOTokenTest extends TestCase {
 	 * 
 	 * @covers \Staffbase\plugins\sdk\SSOToken::__construct
 	 */
-	public function testConstructorAcceptsLeewayForTokenIssedInTheFuture() {
+	public function testConstructorAcceptsLeewayForTokenIssuedInTheFuture() {
 
 		$leeway = 11;
 		$tokendata = SSODataTest::getTokenData();
