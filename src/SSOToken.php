@@ -139,7 +139,8 @@ class SSOToken extends SSOData {
 					$claimValue = $claim->getValue();
 
 					// get the short class-name of the validatable claim
-					$operator = array_pop(explode('\\', get_class($claim)));
+					$segments = explode('\\', get_class($claim));
+					$operator = array_pop($segments);
 					$operand  = $data->get($claimName);
 
 					throw new Exception("Token Validation failed on claim '$claimName' $claimValue $operator $operand.");
