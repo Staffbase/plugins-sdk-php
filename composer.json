@@ -4,7 +4,7 @@
 	"description": "Staffbase php sdk library for plugins.",
 	"keywords": ["staffbase", "plugins", "library", "php", "sdk"],
 	"homepage": "https://github.com/Staffbase/plugins-sdk-php",
-	"license": "Apache 2.0",
+	"license": "Apache-2.0",
 	"authors": [
 		{
 			"name": "Vitaliy Ivanov",
