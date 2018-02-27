@@ -1,6 +1,6 @@
 DOC_FOLDER=doc
 
-.PHONY: all doc test doc-folder doc-clean
+.PHONY: all doc test doc-folder doc-clean lint
 
 all: lint test doc
 
