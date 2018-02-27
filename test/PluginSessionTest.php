@@ -19,8 +19,8 @@ use phpseclib\Crypt\RSA;
 use PHPUnit_Framework_TestCase as TestCase;
 use Staffbase\plugins\sdk\PluginSession;
 
-class PluginSessionTest extends TestCase {
-	
+class PluginSessionTest extends TestCase
+{
 	private $token;
 	private $pubKey;
 	private $privKey;

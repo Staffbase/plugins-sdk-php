@@ -23,8 +23,8 @@ use Lcobucci\JWT\Signer\Rsa\Sha256;
 use Staffbase\plugins\sdk\SSOData;
 use Staffbase\plugins\sdk\SSOToken;
 
-class SSOTokenTest extends TestCase {
-
+class SSOTokenTest extends TestCase
+{
 	private $pubKey;
 	private $privKey;
 	private $classname = SSOToken::class;
@@ -264,7 +264,6 @@ class SSOTokenTest extends TestCase {
 
 		$ssotoken = new SSOToken($this->pubKey, $token, $leeway);
 	}
-
 
 	/**
 	 * @test

@@ -18,7 +18,8 @@ namespace Staffbase\plugins\sdk;
  * A container for the data transmitted from Staffbase app to a plugin
  * using the Staffbase single-sign-on.
  */
-abstract class SSOData {
+abstract class SSOData
+{
     const CLAIM_AUDIENCE               = 'aud';
     const CLAIM_EXPIRE_AT              = 'exp';
     const CLAIM_NOT_BEFORE             = 'nbf';
@@ -75,7 +76,7 @@ abstract class SSOData {
      * @return mixed
      */
     protected function getClaimSafe($name) {
-        
+
         if ($this->hasClaim($name)) 
             return $this->getClaim($name);
 

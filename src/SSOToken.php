@@ -26,8 +26,8 @@ use Lcobucci\JWT\Signer\Rsa\Sha256;
  * A container which is able to decrypt and store the data transmitted
  * from Staffbase app to a plugin using the Staffbase single-sign-on.
  */
-class SSOToken extends SSOData {
-
+class SSOToken extends SSOData
+{
 	/** 
 	 * @var $token  Lcobucci\JWT\Token 
 	 */
@@ -72,7 +72,7 @@ class SSOToken extends SSOData {
 	 * @throws Exception if the parsing/verification/validation of the token fails.
 	 */
 	protected function parseToken($appSecret, $tokenData, $leeway) {
-		
+
 		// parse text
 		$this->token = (new Parser())->parse((string) $tokenData);
 
@@ -151,7 +151,6 @@ class SSOToken extends SSOData {
 		// unknown reason, probably an addition to used library
 		throw new Exception('Token Validation failed.');
 	}
-
 
 	/**
 	 * Test if a claim is set.
