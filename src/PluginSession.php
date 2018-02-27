@@ -51,8 +51,8 @@ class PluginSession extends SSOData
 	 * 
 	 * @throws Exception
 	 */
-	public function __construct($pluginId, $appSecret, SessionHandlerInterface $sessionHandler = null, $leeway = 0)
-	{
+	public function __construct($pluginId, $appSecret, SessionHandlerInterface $sessionHandler = null, $leeway = 0) {
+
 		if (!$pluginId)
 			throw new Exception('Empty plugin ID.');
 
@@ -107,6 +107,7 @@ class PluginSession extends SSOData
 	 * Destructor
 	 */
 	public function __destruct() {
+
 		$this->closeSession();
 	}
 
@@ -116,6 +117,7 @@ class PluginSession extends SSOData
 	 * @param string $name of the session
 	 */
 	protected function openSession($name) {
+
 		session_name($name);
 		session_start();
 	}	
@@ -124,6 +126,7 @@ class PluginSession extends SSOData
 	 * Close a session.
 	 */
 	protected function closeSession() {
+
 		session_write_close();
 	}
 
@@ -134,9 +137,10 @@ class PluginSession extends SSOData
 	 *
 	 * @return string PEM encoded key
 	 */
-	public static function base64ToPEMPublicKey($data)
-	{
+	public static function base64ToPEMPublicKey($data) {
+
 		error_log("Warning: PluginSession::base64ToPEMPublicKey() is deprecated. Please switch over to  SSOToken::base64ToPEMPublicKey().");
+
 		return SSOToken::base64ToPEMPublicKey($data);
 	}
 
@@ -148,6 +152,7 @@ class PluginSession extends SSOData
 	 * @return boolean
 	 */
 	protected function hasClaim($claim) {
+
 		return isset($_SESSION[$this->pluginInstanceId][self::KEY_SSO][$claim]);
 	}
 
@@ -159,6 +164,7 @@ class PluginSession extends SSOData
 	 * @return mixed
 	 */
 	protected function getClaim($claim) {
+
 		return $_SESSION[$this->pluginInstanceId][self::KEY_SSO][$claim];
 	}
 
@@ -168,6 +174,7 @@ class PluginSession extends SSOData
 	 * @return array
 	 */
 	protected function getAllClaims() {
+
 		return $_SESSION[$this->pluginInstanceId][self::KEY_SSO];
 	}
 
@@ -179,6 +186,7 @@ class PluginSession extends SSOData
 	 * @return mixed|null
 	 */
 	public function getSessionVar($key) {
+
 		if(isset($_SESSION[$this->pluginInstanceId][self::KEY_DATA][$key]))
 			return $_SESSION[$this->pluginInstanceId][self::KEY_DATA][$key];
 
@@ -191,6 +199,7 @@ class PluginSession extends SSOData
 	 * @return array
 	 */
 	public function getSessionData() {
+
 		if(isset($_SESSION[$this->pluginInstanceId][self::KEY_DATA]))
 			return $_SESSION[$this->pluginInstanceId][self::KEY_DATA];
 
@@ -204,6 +213,7 @@ class PluginSession extends SSOData
 	 * @param mixed $val
 	 */
 	public function setSessionVar($key, $val) {
+
 		$_SESSION[$this->pluginInstanceId][self::KEY_DATA][$key] = $val;
 	}
 
@@ -213,6 +223,7 @@ class PluginSession extends SSOData
 	 * @return array
 	 */
 	public function isUserView() {
+		
 		return $this->userView;
 	}
 

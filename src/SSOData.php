@@ -75,7 +75,7 @@ abstract class SSOData {
      * @return mixed
      */
     protected function getClaimSafe($name) {
-
+        
         if ($this->hasClaim($name)) 
             return $this->getClaim($name);
 
@@ -88,6 +88,7 @@ abstract class SSOData {
      * @return null|string
      */
     public function getAudience() {
+
         return $this->getClaimSafe(self::CLAIM_AUDIENCE);
     }
 
@@ -97,6 +98,7 @@ abstract class SSOData {
      * @return int
      */
     public function getExpireAtTime() {
+
         return $this->getClaimSafe(self::CLAIM_EXPIRE_AT);
     }
 
@@ -106,6 +108,7 @@ abstract class SSOData {
      * @return int
      */
     public function getNotBeforeTime() {
+
         return $this->getClaimSafe(self::CLAIM_NOT_BEFORE);
     }
 
@@ -115,6 +118,7 @@ abstract class SSOData {
      * @return int
      */
     public function getIssuedAtTime() {
+
         return $this->getClaimSafe(self::CLAIM_ISSUED_AT);
     }
 
@@ -124,6 +128,7 @@ abstract class SSOData {
      * @return null|string
      */
     public function getIssuer() {
+
         return $this->getClaimSafe(self::CLAIM_ISSUER);
     }
 
@@ -135,6 +140,7 @@ abstract class SSOData {
      * @return string
      */
     public function getInstanceId() {
+
         return $this->getClaimSafe(self::CLAIM_INSTANCE_ID);
     }
 
@@ -144,6 +150,7 @@ abstract class SSOData {
      * @return null|string
      */
     public function getInstanceName() {
+
         return $this->getClaimSafe(self::CLAIM_INSTANCE_NAME);
     }
 
@@ -153,6 +160,7 @@ abstract class SSOData {
      * @return null|string
      */
     public function getUserId() {
+
         return $this->getClaimSafe(self::CLAIM_USER_ID);
     }
 
@@ -165,6 +173,7 @@ abstract class SSOData {
      * @return null|string
      */
     public function getUserExternalId() {
+
         return $this->getClaimSafe(self::CLAIM_USER_EXTERNAL_ID);
     }
 
@@ -174,6 +183,7 @@ abstract class SSOData {
      * @return null|string
      */
     public function getFullName() {
+
         return $this->getClaimSafe(self::CLAIM_USER_FULL_NAME);
     }
 
@@ -183,6 +193,7 @@ abstract class SSOData {
      * @return null|string
      */
     public function getFirstName() {
+
         return $this->getClaimSafe(self::CLAIM_USER_FIRST_NAME);
     }
 
@@ -192,6 +203,7 @@ abstract class SSOData {
      * @return null|string
      */
     public function getLastName() {
+
         return $this->getClaimSafe(self::CLAIM_USER_LAST_NAME);
     }
 
@@ -205,6 +217,7 @@ abstract class SSOData {
      * @return null|string
      */
     public function getRole() {
+
         return $this->getClaimSafe(self::CLAIM_USER_ROLE);
     }
 
@@ -216,6 +229,7 @@ abstract class SSOData {
      * @return null|string
      */
     public function getType() {
+
         return $this->getClaimSafe(self::CLAIM_ENTITY_TYPE);
     }
 
@@ -227,6 +241,7 @@ abstract class SSOData {
      * @return null|string
      */
     public function getThemeTextColor() {
+
         return $this->getClaimSafe(self::CLAIM_THEME_TEXT_COLOR);
     }
 
@@ -238,6 +253,7 @@ abstract class SSOData {
      * @return null|string
      */
     public function getThemeBackgroundColor() {
+
         return $this->getClaimSafe(self::CLAIM_THEME_BACKGROUND_COLOR);
     }
 
@@ -247,6 +263,7 @@ abstract class SSOData {
      * @return string
      */
     public function getLocale() {
+
         return $this->getClaimSafe(self::CLAIM_USER_LOCALE);
     }
 
@@ -256,6 +273,7 @@ abstract class SSOData {
      * @return array|null
      */
     public function getTags() {
+
         return $this->getClaimSafe(self::CLAIM_USER_TAGS);
     }
 
@@ -268,6 +286,7 @@ abstract class SSOData {
      * @return boolean
      */
     public function isEditor() {
+
         return $this->getClaimSafe(self::CLAIM_USER_ROLE) === self::USER_ROLE_EDITOR;
     }
 
@@ -277,6 +296,7 @@ abstract class SSOData {
      * @return array
      */
     public function getData() {
+
         return $this->getAllClaims();
     }   
 }

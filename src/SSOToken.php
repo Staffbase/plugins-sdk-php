@@ -72,6 +72,7 @@ class SSOToken extends SSOData {
 	 * @throws Exception if the parsing/verification/validation of the token fails.
 	 */
 	protected function parseToken($appSecret, $tokenData, $leeway) {
+		
 		// parse text
 		$this->token = (new Parser())->parse((string) $tokenData);
 
@@ -101,8 +102,7 @@ class SSOToken extends SSOData {
 	 *
 	 * @return string PEM encoded key
 	 */
-	public static function base64ToPEMPublicKey($data)
-	{
+	public static function base64ToPEMPublicKey($data) {
 		$data = strtr($data, array(
 			"\r" => "",
 			"\n" => ""
@@ -161,6 +161,7 @@ class SSOToken extends SSOData {
 	 * @return boolean
 	 */
 	protected function hasClaim($claim) {
+
 		return $this->token->hasClaim($claim);
 	}
 
@@ -172,6 +173,7 @@ class SSOToken extends SSOData {
 	 * @return mixed
 	 */
 	protected function getClaim($claim) {
+
 		return $this->token->getClaim($claim);
 	}
 
