@@ -103,6 +103,7 @@ class SSOToken extends SSOData
 	 * @return string PEM encoded key
 	 */
 	public static function base64ToPEMPublicKey($data) {
+		
 		$data = strtr($data, array(
 			"\r" => "",
 			"\n" => ""
