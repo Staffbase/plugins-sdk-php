@@ -82,10 +82,6 @@ class PluginSession extends SSOData
 		// we update the SSO info every time we get a token
 		if ($jwt) {
 
-			// convert secret to PEM if its a plain base64 string
-			if(strpos(trim($appSecret),'-----') !== 0 && strpos(trim($appSecret), 'file://') !==0 )
-				$appSecret = self::base64ToPEMPublicKey($appSecret);
-
 			// decrypt the token
 			$sso = new SSOToken($appSecret, $jwt, $leeway);
 			$ssoData = $sso->getData();
@@ -99,7 +95,7 @@ class PluginSession extends SSOData
 
 		// requests with spoofed PID are not allowed
 		if (!isset($_SESSION[$this->pluginInstanceId][self::KEY_SSO]) 
-		|| empty($_SESSION[$this->pluginInstanceId][self::KEY_SSO]))
+		  || empty($_SESSION[$this->pluginInstanceId][self::KEY_SSO]))
 			throw new Exception('Tried to access an instance without previous authentication.');
 
 		// decide if we are in user view or not
@@ -132,7 +128,7 @@ class PluginSession extends SSOData
 	}
 
 	/**
-	 * Translate a base64 string to PEM encoded public key.
+	 * (DEPRECATED) Translate a base64 string to PEM encoded public key.
 	 *
 	 * @param string $data base64 encoded key
 	 *
@@ -140,16 +136,8 @@ class PluginSession extends SSOData
 	 */
 	public static function base64ToPEMPublicKey($data)
 	{
-
-		$data = strtr($data, array(
-			"\r" => "",
-			"\n" => ""
-		));
-
-		return
-			"-----BEGIN PUBLIC KEY-----\n".
-			chunk_split($data, 64, "\n").
-			"-----END PUBLIC KEY-----\n";
+		error_log("Warning: PluginSession::base64ToPEMPublicKey() is deprecated. Please switch over to  SSOToken::base64ToPEMPublicKey().");
+		return SSOToken::base64ToPEMPublicKey($data);
 	}
 
 	/**
