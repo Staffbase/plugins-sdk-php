@@ -53,6 +53,10 @@ class SSOToken extends SSOData {
 		if (!is_numeric($leeway))
 			throw new Exception('Parameter leeway has to be numeric.');
 
+		// convert secret to PEM if its a plain base64 string and does not yield an url
+		if(strpos(trim($appSecret),'-----') !== 0 && strpos(trim($appSecret), 'file://') !==0 )
+			$appSecret = self::base64ToPEMPublicKey($appSecret);
+
 		$this->parseToken($appSecret, $tokenData, $leeway);
 	}
 
@@ -88,6 +92,26 @@ class SSOToken extends SSOData {
 		// its a security risk to work with tokens lacking instance id
 		if (!trim($this->getInstanceId()))
 			throw new Exception('Token lacks instance id.');
+	}
+
+	/**
+	 * Translate a base64 string to PEM encoded public key.
+	 *
+	 * @param string $data base64 encoded key
+	 *
+	 * @return string PEM encoded key
+	 */
+	public static function base64ToPEMPublicKey($data)
+	{
+		$data = strtr($data, array(
+			"\r" => "",
+			"\n" => ""
+		));
+
+		return
+			"-----BEGIN PUBLIC KEY-----\n".
+			chunk_split($data, 64, "\n").
+			"-----END PUBLIC KEY-----\n";
 	}
 
 	/**
