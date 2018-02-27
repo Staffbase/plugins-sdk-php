@@ -52,6 +52,7 @@
     * [isEditor](#iseditor-1)
     * [getData](#getdata-1)
     * [__construct](#__construct-1)
+    * [base64ToPEMPublicKey](#base64topempublickey-1)
 
 ## PluginSession
 
@@ -430,7 +431,7 @@ PluginSession::__destruct(  )
 
 ### base64ToPEMPublicKey
 
-Translate a base64 string to PEM encoded public key.
+(DEPRECATED) Translate a base64 string to PEM encoded public key.
 
 ```php
 PluginSession::base64ToPEMPublicKey( string $data ): string
@@ -890,7 +891,33 @@ SSOToken::__construct( string $appSecret, string $tokenData, integer $leeway )
 
 ---
 
+### base64ToPEMPublicKey
+
+Translate a base64 string to PEM encoded public key.
+
+```php
+SSOToken::base64ToPEMPublicKey( string $data ): string
+```
+
+
+
+* This method is **static**.
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `$data` | **string** | base64 encoded key |
+
+
+**Return Value:**
+
+PEM encoded key
+
+
+
+---
+
 
 
 --------
-> This document was automatically generated from source code comments on 2017-09-20 using [phpDocumentor](http://www.phpdoc.org/) and [cvuorinen/phpdoc-markdown-public](https://github.com/cvuorinen/phpdoc-markdown-public)
+> This document was automatically generated from source code comments on 2018-02-27 using [phpDocumentor](http://www.phpdoc.org/) and [cvuorinen/phpdoc-markdown-public](https://github.com/cvuorinen/phpdoc-markdown-public)
