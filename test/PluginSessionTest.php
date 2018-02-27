@@ -100,7 +100,7 @@ class PluginSessionTest extends TestCase {
 	 */	
 	public function testConstructorRejectsSpoofedPID() {
 
-		$this->setupEnvironment(null,$this->token);
+		$this->setupEnvironment(null, $this->token);
 
 		$mock = $this->getMockBuilder($this->classname)
 			->disableOriginalConstructor()
@@ -111,7 +111,7 @@ class PluginSessionTest extends TestCase {
 		$constructor = $reflectedClass->getConstructor();
 		$constructor->invoke($mock, $this->pluginId, $this->pubKey);
 
-		$this->setupEnvironment($this->pluginInstanceId+'spoof', null, false);
+		$this->setupEnvironment($this->pluginInstanceId. 'spoof', null, false);
 
 		try {
 			$constructor->invoke($mock, $this->pluginId, $this->pubKey);
