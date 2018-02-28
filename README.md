@@ -84,6 +84,6 @@ To run the tests a simple `# composer test` command in the root directory will s
 
 ## License
 
-Copyright 2017 Staffbase GmbH.
+Copyright 2017-2018 Staffbase GmbH.
 
 Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0

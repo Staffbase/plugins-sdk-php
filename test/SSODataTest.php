@@ -16,8 +16,8 @@ namespace Staffbase\plugins\test;
 use PHPUnit_Framework_TestCase as TestCase;
 use Staffbase\plugins\sdk\SSOData;
 
-class SSODataTest extends TestCase {
-
+class SSODataTest extends TestCase
+{
 	private $classname = SSOData::class;
 
 	/**
@@ -209,5 +209,4 @@ class SSODataTest extends TestCase {
 			$tokendata,
 			"comparing data array to token", 0, 10, true);
 	}
-
 }

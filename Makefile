@@ -1,8 +1,8 @@
 DOC_FOLDER=doc
 
-.PHONY: all doc test doc-folder doc-clean
+.PHONY: all doc test doc-folder doc-clean lint
 
-all: doc test
+all: lint test doc
 
 doc: doc-clean vendor
 	php -d date.timezone="UTC" \
@@ -18,6 +18,9 @@ doc-folder:
 doc-clean: doc-folder
 	rm -r "${DOC_FOLDER}"
 
+lint:
+	find src  -name '*.php' | xargs -n1 php -l
+	find test -name '*.php' | xargs -n1 php -l
 
 test: vendor
 	composer test

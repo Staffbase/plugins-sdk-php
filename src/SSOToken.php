@@ -26,8 +26,8 @@ use Lcobucci\JWT\Signer\Rsa\Sha256;
  * A container which is able to decrypt and store the data transmitted
  * from Staffbase app to a plugin using the Staffbase single-sign-on.
  */
-class SSOToken extends SSOData {
-
+class SSOToken extends SSOData
+{
 	/** 
 	 * @var $token  Lcobucci\JWT\Token 
 	 */
@@ -53,6 +53,10 @@ class SSOToken extends SSOData {
 		if (!is_numeric($leeway))
 			throw new Exception('Parameter leeway has to be numeric.');
 
+		// convert secret to PEM if its a plain base64 string and does not yield an url
+		if(strpos(trim($appSecret),'-----') !== 0 && strpos(trim($appSecret), 'file://') !==0 )
+			$appSecret = self::base64ToPEMPublicKey($appSecret);
+
 		$this->parseToken($appSecret, $tokenData, $leeway);
 	}
 
@@ -68,6 +72,7 @@ class SSOToken extends SSOData {
 	 * @throws Exception if the parsing/verification/validation of the token fails.
 	 */
 	protected function parseToken($appSecret, $tokenData, $leeway) {
+
 		// parse text
 		$this->token = (new Parser())->parse((string) $tokenData);
 
@@ -88,6 +93,26 @@ class SSOToken extends SSOData {
 		// its a security risk to work with tokens lacking instance id
 		if (!trim($this->getInstanceId()))
 			throw new Exception('Token lacks instance id.');
+	}
+
+	/**
+	 * Translate a base64 string to PEM encoded public key.
+	 *
+	 * @param string $data base64 encoded key
+	 *
+	 * @return string PEM encoded key
+	 */
+	public static function base64ToPEMPublicKey($data) {
+		
+		$data = strtr($data, array(
+			"\r" => "",
+			"\n" => ""
+		));
+
+		return
+			"-----BEGIN PUBLIC KEY-----\n".
+			chunk_split($data, 64, "\n").
+			"-----END PUBLIC KEY-----\n";
 	}
 
 	/**
@@ -115,7 +140,8 @@ class SSOToken extends SSOData {
 					$claimValue = $claim->getValue();
 
 					// get the short class-name of the validatable claim
-					$operator = array_pop(explode('\\', get_class($claim)));
+					$segments = explode('\\', get_class($claim));
+					$operator = array_pop($segments);
 					$operand  = $data->get($claimName);
 
 					throw new Exception("Token Validation failed on claim '$claimName' $claimValue $operator $operand.");
@@ -127,7 +153,6 @@ class SSOToken extends SSOData {
 		throw new Exception('Token Validation failed.');
 	}
 
-
 	/**
 	 * Test if a claim is set.
 	 *
@@ -136,6 +161,7 @@ class SSOToken extends SSOData {
 	 * @return boolean
 	 */
 	protected function hasClaim($claim) {
+
 		return $this->token->hasClaim($claim);
 	}
 
@@ -147,6 +173,7 @@ class SSOToken extends SSOData {
 	 * @return mixed
 	 */
 	protected function getClaim($claim) {
+
 		return $this->token->getClaim($claim);
 	}
 
