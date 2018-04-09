@@ -86,9 +86,9 @@ class RemoteCallHandler extends AbstractRemoteCallHandler implements DeleteInsta
         $this->db = $db;
     } 
 
-    public function deleteInstance($pluginId) {
+    public function deleteInstance($instanceId) {
     
-        $result = $this->db->posts->deleteByInstance($pluginId);
+        $result = $this->db->posts->deleteByInstance($instanceId);
 
         return $result !== false;
     }
