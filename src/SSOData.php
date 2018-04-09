@@ -41,6 +41,8 @@ abstract class SSOData
 
     const USER_ROLE_EDITOR = 'editor';
 
+    const REMOTE_CALL_DELETE = 'delete';
+
     /**
      * Test if a claim is set.
      *
@@ -289,6 +291,18 @@ abstract class SSOData
     public function isEditor() {
 
         return $this->getClaimSafe(self::CLAIM_USER_ROLE) === self::USER_ROLE_EDITOR;
+    }
+
+    /**
+     * Check if the SSO call is an instance deletion call.
+     *
+     * If an editor deletes a plugin instance in Staffbase
+     * This will be true.
+     *
+     * @return boolean
+     */
+    public function isDeleteInstanceCall() {
+        return $this->getUserId() === self::REMOTE_CALL_DELETE;
     }
 
     /**

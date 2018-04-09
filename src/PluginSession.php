@@ -18,6 +18,8 @@ use Exception;
 use SessionHandlerInterface;
 use Staffbase\plugins\sdk\SSOData;
 use Staffbase\plugins\sdk\SSOToken;
+use Staffbase\plugins\sdk\RemoteCall\RemoteCallInterface;
+use Staffbase\plugins\sdk\RemoteCall\DeleteInstanceCallHandlerInterface;
 
 /**
  * A container which decrypts and stores the SSO data in a session for further requests.
@@ -86,10 +88,28 @@ class PluginSession extends SSOData
 			$sso = new SSOToken($appSecret, $jwt, $leeway);
 			$ssoData = $sso->getData();
 
+			// dispatch remote calls from Staffbase
+			if ($sso->isDeleteInstanceCall() && $remoteCallHandler) {
+
+				$result = false;
+
+				if ($remoteCallHandler instanceOf DeleteInstanceCallHandlerInterface) {
+					$result = $remoteCallHandler->deleteInstance($sso->getInstanceId());		
+				} else {
+					throw new Exception('Unknown remote call interface');
+				}
+
+				// finish the remote call
+				if($result)
+					$remoteCallHandler->exitSuccess();
+				else
+					$remoteCallHandler->exitFailure();
+
+				throw new Exception("Not properly handled remote call exit procedure");
+			}
+
 			// update data
-
 			$this->pluginInstanceId = $sso->getInstanceId();
-
 			$_SESSION[$this->pluginInstanceId][self::KEY_SSO] = $ssoData;
 		}
 
