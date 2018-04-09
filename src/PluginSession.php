@@ -54,7 +54,7 @@ class PluginSession extends SSOData
 	 * 
 	 * @throws Exception
 	 */
-	public function __construct($pluginId, $appSecret, SessionHandlerInterface $sessionHandler = null, $leeway = 0, RemoteCallInterface $remoteCallHandler) {
+	public function __construct($pluginId, $appSecret, SessionHandlerInterface $sessionHandler = null, $leeway = 0, RemoteCallInterface $remoteCallHandler = null) {
 
 		if (!$pluginId)
 			throw new Exception('Empty plugin ID.');
@@ -106,7 +106,7 @@ class PluginSession extends SSOData
 				else
 					$remoteCallHandler->exitFailure();
 
-				throw new Exception("Not properly handled remote call exit procedure");
+				$this->exitRemoteCall();
 			}
 
 			// update data
@@ -130,6 +130,16 @@ class PluginSession extends SSOData
 	public function __destruct() {
 
 		$this->closeSession();
+	}
+
+	/**
+	 * Exit the script 
+	 * 
+	 * if a remote call was not handled by the user we die hard here
+	 */
+	protected function exitRemoteCall() {
+		error_log("The exit procedure for a remote call was not properly handled.");
+		exit;
 	}
 
 	/**
