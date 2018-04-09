@@ -1,5 +1,16 @@
 <?php
-
+/**
+ * Delete remote handler interface, based on this doc:
+ * https://developers.staffbase.com/api/plugin-sso/
+ *
+ * PHP version 5.5.9
+ *
+ * @category  Authentication
+ * @copyright 2018 Staffbase, GmbH.
+ * @author    Vitaliy Ivanov
+ * @license   http://www.apache.org/licenses/LICENSE-2.0
+ * @link      https://github.com/staffbase/plugins-sdk-php
+ */
 namespace Staffbase\plugins\sdk\RemoteCall;
 
 /**
