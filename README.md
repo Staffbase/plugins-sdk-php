@@ -73,8 +73,6 @@ With the version 1.2.0 we introduced the concept of remote calls. These can happ
 
 ```php
 
-<?php
-
 use Staffbase\plugins\sdk\RemoteCall\AbstractRemoteCallHandler;
 use Staffbase\plugins\sdk\RemoteCall\DeleteInstanceCallHandlerInterface;
 
@@ -96,7 +94,7 @@ class RemoteCallHandler extends AbstractRemoteCallHandler implements DeleteInsta
     }
 }
 
-// pass it to the PluginSession on csontruction as the last paramter
+// pass it to the PluginSession on construction as the last paramter
 $remoteCallHandler = new RemoteCallHandler($db);
 $session = new PluginSessiona(PLUGIN_ID, $secret, $sessionHandler, null, $remoteCallHandler);
 
