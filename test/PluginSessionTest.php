@@ -18,6 +18,7 @@ use ReflectionClass;
 use phpseclib\Crypt\RSA;
 use PHPUnit_Framework_TestCase as TestCase;
 use Staffbase\plugins\sdk\PluginSession;
+use Staffbase\plugins\sdk\RemoteCall\DeleteInstanceCallHandlerInterface;
 
 class PluginSessionTest extends TestCase
 {
@@ -321,7 +322,6 @@ class PluginSessionTest extends TestCase
 	 * 
 	 * @covers \Staffbase\plugins\sdk\PluginSession::__construct
 	 * @covers \Staffbase\plugins\sdk\PluginSession::getSessionData
-
 	 */	
 	public function testGetSessionData() {
 
@@ -346,4 +346,87 @@ class PluginSessionTest extends TestCase
 		$this->assertEquals($sessionData, $session->getSessionData());
 
 	}
+
+	/** 
+	 * @test
+	 * 
+	 * Test that a delete call triggers interace methods in correct order.
+	 * 
+	 * @covers \Staffbase\plugins\sdk\PluginSession::__construct
+	 */	
+	public function testDeleteSuccessfullCallInterface() {
+
+		$tokendata = $this->tokendata;
+		$tokendata[PluginSession::CLAIM_USER_ID] = 'delete';
+		$token = SSOTokenTest::createSignedTokenFromData($this->privKey, $tokendata);
+
+		$this->setupEnvironment(null, $token, false);
+
+		// successfull remote call handler mock
+		$handler = $this->getMockBuilder(DeleteInstanceCallHandlerInterface::class)
+			->setMethods(array('deleteInstance', 'exitSuccess', 'exitFailure'))
+			->getMock();
+
+        $handler->method('deleteInstance')
+             ->willReturn(true);
+
+		$handler->expects($this->once())
+			->method('deleteInstance');
+
+		$handler->expects($this->once())
+			->method('exitSuccess');
+
+		$handler->expects($this->never())
+			->method('exitFailure');
+
+		// session mock
+		$Session = $this->getMockBuilder($this->classname)
+			->disableOriginalConstructor()
+			->setMethods(array('openSession', 'closeSession', 'exitRemoteCall'))
+			->getMock();
+
+		$session = new $Session($this->pluginId, $this->pubKey, null, 0, $handler);
+	}
+
+	/** 
+	 * @test
+	 * 
+	 * Test that a delete call triggers interace methods in correct order.
+	 * 
+	 * @covers \Staffbase\plugins\sdk\PluginSession::__construct
+	 */	
+	public function testDeleteFailedCallInterface() {
+
+		$tokendata = $this->tokendata;
+		$tokendata[PluginSession::CLAIM_USER_ID] = 'delete';
+		$token = SSOTokenTest::createSignedTokenFromData($this->privKey, $tokendata);
+
+		$this->setupEnvironment(null, $token, false);
+
+		// successfull remote call handler mock
+		$handler = $this->getMockBuilder(DeleteInstanceCallHandlerInterface::class)
+			->setMethods(array('deleteInstance', 'exitSuccess', 'exitFailure'))
+			->getMock();
+
+        $handler->method('deleteInstance')
+             ->willReturn(false);
+
+		$handler->expects($this->once())
+			->method('deleteInstance');
+
+		$handler->expects($this->never())
+			->method('exitSuccess');
+
+		$handler->expects($this->once())
+			->method('exitFailure');
+
+		// session mock
+		$Session = $this->getMockBuilder($this->classname)
+			->disableOriginalConstructor()
+			->setMethods(array('openSession', 'closeSession', 'exitRemoteCall'))
+			->getMock();
+
+		$session = new $Session($this->pluginId, $this->pubKey, null, 0, $handler);
+	}
+
 }
