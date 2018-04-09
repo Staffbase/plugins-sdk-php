@@ -49,11 +49,12 @@ class PluginSession extends SSOData
 	 * @param string $pluginId the unique name of the plugin
 	 * @param string $appSecret application public key
 	 * @param $sessionHandler optional custom session handler
-	 * @param $leeway [<description>]
+	 * @param $leeway in seconds to compensate clock skew
+	 * @param $remoteCallHandler a class handling remote calls
 	 * 
 	 * @throws Exception
 	 */
-	public function __construct($pluginId, $appSecret, SessionHandlerInterface $sessionHandler = null, $leeway = 0) {
+	public function __construct($pluginId, $appSecret, SessionHandlerInterface $sessionHandler = null, $leeway = 0, RemoteCallInterface $remoteCallHandler) {
 
 		if (!$pluginId)
 			throw new Exception('Empty plugin ID.');
