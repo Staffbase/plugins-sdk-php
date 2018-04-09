@@ -92,12 +92,15 @@ class PluginSession extends SSOData
 			// dispatch remote calls from Staffbase
 			if ($sso->isDeleteInstanceCall() && $remoteCallHandler) {
 
-				$result = false;
+				// we will accept unhandled cals with a warning
+				$result = true;
+
+				$instanceId = $sso->getInstanceId();
 
 				if ($remoteCallHandler instanceOf DeleteInstanceCallHandlerInterface) {
-					$result = $remoteCallHandler->deleteInstance($sso->getInstanceId());		
+					$result = $remoteCallHandler->deleteInstance($instanceId);		
 				} else {
-					throw new Exception('Unknown remote call interface');
+					error_log("Warning: An instance deletion call for instance $instanceId was not handled.");
 				}
 
 				// finish the remote call
