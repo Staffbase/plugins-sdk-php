@@ -92,7 +92,7 @@ class PluginSession extends SSOData
 			// dispatch remote calls from Staffbase
 			if ($sso->isDeleteInstanceCall() && $remoteCallHandler) {
 
-				// we will accept unhandled cals with a warning
+				// we will accept unhandled calls with a warning
 				$result = true;
 
 				$instanceId = $sso->getInstanceId();
