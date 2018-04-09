@@ -69,7 +69,7 @@ try {
 ```
 
 ### Remote calls
-With the version 1.2.0 we introduced the concept of remote calls. These can happen if the Staffbase app need's to notify the plugin about an event which may be relevant. Events could be such as: A plugin instance gets deleted or A user should be logged out. For now we support only the instance-deletion call. You can find all supportd calls in the `RemoteCall` namespace. 
+With the version 1.2.0 we introduced the concept of remote calls. These can happen if the Staffbase app need's to notify the plugin about an event which may be relevant. Events could be such as: a plugin instance gets deleted or a user should be logged out. For now we support only the instance-deletion call. You can find all supportd calls in the `RemoteCall` namespace. 
 
 ```php
 
