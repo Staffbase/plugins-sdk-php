@@ -138,7 +138,7 @@ class PluginSession extends SSOData
 	 * if a remote call was not handled by the user we die hard here
 	 */
 	protected function exitRemoteCall() {
-		error_log("The exit procedure for a remote call was not properly handled.");
+		error_log("Warning: The exit procedure for a remote call was not properly handled.");
 		exit;
 	}
 
