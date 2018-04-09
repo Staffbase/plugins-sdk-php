@@ -68,6 +68,45 @@ try {
 }
 ```
 
+### Remote calls
+With the version 1.2.0 we introduced the concept of remote calls. These can happen if the Staffbase app need's to notify the plugin about an event which may be relevant. Events could be such as: A plugin instance gets deleted or A user should be logged out. For now we support only the instance-deletion call. You can find all supportd calls in the `RemoteCall` namespace. 
+
+```php
+
+<?php
+
+use Staffbase\plugins\sdk\RemoteCall\AbstractRemoteCallHandler;
+use Staffbase\plugins\sdk\RemoteCall\DeleteInstanceCallHandlerInterface;
+
+// create a call handler which can have multiple call interfaces implemented
+class RemoteCallHandler extends AbstractRemoteCallHandler implements DeleteInstanceCallHandlerInterface {
+
+    private $db;
+
+    public function __construct($db) {
+    
+        $this->db = $db;
+    } 
+
+    public function deleteInstance($pluginId) {
+    
+        $result = $this->db->posts->deleteByInstance($pluginId);
+
+        return $result !== false;
+    }
+}
+
+// pass it to the PluginSession on csontruction as the last paramter
+$remoteCallHandler = new RemoteCallHandler($db);
+$session = new PluginSessiona(PLUGIN_ID, $secret, $sessionHandler, null, $remoteCallHandler);
+
+/* Unreachable code in a delete call follows */
+...
+
+```
+
+Please notice that a remote call will either be exited through proper implementation of `RemoteCallInterface`'s exit functions or forcefully with a warning. This happens because practically there is no session to built after a call.
+
 ## Contribution
 
 - Fork it
