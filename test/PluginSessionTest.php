@@ -367,8 +367,8 @@ class PluginSessionTest extends TestCase
 			->setMethods(array('deleteInstance', 'exitSuccess', 'exitFailure'))
 			->getMock();
 
-        $handler->method('deleteInstance')
-             ->willReturn(true);
+		$handler->method('deleteInstance')
+			->willReturn(true);
 
 		$handler->expects($this->once())
 			->method('deleteInstance');
@@ -408,8 +408,8 @@ class PluginSessionTest extends TestCase
 			->setMethods(array('deleteInstance', 'exitSuccess', 'exitFailure'))
 			->getMock();
 
-        $handler->method('deleteInstance')
-             ->willReturn(false);
+		$handler->method('deleteInstance')
+			->willReturn(false);
 
 		$handler->expects($this->once())
 			->method('deleteInstance');

@@ -296,8 +296,8 @@ abstract class SSOData
     /**
      * Check if the SSO call is an instance deletion call.
      *
-     * If an editor deletes a plugin instance in Staffbase
-     * This will be true.
+     * If an editor deletes a plugin instance in Staffbase,
+     * this will be true.
      *
      * @return boolean
      */
