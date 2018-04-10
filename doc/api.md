@@ -22,6 +22,7 @@
     * [getLocale](#getlocale)
     * [getTags](#gettags)
     * [isEditor](#iseditor)
+    * [isDeleteInstanceCall](#isdeleteinstancecall)
     * [getData](#getdata)
     * [__construct](#__construct)
     * [__destruct](#__destruct)
@@ -50,6 +51,7 @@
     * [getLocale](#getlocale-1)
     * [getTags](#gettags-1)
     * [isEditor](#iseditor-1)
+    * [isDeleteInstanceCall](#isdeleteinstancecall-1)
     * [getData](#getdata-1)
     * [__construct](#__construct-1)
     * [base64ToPEMPublicKey](#base64topempublickey-1)
@@ -372,6 +374,23 @@ provided the user will be marked as editor.
 
 ---
 
+### isDeleteInstanceCall
+
+Check if the SSO call is an instance deletion call.
+
+```php
+PluginSession::isDeleteInstanceCall(  ): boolean
+```
+
+If an editor deletes a plugin instance in Staffbase,
+this will be true.
+
+
+
+
+
+---
+
 ### getData
 
 Get all stored data.
@@ -393,7 +412,7 @@ PluginSession::getData(  ): array
 Constructor
 
 ```php
-PluginSession::__construct( string $pluginId, string $appSecret,  $sessionHandler = null,  $leeway )
+PluginSession::__construct( string $pluginId, string $appSecret,  $sessionHandler = null,  $leeway,  $remoteCallHandler = null )
 ```
 
 
@@ -406,7 +425,8 @@ PluginSession::__construct( string $pluginId, string $appSecret,  $sessionHandle
 | `$pluginId` | **string** | the unique name of the plugin |
 | `$appSecret` | **string** | application public key |
 | `$sessionHandler` | **** | optional custom session handler |
-| `$leeway` | **** | [<description>] |
+| `$leeway` | **** | in seconds to compensate clock skew |
+| `$remoteCallHandler` | **** | a class handling remote calls |
 
 
 
@@ -851,6 +871,23 @@ provided the user will be marked as editor.
 
 ---
 
+### isDeleteInstanceCall
+
+Check if the SSO call is an instance deletion call.
+
+```php
+SSOToken::isDeleteInstanceCall(  ): boolean
+```
+
+If an editor deletes a plugin instance in Staffbase,
+this will be true.
+
+
+
+
+
+---
+
 ### getData
 
 Get all stored data.
@@ -920,4 +957,4 @@ PEM encoded key
 
 
 --------
-> This document was automatically generated from source code comments on 2018-02-27 using [phpDocumentor](http://www.phpdoc.org/) and [cvuorinen/phpdoc-markdown-public](https://github.com/cvuorinen/phpdoc-markdown-public)
+> This document was automatically generated from source code comments on 2018-04-10 using [phpDocumentor](http://www.phpdoc.org/) and [cvuorinen/phpdoc-markdown-public](https://github.com/cvuorinen/phpdoc-markdown-public)

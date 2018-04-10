@@ -18,6 +18,8 @@ use Exception;
 use SessionHandlerInterface;
 use Staffbase\plugins\sdk\SSOData;
 use Staffbase\plugins\sdk\SSOToken;
+use Staffbase\plugins\sdk\RemoteCall\RemoteCallInterface;
+use Staffbase\plugins\sdk\RemoteCall\DeleteInstanceCallHandlerInterface;
 
 /**
  * A container which decrypts and stores the SSO data in a session for further requests.
@@ -47,11 +49,12 @@ class PluginSession extends SSOData
 	 * @param string $pluginId the unique name of the plugin
 	 * @param string $appSecret application public key
 	 * @param $sessionHandler optional custom session handler
-	 * @param $leeway [<description>]
+	 * @param $leeway in seconds to compensate clock skew
+	 * @param $remoteCallHandler a class handling remote calls
 	 * 
 	 * @throws Exception
 	 */
-	public function __construct($pluginId, $appSecret, SessionHandlerInterface $sessionHandler = null, $leeway = 0) {
+	public function __construct($pluginId, $appSecret, SessionHandlerInterface $sessionHandler = null, $leeway = 0, RemoteCallInterface $remoteCallHandler = null) {
 
 		if (!$pluginId)
 			throw new Exception('Empty plugin ID.');
@@ -86,10 +89,31 @@ class PluginSession extends SSOData
 			$sso = new SSOToken($appSecret, $jwt, $leeway);
 			$ssoData = $sso->getData();
 
+			// dispatch remote calls from Staffbase
+			if ($sso->isDeleteInstanceCall() && $remoteCallHandler) {
+
+				// we will accept unhandled calls with a warning
+				$result = true;
+
+				$instanceId = $sso->getInstanceId();
+
+				if ($remoteCallHandler instanceOf DeleteInstanceCallHandlerInterface) {
+					$result = $remoteCallHandler->deleteInstance($instanceId);		
+				} else {
+					error_log("Warning: An instance deletion call for instance $instanceId was not handled.");
+				}
+
+				// finish the remote call
+				if($result)
+					$remoteCallHandler->exitSuccess();
+				else
+					$remoteCallHandler->exitFailure();
+
+				$this->exitRemoteCall();
+			}
+
 			// update data
-
 			$this->pluginInstanceId = $sso->getInstanceId();
-
 			$_SESSION[$this->pluginInstanceId][self::KEY_SSO] = $ssoData;
 		}
 
@@ -109,6 +133,16 @@ class PluginSession extends SSOData
 	public function __destruct() {
 
 		$this->closeSession();
+	}
+
+	/**
+	 * Exit the script 
+	 * 
+	 * if a remote call was not handled by the user we die hard here
+	 */
+	protected function exitRemoteCall() {
+		error_log("Warning: The exit procedure for a remote call was not properly handled.");
+		exit;
 	}
 
 	/**
