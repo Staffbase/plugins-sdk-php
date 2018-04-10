@@ -382,8 +382,8 @@ Check if the SSO call is an instance deletion call.
 PluginSession::isDeleteInstanceCall(  ): boolean
 ```
 
-If an editor deletes a plugin instance in Staffbase
-This will be true.
+If an editor deletes a plugin instance in Staffbase,
+this will be true.
 
 
 
@@ -879,8 +879,8 @@ Check if the SSO call is an instance deletion call.
 SSOToken::isDeleteInstanceCall(  ): boolean
 ```
 
-If an editor deletes a plugin instance in Staffbase
-This will be true.
+If an editor deletes a plugin instance in Staffbase,
+this will be true.
 
 
 
@@ -957,4 +957,4 @@ PEM encoded key
 
 
 --------
-> This document was automatically generated from source code comments on 2018-04-09 using [phpDocumentor](http://www.phpdoc.org/) and [cvuorinen/phpdoc-markdown-public](https://github.com/cvuorinen/phpdoc-markdown-public)
+> This document was automatically generated from source code comments on 2018-04-10 using [phpDocumentor](http://www.phpdoc.org/) and [cvuorinen/phpdoc-markdown-public](https://github.com/cvuorinen/phpdoc-markdown-public)
