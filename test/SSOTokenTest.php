@@ -20,7 +20,6 @@ use PHPUnit_Framework_TestCase as TestCase;
 use Lcobucci\JWT\Builder;
 use Lcobucci\JWT\Signer\Keychain;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
-use Staffbase\plugins\sdk\SSOData;
 use Staffbase\plugins\sdk\SSOToken;
 
 class SSOTokenTest extends TestCase
