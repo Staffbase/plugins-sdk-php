@@ -541,7 +541,7 @@ PluginSession::setSessionVar( mixed $key, mixed $val )
 Test if userView is enabled.
 
 ```php
-PluginSession::isUserView(  ): array
+PluginSession::isUserView(  ): boolean
 ```
 
 
@@ -957,4 +957,4 @@ PEM encoded key
 
 
 --------
-> This document was automatically generated from source code comments on 2018-04-10 using [phpDocumentor](http://www.phpdoc.org/) and [cvuorinen/phpdoc-markdown-public](https://github.com/cvuorinen/phpdoc-markdown-public)
+> This document was automatically generated from source code comments on 2019-02-07 using [phpDocumentor](http://www.phpdoc.org/) and [cvuorinen/phpdoc-markdown-public](https://github.com/cvuorinen/phpdoc-markdown-public)

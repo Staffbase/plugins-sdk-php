@@ -18,8 +18,6 @@ use Staffbase\plugins\sdk\SSOData;
 
 class SSODataTest extends TestCase
 {
-	private $classname = SSOData::class;
-
 	/**
 	 * Create test data for a token.
 	 *
@@ -61,28 +59,28 @@ class SSODataTest extends TestCase
 	 */
 	public static function getTokenAccesors() {
 
-		$acccessors = [];
+		$accessors = [];
 
-		$acccessors[SSOData::CLAIM_AUDIENCE]               = 'getAudience';
-		$acccessors[SSOData::CLAIM_EXPIRE_AT]              = 'getExpireAtTime';
-		$acccessors[SSOData::CLAIM_NOT_BEFORE]             = 'getNotBeforeTime';
-		$acccessors[SSOData::CLAIM_ISSUED_AT]              = 'getIssuedAtTime';
-		$acccessors[SSOData::CLAIM_ISSUER]                 = 'getIssuer';
-		$acccessors[SSOData::CLAIM_INSTANCE_ID]            = 'getInstanceId';
-		$acccessors[SSOData::CLAIM_INSTANCE_NAME]          = 'getInstanceName';
-		$acccessors[SSOData::CLAIM_USER_ID]                = 'getUserId';
-		$acccessors[SSOData::CLAIM_USER_EXTERNAL_ID]       = 'getUserExternalId';
-		$acccessors[SSOData::CLAIM_USER_FULL_NAME]         = 'getFullName';
-		$acccessors[SSOData::CLAIM_USER_FIRST_NAME]        = 'getFirstName';
-		$acccessors[SSOData::CLAIM_USER_LAST_NAME]         = 'getLastName';
-		$acccessors[SSOData::CLAIM_USER_ROLE]              = 'getRole';
-		$acccessors[SSOData::CLAIM_ENTITY_TYPE]            = 'getType';
-		$acccessors[SSOData::CLAIM_THEME_TEXT_COLOR]       = 'getThemeTextColor';
-		$acccessors[SSOData::CLAIM_THEME_BACKGROUND_COLOR] = 'getThemeBackgroundColor';
-		$acccessors[SSOData::CLAIM_USER_LOCALE]            = 'getLocale';
-		$acccessors[SSOData::CLAIM_USER_TAGS]              = 'getTags';
+		$accessors[SSOData::CLAIM_AUDIENCE]               = 'getAudience';
+		$accessors[SSOData::CLAIM_EXPIRE_AT]              = 'getExpireAtTime';
+		$accessors[SSOData::CLAIM_NOT_BEFORE]             = 'getNotBeforeTime';
+		$accessors[SSOData::CLAIM_ISSUED_AT]              = 'getIssuedAtTime';
+		$accessors[SSOData::CLAIM_ISSUER]                 = 'getIssuer';
+		$accessors[SSOData::CLAIM_INSTANCE_ID]            = 'getInstanceId';
+		$accessors[SSOData::CLAIM_INSTANCE_NAME]          = 'getInstanceName';
+		$accessors[SSOData::CLAIM_USER_ID]                = 'getUserId';
+		$accessors[SSOData::CLAIM_USER_EXTERNAL_ID]       = 'getUserExternalId';
+		$accessors[SSOData::CLAIM_USER_FULL_NAME]         = 'getFullName';
+		$accessors[SSOData::CLAIM_USER_FIRST_NAME]        = 'getFirstName';
+		$accessors[SSOData::CLAIM_USER_LAST_NAME]         = 'getLastName';
+		$accessors[SSOData::CLAIM_USER_ROLE]              = 'getRole';
+		$accessors[SSOData::CLAIM_ENTITY_TYPE]            = 'getType';
+		$accessors[SSOData::CLAIM_THEME_TEXT_COLOR]       = 'getThemeTextColor';
+		$accessors[SSOData::CLAIM_THEME_BACKGROUND_COLOR] = 'getThemeBackgroundColor';
+		$accessors[SSOData::CLAIM_USER_LOCALE]            = 'getLocale';
+		$accessors[SSOData::CLAIM_USER_TAGS]              = 'getTags';
 
-		return $acccessors;
+		return $accessors;
 	}
 
 	/**
@@ -109,34 +107,34 @@ class SSODataTest extends TestCase
 	 * @covers \Staffbase\plugins\sdk\SSOData::getLocale()
 	 * @covers \Staffbase\plugins\sdk\SSOData::getTags()
 	 */
-	public function testAccesorsGiveCorrectValues() {
+	public function testAccessorsGiveCorrectValues() {
 
-		$tokendata = self::getTokenData();
+		$tokenData = self::getTokenData();
 		$accessors = self::getTokenAccesors();
 
-		$ssodata = $this->getMockForAbstractClass(SSOData::class);
+		$ssoData = $this->getMockForAbstractClass(SSOData::class);
 
-		$ssodata
+		$ssoData
 			->expects($this->exactly(count($accessors)))
 			->method('hasClaim')
-			->will($this->returnCallback(function ($key) use ($tokendata) {
-				return isset($tokendata[$key]);
+			->will($this->returnCallback(function ($key) use ($tokenData) {
+				return isset($tokenData[$key]);
 			}));
 
-		$ssodata
+		$ssoData
 			->expects($this->exactly(count($accessors)))
 			->method('getClaim')
-			->will($this->returnCallback(function ($key) use ($tokendata) {
-				return $tokendata[$key];
+			->will($this->returnCallback(function ($key) use ($tokenData) {
+				return $tokenData[$key];
 			}));
 
 		foreach ($accessors as $key => $fn) {
 
 			$this->assertEquals(
-				call_user_func([$ssodata,$fn]),
-				$tokendata[$key], 
+				call_user_func([$ssoData,$fn]),
+				$tokenData[$key],
 				"called $fn expected ". 
-				is_array($tokendata[$key]) ? print_r($tokendata[$key], true) : $tokendata[$key]);
+				is_array($tokenData[$key]) ? print_r($tokenData[$key], true) : $tokenData[$key]);
 		}
 	}
 
@@ -160,25 +158,25 @@ class SSODataTest extends TestCase
 
 		foreach($map as $arg => $expect) {
 
-			$tokendata = self::getTokenData();
-			$tokendata[SSOData::CLAIM_USER_ROLE] = $arg;
+			$tokenData = self::getTokenData();
+			$tokenData[SSOData::CLAIM_USER_ROLE] = $arg;
 
-			$ssodata = $this->getMockForAbstractClass(SSOData::class);
+			$ssoData = $this->getMockForAbstractClass(SSOData::class);
 
-			$ssodata
+			$ssoData
 				->method('hasClaim')
-				->will($this->returnCallback(function ($key) use ($tokendata) {
-					return isset($tokendata[$key]);
+				->will($this->returnCallback(function ($key) use ($tokenData) {
+					return isset($tokenData[$key]);
 				}));
 
-			$ssodata
+			$ssoData
 				->method('getClaim')
-				->will($this->returnCallback(function ($key) use ($tokendata) {
-					return $tokendata[$key];
+				->will($this->returnCallback(function ($key) use ($tokenData) {
+					return $tokenData[$key];
 				}));
 
 			$this->assertEquals(
-				$ssodata->isEditor(),
+				$ssoData->isEditor(),
 				$expect,
 				"called isEditor on role [$arg] expected [$expect]");
 		}
@@ -193,20 +191,19 @@ class SSODataTest extends TestCase
 	 */
 	public function testGetDataReturnsCorrectValues() {
 
-		$tokendata = self::getTokenData();
-		$accessors = self::getTokenAccesors();
+		$tokenData = self::getTokenData();
 
-		$ssodata = $this->getMockForAbstractClass(SSOData::class);
+		$ssoData = $this->getMockForAbstractClass(SSOData::class);
 
-		$ssodata
+		$ssoData
 			->method('getAllClaims')
-			->will($this->returnCallback(function () use ($tokendata) {
-				return $tokendata;
+			->will($this->returnCallback(function () use ($tokenData) {
+				return $tokenData;
 			}));
 
 		$this->assertEquals(
-			$ssodata->getData(),
-			$tokendata,
+			$ssoData->getData(),
+			$tokenData,
 			"comparing data array to token", 0, 10, true);
 	}
 }

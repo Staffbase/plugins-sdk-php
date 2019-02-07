@@ -254,7 +254,7 @@ class PluginSession extends SSOData
 	/**
 	 * Test if userView is enabled.
 	 *
-	 * @return array
+	 * @return bool
 	 */
 	public function isUserView() {
 		
