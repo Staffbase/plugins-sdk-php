@@ -20,13 +20,12 @@ use PHPUnit_Framework_TestCase as TestCase;
 use Lcobucci\JWT\Builder;
 use Lcobucci\JWT\Signer\Keychain;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
-use Staffbase\plugins\sdk\SSOData;
 use Staffbase\plugins\sdk\SSOToken;
 
 class SSOTokenTest extends TestCase
 {
-	private $pubKey;
-	private $privKey;
+	private $publicKey;
+	private $privateKey;
 	private $classname = SSOToken::class;
 
 	/**
@@ -39,8 +38,8 @@ class SSOTokenTest extends TestCase
 		$rsa = new RSA();
 		$keypair = $rsa->createKey();
 
-		$this->pubKey  = $keypair['publickey'];
-		$this->privKey = $keypair['privatekey'];
+		$this->publicKey  = $keypair['publickey'];
+		$this->privateKey = $keypair['privatekey'];
 	}
 
 	/**
@@ -91,9 +90,6 @@ class SSOTokenTest extends TestCase
 	 * @return string Encoded token.
 	 */
 	private static function createUnsignedTokenFromData($tokenData) {
-
-		$signer   = new Sha256();
-		$keychain = new Keychain();
 
 		$token = (new Builder())
 			->setIssuer($tokenData[SSOToken::CLAIM_ISSUER])
@@ -182,14 +178,14 @@ class SSOTokenTest extends TestCase
 	 */
 	public function testConstructorToFailOnExpiredToken() {
 
-		$tokendata = SSODataTest::getTokenData();
-		$tokendata[SSOToken::CLAIM_EXPIRE_AT] = strtotime("-1 minute");
+		$tokenData = SSODataTest::getTokenData();
+		$tokenData[SSOToken::CLAIM_EXPIRE_AT] = strtotime("-1 minute");
 
-		$token = self::createSignedTokenFromData($this->privKey, $tokendata);
+		$token = self::createSignedTokenFromData($this->privateKey, $tokenData);
 
 		try{ 
 
-			$ssotoken = new SSOToken($this->pubKey, $token);
+			new SSOToken($this->publicKey, $token);
 
 		} catch (Exception $e) {
 			return;
@@ -206,14 +202,14 @@ class SSOTokenTest extends TestCase
 	 */
 	public function testConstructorToFailOnFutureToken() {
 
-		$tokendata = SSODataTest::getTokenData();
-		$tokendata[SSOToken::CLAIM_NOT_BEFORE] = strtotime("+1 minute");
+		$tokenData = SSODataTest::getTokenData();
+		$tokenData[SSOToken::CLAIM_NOT_BEFORE] = strtotime("+1 minute");
 
-		$token = self::createSignedTokenFromData($this->privKey, $tokendata);
+		$token = self::createSignedTokenFromData($this->privateKey, $tokenData);
 
 		try {
 
-			$ssotoken = new SSOToken($this->pubKey, $token);
+			new SSOToken($this->publicKey, $token);
 
 		} catch (Exception $e) {
 			return;
@@ -231,14 +227,14 @@ class SSOTokenTest extends TestCase
 	 */
 	public function testConstructorToFailOnTokenIssuedInTheFuture() {
 
-		$tokendata = SSODataTest::getTokenData();
-		$tokendata[SSOToken::CLAIM_ISSUED_AT] = strtotime("+10 second");
+		$tokenData = SSODataTest::getTokenData();
+		$tokenData[SSOToken::CLAIM_ISSUED_AT] = strtotime("+10 second");
 
-		$token = self::createSignedTokenFromData($this->privKey, $tokendata);
+		$token = self::createSignedTokenFromData($this->privateKey, $tokenData);
 
 		try {
 
-			$ssotoken = new SSOToken($this->pubKey, $token);
+			new SSOToken($this->publicKey, $token);
 
 		} catch (Exception $e) {
 			return;
@@ -257,12 +253,12 @@ class SSOTokenTest extends TestCase
 	public function testConstructorAcceptsLeewayForTokenIssuedInTheFuture() {
 
 		$leeway = 11;
-		$tokendata = SSODataTest::getTokenData();
-		$tokendata[SSOToken::CLAIM_ISSUED_AT] = strtotime("+10 second");
+		$tokenData = SSODataTest::getTokenData();
+		$tokenData[SSOToken::CLAIM_ISSUED_AT] = strtotime("+10 second");
 
-		$token = self::createSignedTokenFromData($this->privKey, $tokendata);
+		$token = self::createSignedTokenFromData($this->privateKey, $tokenData);
 
-		$ssotoken = new SSOToken($this->pubKey, $token, $leeway);
+		new SSOToken($this->publicKey, $token, $leeway);
 	}
 
 	/**
@@ -274,14 +270,14 @@ class SSOTokenTest extends TestCase
 	 */
 	public function testConstructorToFailOnMissingInstanceId() {
 
-		$tokendata = SSODataTest::getTokenData();
-		$tokendata[SSOToken::CLAIM_INSTANCE_ID] = '';
+		$tokenData = SSODataTest::getTokenData();
+		$tokenData[SSOToken::CLAIM_INSTANCE_ID] = '';
 
-		$token = self::createSignedTokenFromData($this->privKey, $tokendata);
+		$token = self::createSignedTokenFromData($this->privateKey, $tokenData);
 
 		try {
 
-			$ssotoken = new SSOToken($this->pubKey, $token);
+			new SSOToken($this->publicKey, $token);
 
 		} catch (Exception $e) {
 			return;
@@ -299,13 +295,13 @@ class SSOTokenTest extends TestCase
 	 */
 	public function testConstructorToFailOnUnsignedToken() {
 
-		$tokendata = SSODataTest::getTokenData();
+		$tokenData = SSODataTest::getTokenData();
 
-		$token = self::createUnsignedTokenFromData($tokendata);
+		$token = self::createUnsignedTokenFromData($tokenData);
 
 		try {
 
-			$ssotoken = new SSOToken($this->pubKey, $token);
+			new SSOToken($this->publicKey, $token);
 
 		} catch (Exception $e) {
 			return;
@@ -319,42 +315,42 @@ class SSOTokenTest extends TestCase
 	 *
 	 * Test accessors deliver correct values.
 	 *
-	 * @covers \Staffbase\plugins\std\SSOToken::__construct
-	 * @covers \Staffbase\plugins\std\SSOToken::getAudience()
-	 * @covers \Staffbase\plugins\std\SSOToken::getExpireAtTime()
-	 * @covers \Staffbase\plugins\std\SSOToken::getNotBeforeTime()
-	 * @covers \Staffbase\plugins\std\SSOToken::getIssuedAtTime()
-	 * @covers \Staffbase\plugins\std\SSOToken::getIssuer()
-	 * @covers \Staffbase\plugins\std\SSOToken::getInstanceId()
-	 * @covers \Staffbase\plugins\std\SSOToken::getInstanceName()
-	 * @covers \Staffbase\plugins\std\SSOToken::getUserId()
-	 * @covers \Staffbase\plugins\std\SSOToken::getUserExternalId()
-	 * @covers \Staffbase\plugins\std\SSOToken::getFullName()
-	 * @covers \Staffbase\plugins\std\SSOToken::getFirstName()
-	 * @covers \Staffbase\plugins\std\SSOToken::getLastName()
-	 * @covers \Staffbase\plugins\std\SSOToken::getRole()
-	 * @covers \Staffbase\plugins\std\SSOToken::getType()
-	 * @covers \Staffbase\plugins\std\SSOToken::getThemeTextColor()
-	 * @covers \Staffbase\plugins\std\SSOToken::getThemeBackgroundColor()
-	 * @covers \Staffbase\plugins\std\SSOToken::getLocale()
-	 * @covers \Staffbase\plugins\std\SSOToken::getTags()
-	 * @covers \Staffbase\plugins\std\SSOToken::hasClaim()
-	 * @covers \Staffbase\plugins\std\SSOToken::getClaim()
+	 * @covers \Staffbase\plugins\sdk\SSOToken::__construct
+	 * @covers \Staffbase\plugins\sdk\SSOToken::getAudience()
+	 * @covers \Staffbase\plugins\sdk\SSOToken::getExpireAtTime()
+	 * @covers \Staffbase\plugins\sdk\SSOToken::getNotBeforeTime()
+	 * @covers \Staffbase\plugins\sdk\SSOToken::getIssuedAtTime()
+	 * @covers \Staffbase\plugins\sdk\SSOToken::getIssuer()
+	 * @covers \Staffbase\plugins\sdk\SSOToken::getInstanceId()
+	 * @covers \Staffbase\plugins\sdk\SSOToken::getInstanceName()
+	 * @covers \Staffbase\plugins\sdk\SSOToken::getUserId()
+	 * @covers \Staffbase\plugins\sdk\SSOToken::getUserExternalId()
+	 * @covers \Staffbase\plugins\sdk\SSOToken::getFullName()
+	 * @covers \Staffbase\plugins\sdk\SSOToken::getFirstName()
+	 * @covers \Staffbase\plugins\sdk\SSOToken::getLastName()
+	 * @covers \Staffbase\plugins\sdk\SSOToken::getRole()
+	 * @covers \Staffbase\plugins\sdk\SSOToken::getType()
+	 * @covers \Staffbase\plugins\sdk\SSOToken::getThemeTextColor()
+	 * @covers \Staffbase\plugins\sdk\SSOToken::getThemeBackgroundColor()
+	 * @covers \Staffbase\plugins\sdk\SSOToken::getLocale()
+	 * @covers \Staffbase\plugins\sdk\SSOToken::getTags()
+	 * @covers \Staffbase\plugins\sdk\SSOToken::hasClaim()
+	 * @covers \Staffbase\plugins\sdk\SSOToken::getClaim()
 	 */
-	public function testAccesorsGiveCorrectValues() {
+	public function testAccessorsGiveCorrectValues() {
 
-		$tokendata = SSODataTest::getTokenData();
+		$tokenData = SSODataTest::getTokenData();
 		$accessors = SSODataTest::getTokenAccesors();
 
-		$token = self::createSignedTokenFromData($this->privKey, $tokendata);
-		$ssotoken = new SSOToken($this->pubKey, $token);
+		$token = self::createSignedTokenFromData($this->privateKey, $tokenData);
+		$ssoToken = new SSOToken($this->publicKey, $token);
 
 		foreach ($accessors as $key => $fn) {
 			$this->assertEquals(
-				call_user_func([$ssotoken,$fn]),
-				$tokendata[$key],
+				call_user_func([$ssoToken,$fn]),
+				$tokenData[$key],
 				"called $fn expected ".
-				is_array($tokendata[$key]) ? print_r($tokendata[$key], true) : $tokendata[$key]);
+				is_array($tokenData[$key]) ? print_r($tokenData[$key], true) : $tokenData[$key]);
 
 		}
 	}
