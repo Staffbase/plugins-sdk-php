@@ -33,25 +33,25 @@ class PluginSession extends SSOData
 	const KEY_SSO  = 'sso';
 	const KEY_DATA = 'data';
 
-	/** 
+	/**
 	 * @var $pluginInstanceId the id of the currently used instance.
 	 */
 	private $pluginInstanceId  = null;
 
-	/** 
+	/**
 	 * @var $userView flag for userView mode.
 	 */
 	private $userView = true;
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param string $pluginId the unique name of the plugin
 	 * @param string $appSecret application public key
 	 * @param $sessionHandler optional custom session handler
 	 * @param $leeway in seconds to compensate clock skew
 	 * @param $remoteCallHandler a class handling remote calls
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public function __construct($pluginId, $appSecret, SessionHandlerInterface $sessionHandler = null, $leeway = 0, RemoteCallInterface $remoteCallHandler = null) {
@@ -77,7 +77,7 @@ class PluginSession extends SSOData
 		}
 
 		if (!$pid && !$jwt) {
-			throw new Exception('Missing PID or JWT query parameter in Reuest.');
+			throw new Exception('Missing PID or JWT query parameter in Request.');
 		}
 
 		$this->pluginInstanceId = $pid;
@@ -98,7 +98,7 @@ class PluginSession extends SSOData
 				$instanceId = $sso->getInstanceId();
 
 				if ($remoteCallHandler instanceOf DeleteInstanceCallHandlerInterface) {
-					$result = $remoteCallHandler->deleteInstance($instanceId);		
+					$result = $remoteCallHandler->deleteInstance($instanceId);
 				} else {
 					error_log("Warning: An instance deletion call for instance $instanceId was not handled.");
 				}
@@ -118,7 +118,7 @@ class PluginSession extends SSOData
 		}
 
 		// requests with spoofed PID are not allowed
-		if (!isset($_SESSION[$this->pluginInstanceId][self::KEY_SSO]) 
+		if (!isset($_SESSION[$this->pluginInstanceId][self::KEY_SSO])
 		  || empty($_SESSION[$this->pluginInstanceId][self::KEY_SSO]))
 			throw new Exception('Tried to access an instance without previous authentication.');
 
@@ -136,8 +136,8 @@ class PluginSession extends SSOData
 	}
 
 	/**
-	 * Exit the script 
-	 * 
+	 * Exit the script
+	 *
 	 * if a remote call was not handled by the user we die hard here
 	 */
 	protected function exitRemoteCall() {
@@ -154,7 +154,7 @@ class PluginSession extends SSOData
 
 		session_name($name);
 		session_start();
-	}	
+	}
 
 	/**
 	 * Close a session.
@@ -257,7 +257,7 @@ class PluginSession extends SSOData
 	 * @return bool
 	 */
 	public function isUserView() {
-		
+
 		return $this->userView;
 	}
 
