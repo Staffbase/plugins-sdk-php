@@ -77,7 +77,7 @@ class PluginSession extends SSOData
 		}
 
 		if (!$pid && !$jwt) {
-			throw new Exception('Missing PID or JWT query parameter in Reuest.');
+			throw new Exception('Missing PID or JWT query parameter in Request.');
 		}
 
 		$this->pluginInstanceId = $pid;
