@@ -96,7 +96,7 @@ class RemoteCallHandler extends AbstractRemoteCallHandler implements DeleteInsta
 
 // pass it to the PluginSession on construction as the last parameter
 $remoteCallHandler = new RemoteCallHandler($db);
-$session = new PluginSessiona(PLUGIN_ID, $secret, $sessionHandler, null, $remoteCallHandler);
+$session = new PluginSession(PLUGIN_ID, $secret, $sessionHandler, null, $remoteCallHandler);
 
 /* Unreachable code in a delete call follows */
 ...
@@ -121,6 +121,6 @@ To run the tests a simple `# composer test` command in the root directory will s
 
 ## License
 
-Copyright 2017-2018 Staffbase GmbH.
+Copyright 2017-2019 Staffbase GmbH.
 
 Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
