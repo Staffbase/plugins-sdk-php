@@ -14,8 +14,6 @@
  
 namespace Staffbase\plugins\sdk\Exceptions;
 
-use Exception;
-
 /**
  * Class SSOAuthenticationException
  * 
