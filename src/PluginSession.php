@@ -6,7 +6,7 @@
  * PHP version 5.5.9
  *
  * @category  Authentication
- * @copyright 2017 Staffbase, GmbH.
+ * @copyright 2017-2019 Staffbase, GmbH.
  * @author    Vitaliy Ivanov
  * @license   http://www.apache.org/licenses/LICENSE-2.0
  * @link      https://github.com/staffbase/plugins-sdk-php
@@ -14,10 +14,11 @@
 
 namespace Staffbase\plugins\sdk;
 
-use Exception;
 use SessionHandlerInterface;
 use Staffbase\plugins\sdk\SSOData;
 use Staffbase\plugins\sdk\SSOToken;
+use Staffbase\plugins\sdk\Exceptions\SSOException;
+use Staffbase\plugins\sdk\Exceptions\SSOAuthenticationException;
 use Staffbase\plugins\sdk\RemoteCall\RemoteCallInterface;
 use Staffbase\plugins\sdk\RemoteCall\DeleteInstanceCallHandlerInterface;
 
@@ -52,15 +53,15 @@ class PluginSession extends SSOData
 	 * @param $leeway in seconds to compensate clock skew
 	 * @param $remoteCallHandler a class handling remote calls
 	 *
-	 * @throws Exception
+	 * @throws SSOAuthenticationException | SSOException
 	 */
 	public function __construct($pluginId, $appSecret, SessionHandlerInterface $sessionHandler = null, $leeway = 0, RemoteCallInterface $remoteCallHandler = null) {
 
 		if (!$pluginId)
-			throw new Exception('Empty plugin ID.');
+			throw new SSOException('Empty plugin ID.');
 
 		if (!$appSecret)
-			throw new Exception('Empty app secret.');
+			throw new SSOException('Empty app secret.');
 
 		if ($sessionHandler)
 			session_set_save_handler($sessionHandler, true);
@@ -73,11 +74,11 @@ class PluginSession extends SSOData
 		// lets hint to bad class usage, as these cases should never happen.
 
 		if($pid && $jwt) {
-			throw new Exception('Tried to initialize the session with both PID and JWT provided.');
+			throw new SSOAuthenticationException('Tried to initialize the session with both PID and JWT provided.');
 		}
 
 		if (!$pid && !$jwt) {
-			throw new Exception('Missing PID or JWT query parameter in Request.');
+			throw new SSOAuthenticationException('Missing PID or JWT query parameter in Request.');
 		}
 
 		$this->pluginInstanceId = $pid;
@@ -120,7 +121,7 @@ class PluginSession extends SSOData
 		// requests with spoofed PID are not allowed
 		if (!isset($_SESSION[$this->pluginInstanceId][self::KEY_SSO])
 		  || empty($_SESSION[$this->pluginInstanceId][self::KEY_SSO]))
-			throw new Exception('Tried to access an instance without previous authentication.');
+			throw new SSOAuthenticationException('Tried to access an instance without previous authentication.');
 
 		// decide if we are in user view or not
 		if($this->isEditor() && (!isset($_GET[self::QUERY_PARAM_USERVIEW]) || $_GET[self::QUERY_PARAM_USERVIEW] !== 'true'))

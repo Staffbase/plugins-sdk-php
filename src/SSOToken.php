@@ -6,7 +6,7 @@
  * PHP version 5.5.9
  *
  * @category  Authentication
- * @copyright 2017 Staffbase, GmbH. 
+ * @copyright 2017-2019 Staffbase, GmbH. 
  * @author    Vitaliy Ivanov
  * @license   http://www.apache.org/licenses/LICENSE-2.0
  * @link      https://github.com/staffbase/plugins-sdk-php
@@ -14,13 +14,14 @@
 
 namespace Staffbase\plugins\sdk;
 
-use Exception;
 use Lcobucci\JWT\Parser;
 use Lcobucci\JWT\Builder;
 use Lcobucci\JWT\ValidationData;
 use Lcobucci\JWT\Claim\Validatable;
 use Lcobucci\JWT\Signer\Keychain;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
+use Staffbase\plugins\sdk\Exceptions\SSOException;
+use Staffbase\plugins\sdk\Exceptions\SSOAuthenticationException;
 
 /**
  * A container which is able to decrypt and store the data transmitted
@@ -40,18 +41,18 @@ class SSOToken extends SSOData
 	 * @param string $tokenData The token text.
 	 * @param int $leeway count of seconds added to current timestamp 
 	 *
-	 * @throws Exception on invalid parameters.
+	 * @throws SSOException on invalid parameters.
 	 */
 	public function __construct($appSecret, $tokenData, $leeway = 0) {
 
 		if (!trim($appSecret))
-			throw new Exception('Parameter appSecret for SSOToken is empty.');
+			throw new SSOException('Parameter appSecret for SSOToken is empty.');
 
 		if (!trim($tokenData))
-			throw new Exception('Parameter tokenData for SSOToken is empty.');
+			throw new SSOException('Parameter tokenData for SSOToken is empty.');
 
 		if (!is_numeric($leeway))
-			throw new Exception('Parameter leeway has to be numeric.');
+			throw new SSOException('Parameter leeway has to be numeric.');
 
 		// convert secret to PEM if its a plain base64 string and does not yield an url
 		if(strpos(trim($appSecret),'-----') !== 0 && strpos(trim($appSecret), 'file://') !==0 )
@@ -69,7 +70,7 @@ class SSOToken extends SSOData
 	 * 
 	 * @return Lcobucci\JWT\Token;
 	 *
-	 * @throws Exception if the parsing/verification/validation of the token fails.
+	 * @throws SSOAuthenticationException if the parsing/verification/validation of the token fails.
 	 */
 	protected function parseToken($appSecret, $tokenData, $leeway) {
 
@@ -81,7 +82,7 @@ class SSOToken extends SSOData
 		$keychain = new Keychain();
 
 		if (!$this->token->verify($signer, $keychain->getPublicKey($appSecret)))
-			throw new Exception('Token verification failed.');
+			throw new SSOAuthenticationException('Token verification failed.');
 
 		// validate claims
 		$data = new ValidationData(time() +$leeway); // iat, nbf and exp are validated by default
@@ -92,7 +93,7 @@ class SSOToken extends SSOData
 
 		// its a security risk to work with tokens lacking instance id
 		if (!trim($this->getInstanceId()))
-			throw new Exception('Token lacks instance id.');
+			throw new SSOAuthenticationException('Token lacks instance id.');
 	}
 
 	/**
@@ -128,7 +129,7 @@ class SSOToken extends SSOData
 	 * 
 	 * @param Lcobucci\JWT\ValidationData $data to validate against
 	 * 
-	 * @throws Exception always.
+	 * @throws SSOAuthenticationException always.
 	 */
 	protected function throwVerboseException(ValidationData $data) {
 
@@ -144,13 +145,13 @@ class SSOToken extends SSOData
 					$operator = array_pop($segments);
 					$operand  = $data->get($claimName);
 
-					throw new Exception("Token Validation failed on claim '$claimName' $claimValue $operator $operand.");
+					throw new SSOAuthenticationException("Token Validation failed on claim '$claimName' $claimValue $operator $operand.");
 				}
 			}
 		}
 
 		// unknown reason, probably an addition to used library
-		throw new Exception('Token Validation failed.');
+		throw new SSOAuthenticationException('Token Validation failed.');
 	}
 
 	/**

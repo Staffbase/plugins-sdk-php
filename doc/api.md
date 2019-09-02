@@ -31,6 +31,8 @@
     * [getSessionData](#getsessiondata)
     * [setSessionVar](#setsessionvar)
     * [isUserView](#isuserview)
+* [SSOAuthenticationException](#ssoauthenticationexception)
+* [SSOException](#ssoexception)
 * [SSOToken](#ssotoken)
     * [getAudience](#getaudience-1)
     * [getExpireAtTime](#getexpireattime-1)
@@ -552,6 +554,32 @@ PluginSession::isUserView(  ): boolean
 
 ---
 
+## SSOAuthenticationException
+
+Class SSOAuthenticationException
+
+An SSO Exception type which indicates
+a failure during the authentication process
+caused by invalid input.
+
+Can be used to identify cases which can
+be handled with a soft http error eg.: 401.
+
+* Full name: \Staffbase\plugins\sdk\Exceptions\SSOAuthenticationException
+* Parent class: \Staffbase\plugins\sdk\Exceptions\SSOException
+
+
+## SSOException
+
+Class SSOException
+
+A general SSO Exception type to group
+exceptions from this library.
+
+* Full name: \Staffbase\plugins\sdk\Exceptions\SSOException
+* Parent class: 
+
+
 ## SSOToken
 
 A container which is able to decrypt and store the data transmitted
@@ -957,4 +985,4 @@ PEM encoded key
 
 
 --------
-> This document was automatically generated from source code comments on 2019-02-07 using [phpDocumentor](http://www.phpdoc.org/) and [cvuorinen/phpdoc-markdown-public](https://github.com/cvuorinen/phpdoc-markdown-public)
+> This document was automatically generated from source code comments on 2019-08-29 using [phpDocumentor](http://www.phpdoc.org/) and [cvuorinen/phpdoc-markdown-public](https://github.com/cvuorinen/phpdoc-markdown-public)
