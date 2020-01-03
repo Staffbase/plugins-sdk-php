@@ -48,8 +48,8 @@ class SSODataTest extends TestCase
 		$tokenData[SSOData::CLAIM_THEME_BACKGROUND_COLOR] = '#FFAABB';
 		$tokenData[SSOData::CLAIM_USER_LOCALE]            = 'en_US';
 		$tokenData[SSOData::CLAIM_USER_TAGS]              = ['profile:field1:val', 'profile:field2:val'];
-        $tokenData[SSOData::CLAIM_BRANCH_ID]              = "dev-id";
-        $tokenData[SSOData::CLAIM_BRANCH_SLUG]            = "dev-slug";
+		$tokenData[SSOData::CLAIM_BRANCH_ID]              = "dev-id";
+		$tokenData[SSOData::CLAIM_BRANCH_SLUG]            = "dev-slug";
 
 		return $tokenData;
 	}
@@ -81,8 +81,8 @@ class SSODataTest extends TestCase
 		$accessors[SSOData::CLAIM_THEME_BACKGROUND_COLOR] = 'getThemeBackgroundColor';
 		$accessors[SSOData::CLAIM_USER_LOCALE]            = 'getLocale';
 		$accessors[SSOData::CLAIM_USER_TAGS]              = 'getTags';
-        $accessors[SSOData::CLAIM_BRANCH_ID]              = "getBranchId";
-        $accessors[SSOData::CLAIM_BRANCH_SLUG]            = "getBranchSlug";
+		$accessors[SSOData::CLAIM_BRANCH_ID]              = "getBranchId";
+		$accessors[SSOData::CLAIM_BRANCH_SLUG]            = "getBranchSlug";
 
 		return $accessors;
 	}
@@ -111,7 +111,7 @@ class SSODataTest extends TestCase
 	 * @covers \Staffbase\plugins\sdk\SSOData::getLocale()
 	 * @covers \Staffbase\plugins\sdk\SSOData::getTags()
 	 * @covers \Staffbase\plugins\sdk\SSOData::getBranchId()
-	 * @covers \Staffbase\plugins\sdk\SSOData::getBranchSlug()
+	 * @covers \Staffbase\plugins\sdk\SSOData::getTags()
 	 */
 	public function testAccessorsGiveCorrectValues() {
 
