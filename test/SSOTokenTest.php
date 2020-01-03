@@ -76,6 +76,8 @@ class SSOTokenTest extends TestCase
 			->set(SSOToken::CLAIM_THEME_BACKGROUND_COLOR, $tokenData[SSOToken::CLAIM_THEME_BACKGROUND_COLOR])
 			->set(SSOToken::CLAIM_USER_LOCALE, $tokenData[SSOToken::CLAIM_USER_LOCALE])
 			->set(SSOToken::CLAIM_USER_TAGS, $tokenData[SSOToken::CLAIM_USER_TAGS])
+            ->set(SSOToken::CLAIM_BRANCH_ID, $tokenData[SSOToken::CLAIM_BRANCH_ID])
+            ->set(SSOToken::CLAIM_BRANCH_SLUG, $tokenData[SSOToken::CLAIM_BRANCH_SLUG])
 			->sign($signer, $keychain->getPrivateKey($privateKey))
 			->getToken();
 
@@ -110,6 +112,8 @@ class SSOTokenTest extends TestCase
 			->set(SSOToken::CLAIM_THEME_BACKGROUND_COLOR, $tokenData[SSOToken::CLAIM_THEME_BACKGROUND_COLOR])
 			->set(SSOToken::CLAIM_USER_LOCALE, $tokenData[SSOToken::CLAIM_USER_LOCALE])
 			->set(SSOToken::CLAIM_USER_TAGS, $tokenData[SSOToken::CLAIM_USER_TAGS])
+            ->set(SSOToken::CLAIM_BRANCH_ID, $tokenData[SSOToken::CLAIM_BRANCH_ID])
+            ->set(SSOToken::CLAIM_BRANCH_SLUG, $tokenData[SSOToken::CLAIM_BRANCH_SLUG])
 			->getToken();
 
 		return $token;
@@ -310,33 +314,35 @@ class SSOTokenTest extends TestCase
 		$this->fail();
 	}
 
-	/**
-	 * @test
-	 *
-	 * Test accessors deliver correct values.
-	 *
-	 * @covers \Staffbase\plugins\sdk\SSOToken::__construct
-	 * @covers \Staffbase\plugins\sdk\SSOToken::getAudience()
-	 * @covers \Staffbase\plugins\sdk\SSOToken::getExpireAtTime()
-	 * @covers \Staffbase\plugins\sdk\SSOToken::getNotBeforeTime()
-	 * @covers \Staffbase\plugins\sdk\SSOToken::getIssuedAtTime()
-	 * @covers \Staffbase\plugins\sdk\SSOToken::getIssuer()
-	 * @covers \Staffbase\plugins\sdk\SSOToken::getInstanceId()
-	 * @covers \Staffbase\plugins\sdk\SSOToken::getInstanceName()
-	 * @covers \Staffbase\plugins\sdk\SSOToken::getUserId()
-	 * @covers \Staffbase\plugins\sdk\SSOToken::getUserExternalId()
-	 * @covers \Staffbase\plugins\sdk\SSOToken::getFullName()
-	 * @covers \Staffbase\plugins\sdk\SSOToken::getFirstName()
-	 * @covers \Staffbase\plugins\sdk\SSOToken::getLastName()
-	 * @covers \Staffbase\plugins\sdk\SSOToken::getRole()
-	 * @covers \Staffbase\plugins\sdk\SSOToken::getType()
-	 * @covers \Staffbase\plugins\sdk\SSOToken::getThemeTextColor()
-	 * @covers \Staffbase\plugins\sdk\SSOToken::getThemeBackgroundColor()
-	 * @covers \Staffbase\plugins\sdk\SSOToken::getLocale()
-	 * @covers \Staffbase\plugins\sdk\SSOToken::getTags()
-	 * @covers \Staffbase\plugins\sdk\SSOToken::hasClaim()
-	 * @covers \Staffbase\plugins\sdk\SSOToken::getClaim()
-	 */
+    /**
+     * @test
+     *
+     * Test accessors deliver correct values.
+     *
+     * @covers \Staffbase\plugins\sdk\SSOToken::__construct
+     * @covers \Staffbase\plugins\sdk\SSOToken::getAudience()
+     * @covers \Staffbase\plugins\sdk\SSOToken::getExpireAtTime()
+     * @covers \Staffbase\plugins\sdk\SSOToken::getNotBeforeTime()
+     * @covers \Staffbase\plugins\sdk\SSOToken::getIssuedAtTime()
+     * @covers \Staffbase\plugins\sdk\SSOToken::getIssuer()
+     * @covers \Staffbase\plugins\sdk\SSOToken::getInstanceId()
+     * @covers \Staffbase\plugins\sdk\SSOToken::getInstanceName()
+     * @covers \Staffbase\plugins\sdk\SSOToken::getUserId()
+     * @covers \Staffbase\plugins\sdk\SSOToken::getUserExternalId()
+     * @covers \Staffbase\plugins\sdk\SSOToken::getFullName()
+     * @covers \Staffbase\plugins\sdk\SSOToken::getFirstName()
+     * @covers \Staffbase\plugins\sdk\SSOToken::getLastName()
+     * @covers \Staffbase\plugins\sdk\SSOToken::getRole()
+     * @covers \Staffbase\plugins\sdk\SSOToken::getType()
+     * @covers \Staffbase\plugins\sdk\SSOToken::getThemeTextColor()
+     * @covers \Staffbase\plugins\sdk\SSOToken::getThemeBackgroundColor()
+     * @covers \Staffbase\plugins\sdk\SSOToken::getLocale()
+     * @covers \Staffbase\plugins\sdk\SSOToken::getTags()
+     * @covers \Staffbase\plugins\sdk\SSOToken::hasClaim()
+     * @covers \Staffbase\plugins\sdk\SSOToken::getClaim()
+     * @covers \Staffbase\plugins\sdk\SSOToken::getBranchId()
+     * @covers \Staffbase\plugins\sdk\SSOToken::getBranchSlug()
+     */
 	public function testAccessorsGiveCorrectValues() {
 
 		$tokenData = SSODataTest::getTokenData();

@@ -27,6 +27,8 @@ abstract class SSOData
     const CLAIM_ISSUER                 = 'iss';
     const CLAIM_INSTANCE_ID            = 'instance_id';
     const CLAIM_INSTANCE_NAME          = 'instance_name';
+    const CLAIM_BRANCH_ID              = 'branch_id';
+    const CLAIM_BRANCH_SLUG            = 'branch_slug';
     const CLAIM_USER_ID                = 'sub';
     const CLAIM_USER_EXTERNAL_ID       = 'external_id';
     const CLAIM_USER_FULL_NAME         = 'name';
@@ -133,6 +135,28 @@ abstract class SSOData
     public function getIssuer() {
 
         return $this->getClaimSafe(self::CLAIM_ISSUER);
+    }
+
+    /**
+     * Get the branch id of the app that issued the token.
+     *
+     * The id will always be present.
+     *
+     * @return string
+     */
+    public function getBranchId() {
+
+        return $this->getClaimSafe(self::CLAIM_BRANCH_ID);
+    }
+
+    /**
+     * Get the slug of the branch of the app that issued the token.
+     *
+     * @return null|string
+     */
+    public function getBranchSlug() {
+
+        return $this->getClaimSafe(self::CLAIM_BRANCH_SLUG);
     }
 
     /**
@@ -313,5 +337,5 @@ abstract class SSOData
     public function getData() {
 
         return $this->getAllClaims();
-    }   
+    }
 }
