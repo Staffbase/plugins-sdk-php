@@ -76,6 +76,8 @@ class SSOTokenTest extends TestCase
 			->set(SSOToken::CLAIM_THEME_BACKGROUND_COLOR, $tokenData[SSOToken::CLAIM_THEME_BACKGROUND_COLOR])
 			->set(SSOToken::CLAIM_USER_LOCALE, $tokenData[SSOToken::CLAIM_USER_LOCALE])
 			->set(SSOToken::CLAIM_USER_TAGS, $tokenData[SSOToken::CLAIM_USER_TAGS])
+			->set(SSOToken::CLAIM_BRANCH_ID, $tokenData[SSOToken::CLAIM_BRANCH_ID])
+			->set(SSOToken::CLAIM_BRANCH_SLUG, $tokenData[SSOToken::CLAIM_BRANCH_SLUG])
 			->sign($signer, $keychain->getPrivateKey($privateKey))
 			->getToken();
 
@@ -110,6 +112,8 @@ class SSOTokenTest extends TestCase
 			->set(SSOToken::CLAIM_THEME_BACKGROUND_COLOR, $tokenData[SSOToken::CLAIM_THEME_BACKGROUND_COLOR])
 			->set(SSOToken::CLAIM_USER_LOCALE, $tokenData[SSOToken::CLAIM_USER_LOCALE])
 			->set(SSOToken::CLAIM_USER_TAGS, $tokenData[SSOToken::CLAIM_USER_TAGS])
+			->set(SSOToken::CLAIM_BRANCH_ID, $tokenData[SSOToken::CLAIM_BRANCH_ID])
+			->set(SSOToken::CLAIM_BRANCH_SLUG, $tokenData[SSOToken::CLAIM_BRANCH_SLUG])
 			->getToken();
 
 		return $token;
@@ -336,6 +340,8 @@ class SSOTokenTest extends TestCase
 	 * @covers \Staffbase\plugins\sdk\SSOToken::getTags()
 	 * @covers \Staffbase\plugins\sdk\SSOToken::hasClaim()
 	 * @covers \Staffbase\plugins\sdk\SSOToken::getClaim()
+	 * @covers \Staffbase\plugins\sdk\SSOToken::getBranchId()
+	 * @covers \Staffbase\plugins\sdk\SSOToken::getBranchSlug()
 	 */
 	public function testAccessorsGiveCorrectValues() {
 
