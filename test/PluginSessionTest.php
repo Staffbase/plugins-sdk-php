@@ -13,7 +13,6 @@
  */
 namespace Staffbase\plugins\test;
 
-use Exception;
 use ReflectionClass;
 use phpseclib\Crypt\RSA;
 use PHPUnit\Framework\TestCase;
@@ -83,7 +82,7 @@ class PluginSessionTest extends TestCase
 
 		$mock = $this->getMockBuilder($this->classname)
 			->disableOriginalConstructor()
-			->setMethods(array('openSession', 'closeSession'))
+			->onlyMethods(array('openSession', 'closeSession'))
 			->getMock();
 
         $mock->expects($this->exactly(2))
@@ -112,7 +111,7 @@ class PluginSessionTest extends TestCase
 
 		$mock = $this->getMockBuilder($this->classname)
 			->disableOriginalConstructor()
-			->setMethods(array('openSession', 'closeSession'))
+			->onlyMethods(array('openSession', 'closeSession'))
 			->getMock();
 
 		$reflectedClass = new ReflectionClass($this->classname);
@@ -138,7 +137,7 @@ class PluginSessionTest extends TestCase
 
 		$mock = $this->getMockBuilder($this->classname)
 			->disableOriginalConstructor()
-			->setMethods(array('openSession', 'closeSession'))
+			->onlyMethods(array('openSession', 'closeSession'))
 			->getMock();
 
         $this->expectException(SSOException::class);
@@ -162,7 +161,7 @@ class PluginSessionTest extends TestCase
 
 		$mock = $this->getMockBuilder($this->classname)
 			->disableOriginalConstructor()
-			->setMethods(array('openSession', 'closeSession'))
+			->onlyMethods(array('openSession', 'closeSession'))
 			->getMock();
 
         $this->expectException(SSOException::class);
@@ -186,7 +185,7 @@ class PluginSessionTest extends TestCase
 
 		$mock = $this->getMockBuilder($this->classname)
 			->disableOriginalConstructor()
-			->setMethods(array('openSession', 'closeSession'))
+			->onlyMethods(array('openSession', 'closeSession'))
 			->getMock();
 
         $this->expectException(SSOAuthenticationException::class);
@@ -210,7 +209,7 @@ class PluginSessionTest extends TestCase
 
 		$mock = $this->getMockBuilder($this->classname)
 			->disableOriginalConstructor()
-			->setMethods(array('openSession', 'closeSession'))
+			->onlyMethods(array('openSession', 'closeSession'))
 			->getMock();
 
         $this->expectException(SSOAuthenticationException::class);
@@ -234,10 +233,11 @@ class PluginSessionTest extends TestCase
 
 		$mock = $this->getMockBuilder($this->classname)
 			->disableOriginalConstructor()
-			->setMethods(array('openSession', 'closeSession'))
+			->onlyMethods(array('openSession', 'closeSession'))
 			->getMock();
 
-		$session = new $mock($this->pluginId, $this->publicKey);
+        /** @var PluginSession $session */
+        $session = new $mock($this->pluginId, $this->publicKey);
 
 		$this->assertEquals($session->getRole(), $this->tokenData[PluginSession::CLAIM_USER_ROLE]);
 
@@ -248,6 +248,7 @@ class PluginSessionTest extends TestCase
 		$this->setupEnvironment(null, $newToken, false);
 		$newSession = new $mock($this->pluginId, $this->publicKey);
 
+        /** @var PluginSession $newSession */
 		$this->assertEquals($newSession->getRole(), $tokenData[PluginSession::CLAIM_USER_ROLE]);
 		$this->assertEquals($session->getRole(), $newSession->getRole());
 	}
@@ -267,9 +268,10 @@ class PluginSessionTest extends TestCase
 
 		$mock = $this->getMockBuilder($this->classname)
 			->disableOriginalConstructor()
-			->setMethods(array('openSession', 'closeSession'))
+			->onlyMethods(array('openSession', 'closeSession'))
 			->getMock();
 
+        /** @var PluginSession $session */
 		$session = new $mock($this->pluginId, $this->publicKey);
 
 
@@ -280,7 +282,8 @@ class PluginSessionTest extends TestCase
 
 		$this->setupEnvironment(null, $newToken, false);
 
-		$newSession = new $mock($this->pluginId, $this->publicKey);
+        /** @var PluginSession $newSession */
+        $newSession = new $mock($this->pluginId, $this->publicKey);
 
 		$this->assertEquals($newSession->getRole(), $tokenData[PluginSession::CLAIM_USER_ROLE]);
 		$this->assertNotEquals($session->getRole(), $newSession->getRole());
@@ -311,10 +314,11 @@ class PluginSessionTest extends TestCase
 
 		$mock = $this->getMockBuilder($this->classname)
 			->disableOriginalConstructor()
-			->setMethods(array('openSession', 'closeSession'))
+			->onlyMethods(array('openSession', 'closeSession'))
 			->getMock();
 
-		$session = new $mock($this->pluginId, $this->publicKey);
+        /** @var PluginSession $session */
+        $session = new $mock($this->pluginId, $this->publicKey);
 
 		$sessionData = [
 			'test1' => 'val1',
@@ -346,7 +350,7 @@ class PluginSessionTest extends TestCase
 
 		// successfull remote call handler mock
 		$handler = $this->getMockBuilder(DeleteInstanceCallHandlerInterface::class)
-			->setMethods(array('deleteInstance', 'exitSuccess', 'exitFailure'))
+			->onlyMethods(array('deleteInstance', 'exitSuccess', 'exitFailure'))
 			->getMock();
 
 		$handler->method('deleteInstance')
@@ -364,7 +368,7 @@ class PluginSessionTest extends TestCase
 		// session mock
 		$Session = $this->getMockBuilder($this->classname)
 			->disableOriginalConstructor()
-			->setMethods(array('openSession', 'closeSession', 'exitRemoteCall'))
+			->onlyMethods(array('openSession', 'closeSession', 'exitRemoteCall'))
 			->getMock();
 
 		new $Session($this->pluginId, $this->publicKey, null, 0, $handler);
@@ -387,7 +391,7 @@ class PluginSessionTest extends TestCase
 
 		// successfull remote call handler mock
 		$handler = $this->getMockBuilder(DeleteInstanceCallHandlerInterface::class)
-			->setMethods(array('deleteInstance', 'exitSuccess', 'exitFailure'))
+			->onlyMethods(array('deleteInstance', 'exitSuccess', 'exitFailure'))
 			->getMock();
 
 		$handler->method('deleteInstance')
@@ -405,7 +409,7 @@ class PluginSessionTest extends TestCase
 		// session mock
 		$Session = $this->getMockBuilder($this->classname)
 			->disableOriginalConstructor()
-			->setMethods(array('openSession', 'closeSession', 'exitRemoteCall'))
+			->onlyMethods(array('openSession', 'closeSession', 'exitRemoteCall'))
 			->getMock();
 
 		new $Session($this->pluginId, $this->publicKey, null, 0, $handler);
