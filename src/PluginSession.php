@@ -44,6 +44,11 @@ class PluginSession extends SSOData
 	 */
 	private $userView = true;
 
+    /**
+     * @var SSOToken token data from the parsed jwt
+     */
+	private $sso = null;
+
 	/**
 	 * Constructor
 	 *
@@ -66,13 +71,11 @@ class PluginSession extends SSOData
 		if ($sessionHandler)
 			session_set_save_handler($sessionHandler, true);
 
-		$this->openSession($pluginId);
 
 		$pid = isset($_GET[self::QUERY_PARAM_PID]) ? $_GET[self::QUERY_PARAM_PID] : null;
 		$jwt = isset($_GET[self::QUERY_PARAM_JWT]) ? $_GET[self::QUERY_PARAM_JWT] : null;
 
 		// lets hint to bad class usage, as these cases should never happen.
-
 		if($pid && $jwt) {
 			throw new SSOAuthenticationException('Tried to initialize the session with both PID and JWT provided.');
 		}
@@ -85,47 +88,22 @@ class PluginSession extends SSOData
 
 		// we update the SSO info every time we get a token
 		if ($jwt) {
-
 			// decrypt the token
-			$sso = new SSOToken($appSecret, $jwt, $leeway);
-			$ssoData = $sso->getData();
-
-			// dispatch remote calls from Staffbase
-			if ($sso->isDeleteInstanceCall() && $remoteCallHandler) {
-
-				// we will accept unhandled calls with a warning
-				$result = true;
-
-				$instanceId = $sso->getInstanceId();
-
-				if ($remoteCallHandler instanceOf DeleteInstanceCallHandlerInterface) {
-					$result = $remoteCallHandler->deleteInstance($instanceId);
-				} else {
-					error_log("Warning: An instance deletion call for instance $instanceId was not handled.");
-				}
-
-				// finish the remote call
-				if($result)
-					$remoteCallHandler->exitSuccess();
-				else
-					$remoteCallHandler->exitFailure();
-
-				$this->exitRemoteCall();
-			}
+			$this->sso = new SSOToken($appSecret, $jwt, $leeway);
 
 			// update data
-			$this->pluginInstanceId = $sso->getInstanceId();
-			$_SESSION[$this->pluginInstanceId][self::KEY_SSO] = $ssoData;
+			$this->pluginInstanceId = $this->sso->getInstanceId();
 		}
 
-		// requests with spoofed PID are not allowed
-		if (!isset($_SESSION[$this->pluginInstanceId][self::KEY_SSO])
-		  || empty($_SESSION[$this->pluginInstanceId][self::KEY_SSO]))
-			throw new SSOAuthenticationException('Tried to access an instance without previous authentication.');
+        // dispatch remote calls from Staffbase
+        if ($this->sso) {
+            $this->deleteInstance($remoteCallHandler);
+        }
 
 		// decide if we are in user view or not
-		if($this->isEditor() && (!isset($_GET[self::QUERY_PARAM_USERVIEW]) || $_GET[self::QUERY_PARAM_USERVIEW] !== 'true'))
-			$this->userView = false;
+        $this->userView = !$this->isAdminView();
+
+        $this->openSession($pluginId);
 	}
 
 	/**
@@ -135,6 +113,35 @@ class PluginSession extends SSOData
 
 		$this->closeSession();
 	}
+
+	private function isAdminView() {
+        return $this->isEditor() && (!isset($_GET[self::QUERY_PARAM_USERVIEW]) || $_GET[self::QUERY_PARAM_USERVIEW] !== 'true');
+    }
+
+	private function deleteInstance($remoteCallHandler){
+        if (!$sso->isDeleteInstanceCall() || !$remoteCallHandler) {
+            return;
+        }
+
+        // we will accept unhandled calls with a warning
+        $result = true;
+
+        $instanceId = $sso->getInstanceId();
+
+        if ($remoteCallHandler instanceOf DeleteInstanceCallHandlerInterface) {
+            $result = $remoteCallHandler->deleteInstance($instanceId);
+        } else {
+            error_log("Warning: An instance deletion call for instance $instanceId was not handled.");
+        }
+
+        // finish the remote call
+        if($result)
+            $remoteCallHandler->exitSuccess();
+        else
+            $remoteCallHandler->exitFailure();
+
+        $this->exitRemoteCall();
+    }
 
 	/**
 	 * Exit the script
@@ -155,6 +162,15 @@ class PluginSession extends SSOData
 
 		session_name($name);
 		session_start();
+
+		if ($this->sso !== null) {
+            $_SESSION[$this->pluginInstanceId][self::KEY_SSO] = $this->sso->getData();
+        }
+
+        // requests with spoofed PID are not allowed
+        if (!isset($_SESSION[$this->pluginInstanceId][self::KEY_SSO])
+            || empty($_SESSION[$this->pluginInstanceId][self::KEY_SSO]))
+            throw new SSOAuthenticationException('Tried to access an instance without previous authentication.');
 	}
 
 	/**

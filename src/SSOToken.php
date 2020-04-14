@@ -68,8 +68,6 @@ class SSOToken extends SSOData
 	 * @param string $tokenData The token text.
 	 * @param int $leeway count of seconds added to current timestamp
 	 *
-	 * @return Lcobucci\JWT\Token;
-	 *
 	 * @throws SSOAuthenticationException if the parsing/verification/validation of the token fails.
 	 */
 	protected function parseToken($appSecret, $tokenData, $leeway) {
