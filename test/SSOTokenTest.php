@@ -6,20 +6,22 @@
  * PHP version 5.5.9
  *
  * @category  Authentication
- * @copyright 2017-2019 Staffbase, GmbH. 
+ * @copyright 2017-2019 Staffbase, GmbH.
  * @author    Vitaliy Ivanov
  * @license   http://www.apache.org/licenses/LICENSE-2.0
  * @link      https://github.com/staffbase/plugins-sdk-php
  */
 namespace Staffbase\plugins\test;
 
-use Exception;
+use BadMethodCallException;
+use Lcobucci\JWT\Signer\Key;
 use ReflectionClass;
 use phpseclib\Crypt\RSA;
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Lcobucci\JWT\Builder;
-use Lcobucci\JWT\Signer\Keychain;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
+use Staffbase\plugins\sdk\Exceptions\SSOAuthenticationException;
+use Staffbase\plugins\sdk\Exceptions\SSOException;
 use Staffbase\plugins\sdk\SSOToken;
 
 class SSOTokenTest extends TestCase
@@ -33,7 +35,7 @@ class SSOTokenTest extends TestCase
 	 *
 	 * Creates an RSA-256 key pair.
 	 */
-	public function __construct() {
+	public function setUp(): void {
 
 		$rsa = new RSA();
 		$keypair = $rsa->createKey();
@@ -55,33 +57,31 @@ class SSOTokenTest extends TestCase
 	public static function createSignedTokenFromData($privateKey, $tokenData) {
 
 		$signer   = new Sha256();
-		$keychain = new Keychain();
+		$key = new Key($privateKey);
 
-		$token = (new Builder())
-			->setIssuer($tokenData[SSOToken::CLAIM_ISSUER])
-			->setAudience($tokenData[SSOToken::CLAIM_AUDIENCE])
-			->setIssuedAt($tokenData[SSOToken::CLAIM_ISSUED_AT])
-			->setNotBefore($tokenData[SSOToken::CLAIM_NOT_BEFORE])
-			->setExpiration($tokenData[SSOToken::CLAIM_EXPIRE_AT])
-			->set(SSOToken::CLAIM_INSTANCE_ID, $tokenData[SSOToken::CLAIM_INSTANCE_ID])
-			->set(SSOToken::CLAIM_INSTANCE_NAME, $tokenData[SSOToken::CLAIM_INSTANCE_NAME])
-			->set(SSOToken::CLAIM_USER_ID, $tokenData[SSOToken::CLAIM_USER_ID])
-			->set(SSOToken::CLAIM_USER_EXTERNAL_ID, $tokenData[SSOToken::CLAIM_USER_EXTERNAL_ID])
-			->set(SSOToken::CLAIM_USER_FULL_NAME, $tokenData[SSOToken::CLAIM_USER_FULL_NAME])
-			->set(SSOToken::CLAIM_USER_FIRST_NAME, $tokenData[SSOToken::CLAIM_USER_FIRST_NAME])
-			->set(SSOToken::CLAIM_USER_LAST_NAME, $tokenData[SSOToken::CLAIM_USER_LAST_NAME])
-			->set(SSOToken::CLAIM_USER_ROLE, $tokenData[SSOToken::CLAIM_USER_ROLE])
-			->set(SSOToken::CLAIM_ENTITY_TYPE, $tokenData[SSOToken::CLAIM_ENTITY_TYPE])
-			->set(SSOToken::CLAIM_THEME_TEXT_COLOR, $tokenData[SSOToken::CLAIM_THEME_TEXT_COLOR])
-			->set(SSOToken::CLAIM_THEME_BACKGROUND_COLOR, $tokenData[SSOToken::CLAIM_THEME_BACKGROUND_COLOR])
-			->set(SSOToken::CLAIM_USER_LOCALE, $tokenData[SSOToken::CLAIM_USER_LOCALE])
-			->set(SSOToken::CLAIM_USER_TAGS, $tokenData[SSOToken::CLAIM_USER_TAGS])
-			->set(SSOToken::CLAIM_BRANCH_ID, $tokenData[SSOToken::CLAIM_BRANCH_ID])
-			->set(SSOToken::CLAIM_BRANCH_SLUG, $tokenData[SSOToken::CLAIM_BRANCH_SLUG])
-			->sign($signer, $keychain->getPrivateKey($privateKey))
-			->getToken();
-
-		return $token;
+        return (new Builder())
+            ->issuedBy($tokenData[SSOToken::CLAIM_ISSUER])
+            ->permittedFor($tokenData[SSOToken::CLAIM_AUDIENCE])
+            ->issuedAt($tokenData[SSOToken::CLAIM_ISSUED_AT])
+            ->canOnlyBeUsedAfter($tokenData[SSOToken::CLAIM_NOT_BEFORE])
+            ->expiresAt($tokenData[SSOToken::CLAIM_EXPIRE_AT])
+            ->withClaim(SSOToken::CLAIM_INSTANCE_ID, $tokenData[SSOToken::CLAIM_INSTANCE_ID])
+            ->withClaim(SSOToken::CLAIM_INSTANCE_NAME, $tokenData[SSOToken::CLAIM_INSTANCE_NAME])
+            ->withClaim(SSOToken::CLAIM_USER_ID, $tokenData[SSOToken::CLAIM_USER_ID])
+            ->withClaim(SSOToken::CLAIM_USER_EXTERNAL_ID, $tokenData[SSOToken::CLAIM_USER_EXTERNAL_ID])
+            ->withClaim(SSOToken::CLAIM_USER_FULL_NAME, $tokenData[SSOToken::CLAIM_USER_FULL_NAME])
+            ->withClaim(SSOToken::CLAIM_USER_FIRST_NAME, $tokenData[SSOToken::CLAIM_USER_FIRST_NAME])
+            ->withClaim(SSOToken::CLAIM_USER_LAST_NAME, $tokenData[SSOToken::CLAIM_USER_LAST_NAME])
+            ->withClaim(SSOToken::CLAIM_USER_ROLE, $tokenData[SSOToken::CLAIM_USER_ROLE])
+            ->withClaim(SSOToken::CLAIM_ENTITY_TYPE, $tokenData[SSOToken::CLAIM_ENTITY_TYPE])
+            ->withClaim(SSOToken::CLAIM_THEME_TEXT_COLOR, $tokenData[SSOToken::CLAIM_THEME_TEXT_COLOR])
+            ->withClaim(SSOToken::CLAIM_THEME_BACKGROUND_COLOR, $tokenData[SSOToken::CLAIM_THEME_BACKGROUND_COLOR])
+            ->withClaim(SSOToken::CLAIM_USER_LOCALE, $tokenData[SSOToken::CLAIM_USER_LOCALE])
+            ->withClaim(SSOToken::CLAIM_USER_TAGS, $tokenData[SSOToken::CLAIM_USER_TAGS])
+            ->withClaim(SSOToken::CLAIM_BRANCH_ID, $tokenData[SSOToken::CLAIM_BRANCH_ID])
+            ->withClaim(SSOToken::CLAIM_BRANCH_SLUG, $tokenData[SSOToken::CLAIM_BRANCH_SLUG])
+            ->sign($signer, $key)
+            ->getToken();
 	}
 
 	/**
@@ -93,30 +93,28 @@ class SSOTokenTest extends TestCase
 	 */
 	private static function createUnsignedTokenFromData($tokenData) {
 
-		$token = (new Builder())
-			->setIssuer($tokenData[SSOToken::CLAIM_ISSUER])
-			->setAudience($tokenData[SSOToken::CLAIM_AUDIENCE])
-			->setIssuedAt($tokenData[SSOToken::CLAIM_ISSUED_AT])
-			->setNotBefore($tokenData[SSOToken::CLAIM_NOT_BEFORE])
-			->setExpiration($tokenData[SSOToken::CLAIM_EXPIRE_AT])
-			->set(SSOToken::CLAIM_INSTANCE_ID, $tokenData[SSOToken::CLAIM_INSTANCE_ID])
-			->set(SSOToken::CLAIM_INSTANCE_NAME, $tokenData[SSOToken::CLAIM_INSTANCE_NAME])
-			->set(SSOToken::CLAIM_USER_ID, $tokenData[SSOToken::CLAIM_USER_ID])
-			->set(SSOToken::CLAIM_USER_EXTERNAL_ID, $tokenData[SSOToken::CLAIM_USER_EXTERNAL_ID])
-			->set(SSOToken::CLAIM_USER_FULL_NAME, $tokenData[SSOToken::CLAIM_USER_FULL_NAME])
-			->set(SSOToken::CLAIM_USER_FIRST_NAME, $tokenData[SSOToken::CLAIM_USER_FIRST_NAME])
-			->set(SSOToken::CLAIM_USER_LAST_NAME, $tokenData[SSOToken::CLAIM_USER_LAST_NAME])
-			->set(SSOToken::CLAIM_USER_ROLE, $tokenData[SSOToken::CLAIM_USER_ROLE])
-			->set(SSOToken::CLAIM_ENTITY_TYPE, $tokenData[SSOToken::CLAIM_ENTITY_TYPE])
-			->set(SSOToken::CLAIM_THEME_TEXT_COLOR, $tokenData[SSOToken::CLAIM_THEME_TEXT_COLOR])
-			->set(SSOToken::CLAIM_THEME_BACKGROUND_COLOR, $tokenData[SSOToken::CLAIM_THEME_BACKGROUND_COLOR])
-			->set(SSOToken::CLAIM_USER_LOCALE, $tokenData[SSOToken::CLAIM_USER_LOCALE])
-			->set(SSOToken::CLAIM_USER_TAGS, $tokenData[SSOToken::CLAIM_USER_TAGS])
-			->set(SSOToken::CLAIM_BRANCH_ID, $tokenData[SSOToken::CLAIM_BRANCH_ID])
-			->set(SSOToken::CLAIM_BRANCH_SLUG, $tokenData[SSOToken::CLAIM_BRANCH_SLUG])
-			->getToken();
-
-		return $token;
+        return (new Builder())
+            ->issuedBy($tokenData[SSOToken::CLAIM_ISSUER])
+            ->permittedFor($tokenData[SSOToken::CLAIM_AUDIENCE])
+            ->issuedAt($tokenData[SSOToken::CLAIM_ISSUED_AT])
+            ->canOnlyBeUsedAfter($tokenData[SSOToken::CLAIM_NOT_BEFORE])
+            ->expiresAt($tokenData[SSOToken::CLAIM_EXPIRE_AT])
+            ->withClaim(SSOToken::CLAIM_INSTANCE_ID, $tokenData[SSOToken::CLAIM_INSTANCE_ID])
+            ->withClaim(SSOToken::CLAIM_INSTANCE_NAME, $tokenData[SSOToken::CLAIM_INSTANCE_NAME])
+            ->withClaim(SSOToken::CLAIM_USER_ID, $tokenData[SSOToken::CLAIM_USER_ID])
+            ->withClaim(SSOToken::CLAIM_USER_EXTERNAL_ID, $tokenData[SSOToken::CLAIM_USER_EXTERNAL_ID])
+            ->withClaim(SSOToken::CLAIM_USER_FULL_NAME, $tokenData[SSOToken::CLAIM_USER_FULL_NAME])
+            ->withClaim(SSOToken::CLAIM_USER_FIRST_NAME, $tokenData[SSOToken::CLAIM_USER_FIRST_NAME])
+            ->withClaim(SSOToken::CLAIM_USER_LAST_NAME, $tokenData[SSOToken::CLAIM_USER_LAST_NAME])
+            ->withClaim(SSOToken::CLAIM_USER_ROLE, $tokenData[SSOToken::CLAIM_USER_ROLE])
+            ->withClaim(SSOToken::CLAIM_ENTITY_TYPE, $tokenData[SSOToken::CLAIM_ENTITY_TYPE])
+            ->withClaim(SSOToken::CLAIM_THEME_TEXT_COLOR, $tokenData[SSOToken::CLAIM_THEME_TEXT_COLOR])
+            ->withClaim(SSOToken::CLAIM_THEME_BACKGROUND_COLOR, $tokenData[SSOToken::CLAIM_THEME_BACKGROUND_COLOR])
+            ->withClaim(SSOToken::CLAIM_USER_LOCALE, $tokenData[SSOToken::CLAIM_USER_LOCALE])
+            ->withClaim(SSOToken::CLAIM_USER_TAGS, $tokenData[SSOToken::CLAIM_USER_TAGS])
+            ->withClaim(SSOToken::CLAIM_BRANCH_ID, $tokenData[SSOToken::CLAIM_BRANCH_ID])
+            ->withClaim(SSOToken::CLAIM_BRANCH_SLUG, $tokenData[SSOToken::CLAIM_BRANCH_SLUG])
+            ->getToken();
 	}
 
 	/**
@@ -130,20 +128,15 @@ class SSOTokenTest extends TestCase
 
 		$mock = $this->getMockBuilder($this->classname)
 			->disableOriginalConstructor()
-			->setMethods(array('parseToken'))
+			->onlyMethods(array('parseToken'))
 			->getMock();
 
-		try {
+        $this->expectException(SSOException::class);
+        $this->expectExceptionMessage('Parameter appSecret for SSOToken is empty.');
 
-			$reflectedClass = new ReflectionClass($this->classname);
-			$constructor = $reflectedClass->getConstructor();
-			$constructor->invoke($mock, ' ', 'fake token');
-
-		} catch (Exception $e) {
-			return;
-		}
-
-		$this->fail();
+        $reflectedClass = new ReflectionClass($this->classname);
+        $constructor = $reflectedClass->getConstructor();
+        $constructor->invoke($mock, ' ', 'fake token');
 	}
 
 	/**
@@ -157,27 +150,44 @@ class SSOTokenTest extends TestCase
 
 		$mock = $this->getMockBuilder($this->classname)
 			->disableOriginalConstructor()
-			->setMethods(array('parseToken'))
+			->onlyMethods(array('parseToken'))
 			->getMock();
 
-		try {
+        $this->expectException(SSOException::class);
+        $this->expectExceptionMessage('Parameter tokenData for SSOToken is empty.');
 
-			$reflectedClass = new ReflectionClass($this->classname);
-			$constructor = $reflectedClass->getConstructor();
-			$constructor->invoke($mock, 'fake secret', ' ');
-
-		} catch (Exception $e) {
-			return;
-		}
-
-		$this->fail();
+        $reflectedClass = new ReflectionClass($this->classname);
+        $constructor = $reflectedClass->getConstructor();
+        $constructor->invoke($mock, 'fake secret', ' ');
 	}
+
+    /**
+     * @test
+     *
+     * Test constructor throws exception on empty token.
+     *
+     * @covers \Staffbase\plugins\sdk\SSOToken::__construct
+     */
+    public function testConstructorRefuseNonNumericLeeway() {
+
+        $mock = $this->getMockBuilder($this->classname)
+            ->disableOriginalConstructor()
+            ->onlyMethods(array('parseToken'))
+            ->getMock();
+
+        $this->expectException(SSOException::class);
+        $this->expectExceptionMessage('Parameter leeway has to be numeric.');
+
+        $reflectedClass = new ReflectionClass($this->classname);
+        $constructor = $reflectedClass->getConstructor();
+        $constructor->invoke($mock, 'fake secret', 'fake token', 'dd');
+    }
 
 	/**
 	 * @test
 	 *
 	 * Test constructor throws exception on expired token.
-	 * 
+	 *
 	 * @covers \Staffbase\plugins\sdk\SSOToken::__construct
 	 */
 	public function testConstructorToFailOnExpiredToken() {
@@ -187,21 +197,16 @@ class SSOTokenTest extends TestCase
 
 		$token = self::createSignedTokenFromData($this->privateKey, $tokenData);
 
-		try{ 
+        $this->expectException(SSOAuthenticationException::class);
 
-			new SSOToken($this->publicKey, $token);
-
-		} catch (Exception $e) {
-			return;
-		}
-		$this->fail();
-	}
+        new SSOToken($this->publicKey, $token);
+    }
 
 	/**
 	 * @test
 	 *
 	 * Test constructor throws exception on a token valid in the future.
-	 * 
+	 *
 	 * @covers \Staffbase\plugins\sdk\SSOToken::__construct
 	 */
 	public function testConstructorToFailOnFutureToken() {
@@ -211,22 +216,16 @@ class SSOTokenTest extends TestCase
 
 		$token = self::createSignedTokenFromData($this->privateKey, $tokenData);
 
-		try {
+        $this->expectException(SSOAuthenticationException::class);
 
-			new SSOToken($this->publicKey, $token);
-
-		} catch (Exception $e) {
-			return;
-		}
-
-		$this->fail();
+        new SSOToken($this->publicKey, $token);
 	}
 
 	/**
 	 * @test
 	 *
 	 * Test constructor throws exception on a token issued in the future.
-	 * 
+	 *
 	 * @covers \Staffbase\plugins\sdk\SSOToken::__construct
 	 */
 	public function testConstructorToFailOnTokenIssuedInTheFuture() {
@@ -236,22 +235,16 @@ class SSOTokenTest extends TestCase
 
 		$token = self::createSignedTokenFromData($this->privateKey, $tokenData);
 
-		try {
+        $this->expectException(SSOAuthenticationException::class);
 
-			new SSOToken($this->publicKey, $token);
-
-		} catch (Exception $e) {
-			return;
-		}
-
-		$this->fail();
+        new SSOToken($this->publicKey, $token);
 	}
 
 	/**
 	 * @test
 	 *
 	 * Test constructor accepts a token issued in the future, by providing a leeway.
-	 * 
+	 *
 	 * @covers \Staffbase\plugins\sdk\SSOToken::__construct
 	 */
 	public function testConstructorAcceptsLeewayForTokenIssuedInTheFuture() {
@@ -262,14 +255,16 @@ class SSOTokenTest extends TestCase
 
 		$token = self::createSignedTokenFromData($this->privateKey, $tokenData);
 
-		new SSOToken($this->publicKey, $token, $leeway);
+		$sso = new SSOToken($this->publicKey, $token, $leeway);
+
+        $this->assertNotEmpty($sso);
 	}
 
 	/**
 	 * @test
 	 *
 	 * Test constructor throws exception on a token missing instance id.
-	 * 
+	 *
 	 * @covers \Staffbase\plugins\sdk\SSOToken::__construct
 	 */
 	public function testConstructorToFailOnMissingInstanceId() {
@@ -279,22 +274,17 @@ class SSOTokenTest extends TestCase
 
 		$token = self::createSignedTokenFromData($this->privateKey, $tokenData);
 
-		try {
+        $this->expectException(SSOAuthenticationException::class);
+        $this->expectExceptionMessage('Token lacks instance id.');
 
-			new SSOToken($this->publicKey, $token);
-
-		} catch (Exception $e) {
-			return;
-		}
-
-		$this->fail();
+        new SSOToken($this->publicKey, $token);
 	}
 
 	/**
 	 * @test
 	 *
 	 * Test constructor throws exception on a unsigned token.
-	 * 
+	 *
 	 * @covers \Staffbase\plugins\sdk\SSOToken::__construct
 	 */
 	public function testConstructorToFailOnUnsignedToken() {
@@ -303,15 +293,10 @@ class SSOTokenTest extends TestCase
 
 		$token = self::createUnsignedTokenFromData($tokenData);
 
-		try {
+        $this->expectException(BadMethodCallException::class);
+        $this->expectExceptionMessage('This token is not signed');
 
-			new SSOToken($this->publicKey, $token);
-
-		} catch (Exception $e) {
-			return;
-		}
-
-		$this->fail();
+        new SSOToken($this->publicKey, $token);
 	}
 
 	/**

@@ -6,7 +6,7 @@
  * PHP version 5.5.9
  *
  * @category  Authentication
- * @copyright 2017-2019 Staffbase, GmbH. 
+ * @copyright 2017-2019 Staffbase, GmbH.
  * @author    Vitaliy Ivanov
  * @license   http://www.apache.org/licenses/LICENSE-2.0
  * @link      https://github.com/staffbase/plugins-sdk-php
@@ -14,11 +14,11 @@
 
 namespace Staffbase\plugins\sdk;
 
+use Lcobucci\JWT\Token;
 use Lcobucci\JWT\Parser;
-use Lcobucci\JWT\Builder;
+use Lcobucci\JWT\Signer\Key;
 use Lcobucci\JWT\ValidationData;
 use Lcobucci\JWT\Claim\Validatable;
-use Lcobucci\JWT\Signer\Keychain;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
 use Staffbase\plugins\sdk\Exceptions\SSOException;
 use Staffbase\plugins\sdk\Exceptions\SSOAuthenticationException;
@@ -29,8 +29,8 @@ use Staffbase\plugins\sdk\Exceptions\SSOAuthenticationException;
  */
 class SSOToken extends SSOData
 {
-	/** 
-	 * @var $token  Lcobucci\JWT\Token 
+	/**
+	 * @var Token $token
 	 */
 	private $token = null;
 
@@ -39,7 +39,7 @@ class SSOToken extends SSOData
 	 *
 	 * @param string $appSecret Either a PEM key or a file:// URL.
 	 * @param string $tokenData The token text.
-	 * @param int $leeway count of seconds added to current timestamp 
+	 * @param int $leeway count of seconds added to current timestamp
 	 *
 	 * @throws SSOException on invalid parameters.
 	 */
@@ -66,9 +66,7 @@ class SSOToken extends SSOData
 	 *
 	 * @param string $appSecret Either a PEM formatted key or a file:// URL of the same.
 	 * @param string $tokenData The token text.
-	 * @param int $leeway count of seconds added to current timestamp 
-	 * 
-	 * @return Lcobucci\JWT\Token;
+	 * @param int $leeway count of seconds added to current timestamp
 	 *
 	 * @throws SSOAuthenticationException if the parsing/verification/validation of the token fails.
 	 */
@@ -79,13 +77,13 @@ class SSOToken extends SSOData
 
 		// verify signature
 		$signer = new Sha256();
-		$keychain = new Keychain();
+		$key = new Key($appSecret);
 
-		if (!$this->token->verify($signer, $keychain->getPublicKey($appSecret)))
+		if (!$this->token->verify($signer, $key))
 			throw new SSOAuthenticationException('Token verification failed.');
 
 		// validate claims
-		$data = new ValidationData(time() +$leeway); // iat, nbf and exp are validated by default
+		$data = new ValidationData(time(), $leeway); // iat, nbf and exp are validated by default
 
 		if (!$this->token->validate($data)) {
 			$this->throwVerboseException($data);
@@ -104,7 +102,7 @@ class SSOToken extends SSOData
 	 * @return string PEM encoded key
 	 */
 	public static function base64ToPEMPublicKey($data) {
-		
+
 		$data = strtr($data, array(
 			"\r" => "",
 			"\n" => ""
@@ -122,13 +120,13 @@ class SSOToken extends SSOData
 	 * Due to minor shortcomings of the library we have to redo the validation
 	 * manually to get the reason for the failure and propagate it.
 	 * We emulate the validation process for the v3.x of the library.
-	 * 
+	 *
 	 * This will most likely have to change on library upgrade either
 	 * by using then supported verbosity or reimplementing validation
 	 * as done in the new flow.
-	 * 
-	 * @param Lcobucci\JWT\ValidationData $data to validate against
-	 * 
+	 *
+	 * @param ValidationData $data to validate against
+	 *
 	 * @throws SSOAuthenticationException always.
 	 */
 	protected function throwVerboseException(ValidationData $data) {

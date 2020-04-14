@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit colors="true" name="unit" bootstrap="vendor/autoload.php">
+<phpunit colors="true" bootstrap="vendor/autoload.php">
 	<testsuites>
 		<testsuite name="Plugins SDK unit test suite">
 			<file>test/SSODataTest.php</file>
 			<file>test/SSOTokenTest.php</file>
 			<file>test/PluginSessionTest.php</file>
 		</testsuite>
+
 	</testsuites>
+	<filter>
+		<whitelist processUncoveredFilesFromWhitelist="true">
+			<directory suffix=".php">src</directory>
+		</whitelist>
+	</filter>
 </phpunit>
