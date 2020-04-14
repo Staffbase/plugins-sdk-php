@@ -12,14 +12,14 @@
 		}
 	],
 	"require": {
-		"php": ">=5.5.9",
+		"php": "^5.5 || ^7.3",
 		"lcobucci/jwt": "^3.2"
 
 	},
 	"require-dev": {
-		"cvuorinen/phpdoc-markdown-public": "^0.1.2",
+		"cvuorinen/phpdoc-markdown-public": "^0.2.0",
 		"phpseclib/phpseclib": "^2.0",
-		"phpunit/phpunit": "^4.8"
+		"phpunit/phpunit": "^9.0"
 	},
 	"autoload": {
 		"psr-4": {

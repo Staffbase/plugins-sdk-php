@@ -6,14 +6,14 @@
  * PHP version 5.5.9
  *
  * @category  Authentication
- * @copyright 2017-2019 Staffbase, GmbH. 
+ * @copyright 2017-2019 Staffbase, GmbH.
  * @author    Vitaliy Ivanov
  * @license   http://www.apache.org/licenses/LICENSE-2.0
  * @link      https://github.com/staffbase/plugins-sdk-php
  */
 namespace Staffbase\plugins\test;
 
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Staffbase\plugins\sdk\SSOData;
 
 class SSODataTest extends TestCase
@@ -91,7 +91,7 @@ class SSODataTest extends TestCase
 	 * @test
 	 *
 	 * Test accessors deliver correct values.
-	 * 
+	 *
 	 * @covers \Staffbase\plugins\sdk\SSOData::getAudience()
 	 * @covers \Staffbase\plugins\sdk\SSOData::getExpireAtTime()
 	 * @covers \Staffbase\plugins\sdk\SSOData::getNotBeforeTime()
@@ -139,7 +139,7 @@ class SSODataTest extends TestCase
 			$this->assertEquals(
 				call_user_func([$ssoData,$fn]),
 				$tokenData[$key],
-				"called $fn expected ". 
+				"called $fn expected ".
 				is_array($tokenData[$key]) ? print_r($tokenData[$key], true) : $tokenData[$key]);
 		}
 	}
@@ -148,8 +148,8 @@ class SSODataTest extends TestCase
 	 * @test
 	 *
 	 * Test isEditor return correct values.
-	 * 
-	 * @covers \Staffbase\plugins\sdk\SSOToken::idEditor
+	 *
+	 * @covers \Staffbase\plugins\sdk\SSOToken::isEditor
 	 */
 	public function testIsEditorReturnsCorrectValues() {
 
@@ -192,7 +192,7 @@ class SSODataTest extends TestCase
 	 * @test
 	 *
 	 * Test getData return correct values.
-	 * 
+	 *
 	 * @covers \Staffbase\plugins\sdk\SSOToken::getData
 	 */
 	public function testGetDataReturnsCorrectValues() {
