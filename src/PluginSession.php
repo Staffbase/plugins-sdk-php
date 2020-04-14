@@ -104,6 +104,15 @@ class PluginSession extends SSOData
         $this->userView = !$this->isAdminView();
 
         $this->openSession($pluginId);
+
+        if ($this->sso !== null) {
+            $_SESSION[$this->pluginInstanceId][self::KEY_SSO] = $this->sso->getData();
+        }
+
+        // requests with spoofed PID are not allowed
+        if (!isset($_SESSION[$this->pluginInstanceId][self::KEY_SSO])
+            || empty($_SESSION[$this->pluginInstanceId][self::KEY_SSO]))
+            throw new SSOAuthenticationException('Tried to access an instance without previous authentication.');
 	}
 
 	/**
@@ -119,18 +128,17 @@ class PluginSession extends SSOData
     }
 
 	private function deleteInstance($remoteCallHandler){
-        if (!$sso->isDeleteInstanceCall() || !$remoteCallHandler) {
+        if (!$this->sso->isDeleteInstanceCall() || !$remoteCallHandler) {
             return;
         }
 
-        // we will accept unhandled calls with a warning
-        $result = true;
-
-        $instanceId = $sso->getInstanceId();
+        $instanceId = $this->sso->getInstanceId();
 
         if ($remoteCallHandler instanceOf DeleteInstanceCallHandlerInterface) {
             $result = $remoteCallHandler->deleteInstance($instanceId);
         } else {
+            // we will accept unhandled calls with a warning
+            $result = true;
             error_log("Warning: An instance deletion call for instance $instanceId was not handled.");
         }
 
@@ -153,24 +161,16 @@ class PluginSession extends SSOData
 		exit;
 	}
 
-	/**
-	 * Open a session.
-	 *
-	 * @param string $name of the session
-	 */
+    /**
+     * Open a session.
+     *
+     * @param string $name of the session
+     */
 	protected function openSession($name) {
 
 		session_name($name);
 		session_start();
 
-		if ($this->sso !== null) {
-            $_SESSION[$this->pluginInstanceId][self::KEY_SSO] = $this->sso->getData();
-        }
-
-        // requests with spoofed PID are not allowed
-        if (!isset($_SESSION[$this->pluginInstanceId][self::KEY_SSO])
-            || empty($_SESSION[$this->pluginInstanceId][self::KEY_SSO]))
-            throw new SSOAuthenticationException('Tried to access an instance without previous authentication.');
 	}
 
 	/**
