@@ -14,12 +14,11 @@
 namespace Staffbase\plugins\test;
 
 use BadMethodCallException;
-use Exception;
+use Lcobucci\JWT\Signer\Key;
 use ReflectionClass;
 use phpseclib\Crypt\RSA;
 use PHPUnit\Framework\TestCase;
 use Lcobucci\JWT\Builder;
-use Lcobucci\JWT\Signer\Keychain;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
 use Staffbase\plugins\sdk\Exceptions\SSOAuthenticationException;
 use Staffbase\plugins\sdk\Exceptions\SSOException;
@@ -60,34 +59,32 @@ class SSOTokenTest extends TestCase
 	public static function createSignedTokenFromData($privateKey, $tokenData) {
 
 		$signer   = new Sha256();
-		$keychain = new Keychain();
+		$key = new Key($privateKey);
 
-		$token = (new Builder())
-			->setIssuer($tokenData[SSOToken::CLAIM_ISSUER])
-			->setAudience($tokenData[SSOToken::CLAIM_AUDIENCE])
-			->setIssuedAt($tokenData[SSOToken::CLAIM_ISSUED_AT])
-			->setNotBefore($tokenData[SSOToken::CLAIM_NOT_BEFORE])
-			->setExpiration($tokenData[SSOToken::CLAIM_EXPIRE_AT])
-			->set(SSOToken::CLAIM_INSTANCE_ID, $tokenData[SSOToken::CLAIM_INSTANCE_ID])
-			->set(SSOToken::CLAIM_INSTANCE_NAME, $tokenData[SSOToken::CLAIM_INSTANCE_NAME])
-			->set(SSOToken::CLAIM_USER_ID, $tokenData[SSOToken::CLAIM_USER_ID])
-			->set(SSOToken::CLAIM_USER_EXTERNAL_ID, $tokenData[SSOToken::CLAIM_USER_EXTERNAL_ID])
-			->set(SSOToken::CLAIM_USER_FULL_NAME, $tokenData[SSOToken::CLAIM_USER_FULL_NAME])
-			->set(SSOToken::CLAIM_USER_FIRST_NAME, $tokenData[SSOToken::CLAIM_USER_FIRST_NAME])
-			->set(SSOToken::CLAIM_USER_LAST_NAME, $tokenData[SSOToken::CLAIM_USER_LAST_NAME])
-			->set(SSOToken::CLAIM_USER_ROLE, $tokenData[SSOToken::CLAIM_USER_ROLE])
-			->set(SSOToken::CLAIM_ENTITY_TYPE, $tokenData[SSOToken::CLAIM_ENTITY_TYPE])
-			->set(SSOToken::CLAIM_THEME_TEXT_COLOR, $tokenData[SSOToken::CLAIM_THEME_TEXT_COLOR])
-			->set(SSOToken::CLAIM_THEME_BACKGROUND_COLOR, $tokenData[SSOToken::CLAIM_THEME_BACKGROUND_COLOR])
-			->set(SSOToken::CLAIM_USER_LOCALE, $tokenData[SSOToken::CLAIM_USER_LOCALE])
-			->set(SSOToken::CLAIM_USER_TAGS, $tokenData[SSOToken::CLAIM_USER_TAGS])
-			->set(SSOToken::CLAIM_BRANCH_ID, $tokenData[SSOToken::CLAIM_BRANCH_ID])
-			->set(SSOToken::CLAIM_BRANCH_SLUG, $tokenData[SSOToken::CLAIM_BRANCH_SLUG])
-            ->set(SSOToken::CLAIM_SESSION_ID, $tokenData[SSOToken::CLAIM_SESSION_ID])
-			->sign($signer, $keychain->getPrivateKey($privateKey))
-			->getToken();
-
-		return $token;
+        return (new Builder())
+            ->issuedBy($tokenData[SSOToken::CLAIM_ISSUER])
+            ->permittedFor($tokenData[SSOToken::CLAIM_AUDIENCE])
+            ->issuedAt($tokenData[SSOToken::CLAIM_ISSUED_AT])
+            ->canOnlyBeUsedAfter($tokenData[SSOToken::CLAIM_NOT_BEFORE])
+            ->expiresAt($tokenData[SSOToken::CLAIM_EXPIRE_AT])
+            ->withClaim(SSOToken::CLAIM_INSTANCE_ID, $tokenData[SSOToken::CLAIM_INSTANCE_ID])
+            ->withClaim(SSOToken::CLAIM_INSTANCE_NAME, $tokenData[SSOToken::CLAIM_INSTANCE_NAME])
+            ->withClaim(SSOToken::CLAIM_USER_ID, $tokenData[SSOToken::CLAIM_USER_ID])
+            ->withClaim(SSOToken::CLAIM_USER_EXTERNAL_ID, $tokenData[SSOToken::CLAIM_USER_EXTERNAL_ID])
+            ->withClaim(SSOToken::CLAIM_USER_FULL_NAME, $tokenData[SSOToken::CLAIM_USER_FULL_NAME])
+            ->withClaim(SSOToken::CLAIM_USER_FIRST_NAME, $tokenData[SSOToken::CLAIM_USER_FIRST_NAME])
+            ->withClaim(SSOToken::CLAIM_USER_LAST_NAME, $tokenData[SSOToken::CLAIM_USER_LAST_NAME])
+            ->withClaim(SSOToken::CLAIM_USER_ROLE, $tokenData[SSOToken::CLAIM_USER_ROLE])
+            ->withClaim(SSOToken::CLAIM_ENTITY_TYPE, $tokenData[SSOToken::CLAIM_ENTITY_TYPE])
+            ->withClaim(SSOToken::CLAIM_THEME_TEXT_COLOR, $tokenData[SSOToken::CLAIM_THEME_TEXT_COLOR])
+            ->withClaim(SSOToken::CLAIM_THEME_BACKGROUND_COLOR, $tokenData[SSOToken::CLAIM_THEME_BACKGROUND_COLOR])
+            ->withClaim(SSOToken::CLAIM_USER_LOCALE, $tokenData[SSOToken::CLAIM_USER_LOCALE])
+            ->withClaim(SSOToken::CLAIM_USER_TAGS, $tokenData[SSOToken::CLAIM_USER_TAGS])
+            ->withClaim(SSOToken::CLAIM_BRANCH_ID, $tokenData[SSOToken::CLAIM_BRANCH_ID])
+            ->withClaim(SSOToken::CLAIM_BRANCH_SLUG, $tokenData[SSOToken::CLAIM_BRANCH_SLUG])
+            ->withClaim(SSOToken::CLAIM_SESSION_ID, $tokenData[SSOToken::CLAIM_SESSION_ID])
+            ->sign($signer, $key)
+            ->getToken();
 	}
 
 	/**
@@ -99,31 +96,29 @@ class SSOTokenTest extends TestCase
 	 */
 	private static function createUnsignedTokenFromData($tokenData) {
 
-		$token = (new Builder())
-			->setIssuer($tokenData[SSOToken::CLAIM_ISSUER])
-			->setAudience($tokenData[SSOToken::CLAIM_AUDIENCE])
-			->setIssuedAt($tokenData[SSOToken::CLAIM_ISSUED_AT])
-			->setNotBefore($tokenData[SSOToken::CLAIM_NOT_BEFORE])
-			->setExpiration($tokenData[SSOToken::CLAIM_EXPIRE_AT])
-			->set(SSOToken::CLAIM_INSTANCE_ID, $tokenData[SSOToken::CLAIM_INSTANCE_ID])
-			->set(SSOToken::CLAIM_INSTANCE_NAME, $tokenData[SSOToken::CLAIM_INSTANCE_NAME])
-			->set(SSOToken::CLAIM_USER_ID, $tokenData[SSOToken::CLAIM_USER_ID])
-			->set(SSOToken::CLAIM_USER_EXTERNAL_ID, $tokenData[SSOToken::CLAIM_USER_EXTERNAL_ID])
-			->set(SSOToken::CLAIM_USER_FULL_NAME, $tokenData[SSOToken::CLAIM_USER_FULL_NAME])
-			->set(SSOToken::CLAIM_USER_FIRST_NAME, $tokenData[SSOToken::CLAIM_USER_FIRST_NAME])
-			->set(SSOToken::CLAIM_USER_LAST_NAME, $tokenData[SSOToken::CLAIM_USER_LAST_NAME])
-			->set(SSOToken::CLAIM_USER_ROLE, $tokenData[SSOToken::CLAIM_USER_ROLE])
-			->set(SSOToken::CLAIM_ENTITY_TYPE, $tokenData[SSOToken::CLAIM_ENTITY_TYPE])
-			->set(SSOToken::CLAIM_THEME_TEXT_COLOR, $tokenData[SSOToken::CLAIM_THEME_TEXT_COLOR])
-			->set(SSOToken::CLAIM_THEME_BACKGROUND_COLOR, $tokenData[SSOToken::CLAIM_THEME_BACKGROUND_COLOR])
-			->set(SSOToken::CLAIM_USER_LOCALE, $tokenData[SSOToken::CLAIM_USER_LOCALE])
-			->set(SSOToken::CLAIM_USER_TAGS, $tokenData[SSOToken::CLAIM_USER_TAGS])
-			->set(SSOToken::CLAIM_BRANCH_ID, $tokenData[SSOToken::CLAIM_BRANCH_ID])
-			->set(SSOToken::CLAIM_BRANCH_SLUG, $tokenData[SSOToken::CLAIM_BRANCH_SLUG])
-            ->set(SSOToken::CLAIM_SESSION_ID, $tokenData[SSOToken::CLAIM_SESSION_ID])
-			->getToken();
-
-		return $token;
+        return (new Builder())
+            ->issuedBy($tokenData[SSOToken::CLAIM_ISSUER])
+            ->permittedFor($tokenData[SSOToken::CLAIM_AUDIENCE])
+            ->issuedAt($tokenData[SSOToken::CLAIM_ISSUED_AT])
+            ->canOnlyBeUsedAfter($tokenData[SSOToken::CLAIM_NOT_BEFORE])
+            ->expiresAt($tokenData[SSOToken::CLAIM_EXPIRE_AT])
+            ->withClaim(SSOToken::CLAIM_INSTANCE_ID, $tokenData[SSOToken::CLAIM_INSTANCE_ID])
+            ->withClaim(SSOToken::CLAIM_INSTANCE_NAME, $tokenData[SSOToken::CLAIM_INSTANCE_NAME])
+            ->withClaim(SSOToken::CLAIM_USER_ID, $tokenData[SSOToken::CLAIM_USER_ID])
+            ->withClaim(SSOToken::CLAIM_USER_EXTERNAL_ID, $tokenData[SSOToken::CLAIM_USER_EXTERNAL_ID])
+            ->withClaim(SSOToken::CLAIM_USER_FULL_NAME, $tokenData[SSOToken::CLAIM_USER_FULL_NAME])
+            ->withClaim(SSOToken::CLAIM_USER_FIRST_NAME, $tokenData[SSOToken::CLAIM_USER_FIRST_NAME])
+            ->withClaim(SSOToken::CLAIM_USER_LAST_NAME, $tokenData[SSOToken::CLAIM_USER_LAST_NAME])
+            ->withClaim(SSOToken::CLAIM_USER_ROLE, $tokenData[SSOToken::CLAIM_USER_ROLE])
+            ->withClaim(SSOToken::CLAIM_ENTITY_TYPE, $tokenData[SSOToken::CLAIM_ENTITY_TYPE])
+            ->withClaim(SSOToken::CLAIM_THEME_TEXT_COLOR, $tokenData[SSOToken::CLAIM_THEME_TEXT_COLOR])
+            ->withClaim(SSOToken::CLAIM_THEME_BACKGROUND_COLOR, $tokenData[SSOToken::CLAIM_THEME_BACKGROUND_COLOR])
+            ->withClaim(SSOToken::CLAIM_USER_LOCALE, $tokenData[SSOToken::CLAIM_USER_LOCALE])
+            ->withClaim(SSOToken::CLAIM_USER_TAGS, $tokenData[SSOToken::CLAIM_USER_TAGS])
+            ->withClaim(SSOToken::CLAIM_BRANCH_ID, $tokenData[SSOToken::CLAIM_BRANCH_ID])
+            ->withClaim(SSOToken::CLAIM_BRANCH_SLUG, $tokenData[SSOToken::CLAIM_BRANCH_SLUG])
+            ->withClaim(SSOToken::CLAIM_SESSION_ID, $tokenData[SSOToken::CLAIM_SESSION_ID])
+            ->getToken();
 	}
 
 	/**
@@ -137,7 +132,7 @@ class SSOTokenTest extends TestCase
 
 		$mock = $this->getMockBuilder($this->classname)
 			->disableOriginalConstructor()
-			->setMethods(array('parseToken'))
+			->onlyMethods(array('parseToken'))
 			->getMock();
 
         $this->expectException(SSOException::class);
@@ -159,7 +154,7 @@ class SSOTokenTest extends TestCase
 
 		$mock = $this->getMockBuilder($this->classname)
 			->disableOriginalConstructor()
-			->setMethods(array('parseToken'))
+			->onlyMethods(array('parseToken'))
 			->getMock();
 
         $this->expectException(SSOException::class);
@@ -181,7 +176,7 @@ class SSOTokenTest extends TestCase
 
         $mock = $this->getMockBuilder($this->classname)
             ->disableOriginalConstructor()
-            ->setMethods(array('parseToken'))
+            ->onlyMethods(array('parseToken'))
             ->getMock();
 
         $this->expectException(SSOException::class);
