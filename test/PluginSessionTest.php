@@ -246,9 +246,10 @@ class PluginSessionTest extends TestCase
 		$newToken = SSOTokenTest::createSignedTokenFromData($this->privateKey, $tokenData);
 
 		$this->setupEnvironment(null, $newToken, false);
-		$newSession = new $mock($this->pluginId, $this->publicKey);
 
         /** @var PluginSession $newSession */
+		$newSession = new $mock($this->pluginId, $this->publicKey);
+
 		$this->assertEquals($newSession->getRole(), $tokenData[PluginSession::CLAIM_USER_ROLE]);
 		$this->assertEquals($session->getRole(), $newSession->getRole());
 	}
