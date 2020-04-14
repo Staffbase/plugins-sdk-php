@@ -15,8 +15,6 @@
 namespace Staffbase\plugins\sdk;
 
 use SessionHandlerInterface;
-use Staffbase\plugins\sdk\SSOData;
-use Staffbase\plugins\sdk\SSOToken;
 use Staffbase\plugins\sdk\Exceptions\SSOException;
 use Staffbase\plugins\sdk\Exceptions\SSOAuthenticationException;
 use Staffbase\plugins\sdk\RemoteCall\RemoteCallInterface;
@@ -35,12 +33,12 @@ class PluginSession extends SSOData
 	const KEY_DATA = 'data';
 
 	/**
-	 * @var $pluginInstanceId the id of the currently used instance.
+	 * @var String $pluginInstanceId the id of the currently used instance.
 	 */
 	private $pluginInstanceId  = null;
 
 	/**
-	 * @var $userView flag for userView mode.
+	 * @var boolean $userView flag for userView mode.
 	 */
 	private $userView = true;
 
@@ -54,9 +52,9 @@ class PluginSession extends SSOData
 	 *
 	 * @param string $pluginId the unique name of the plugin
 	 * @param string $appSecret application public key
-	 * @param $sessionHandler optional custom session handler
-	 * @param $leeway in seconds to compensate clock skew
-	 * @param $remoteCallHandler a class handling remote calls
+	 * @param SessionHandlerInterface $sessionHandler optional custom session handler
+	 * @param int $leeway in seconds to compensate clock skew
+	 * @param RemoteCallInterface $remoteCallHandler a class handling remote calls
 	 *
 	 * @throws SSOAuthenticationException | SSOException
 	 */

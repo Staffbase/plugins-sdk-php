@@ -13,7 +13,6 @@
  */
 namespace Staffbase\plugins\test;
 
-use Exception;
 use ReflectionClass;
 use phpseclib\Crypt\RSA;
 use PHPUnit\Framework\TestCase;
@@ -248,6 +247,7 @@ class PluginSessionTest extends TestCase
         /** @var PluginSession $newSession */
         $newSession = new $mock($this->pluginId, $this->publicKey);
 
+        /** @var PluginSession $newSession */
 		$this->assertEquals($newSession->getRole(), $tokenData[PluginSession::CLAIM_USER_ROLE]);
 		$this->assertEquals($session->getRole(), $newSession->getRole());
 	}

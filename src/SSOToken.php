@@ -14,11 +14,11 @@
 
 namespace Staffbase\plugins\sdk;
 
+use Lcobucci\JWT\Token;
 use Lcobucci\JWT\Parser;
-use Lcobucci\JWT\Builder;
+use Lcobucci\JWT\Signer\Key;
 use Lcobucci\JWT\ValidationData;
 use Lcobucci\JWT\Claim\Validatable;
-use Lcobucci\JWT\Signer\Keychain;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
 use Staffbase\plugins\sdk\Exceptions\SSOException;
 use Staffbase\plugins\sdk\Exceptions\SSOAuthenticationException;
@@ -30,7 +30,7 @@ use Staffbase\plugins\sdk\Exceptions\SSOAuthenticationException;
 class SSOToken extends SSOData
 {
 	/**
-	 * @var $token  Lcobucci\JWT\Token
+	 * @var Token $token
 	 */
 	private $token = null;
 
@@ -77,9 +77,9 @@ class SSOToken extends SSOData
 
 		// verify signature
 		$signer = new Sha256();
-		$keychain = new Keychain();
+		$key = new Key($appSecret);
 
-		if (!$this->token->verify($signer, $keychain->getPublicKey($appSecret)))
+		if (!$this->token->verify($signer, $key))
 			throw new SSOAuthenticationException('Token verification failed.');
 
 		// validate claims
@@ -125,7 +125,7 @@ class SSOToken extends SSOData
 	 * by using then supported verbosity or reimplementing validation
 	 * as done in the new flow.
 	 *
-	 * @param Lcobucci\JWT\ValidationData $data to validate against
+	 * @param ValidationData $data to validate against
 	 *
 	 * @throws SSOAuthenticationException always.
 	 */
