@@ -35,6 +35,8 @@ class SSOTokenTest extends TestCase
 	 * Constructor
 	 *
 	 * Creates an RSA-256 key pair.
+     *
+     * @return void
 	 */
 	public function setUp(): void {
 
@@ -81,6 +83,7 @@ class SSOTokenTest extends TestCase
 			->set(SSOToken::CLAIM_USER_TAGS, $tokenData[SSOToken::CLAIM_USER_TAGS])
 			->set(SSOToken::CLAIM_BRANCH_ID, $tokenData[SSOToken::CLAIM_BRANCH_ID])
 			->set(SSOToken::CLAIM_BRANCH_SLUG, $tokenData[SSOToken::CLAIM_BRANCH_SLUG])
+            ->set(SSOToken::CLAIM_SESSION_ID, $tokenData[SSOToken::CLAIM_SESSION_ID])
 			->sign($signer, $keychain->getPrivateKey($privateKey))
 			->getToken();
 
@@ -117,6 +120,7 @@ class SSOTokenTest extends TestCase
 			->set(SSOToken::CLAIM_USER_TAGS, $tokenData[SSOToken::CLAIM_USER_TAGS])
 			->set(SSOToken::CLAIM_BRANCH_ID, $tokenData[SSOToken::CLAIM_BRANCH_ID])
 			->set(SSOToken::CLAIM_BRANCH_SLUG, $tokenData[SSOToken::CLAIM_BRANCH_SLUG])
+            ->set(SSOToken::CLAIM_SESSION_ID, $tokenData[SSOToken::CLAIM_SESSION_ID])
 			->getToken();
 
 		return $token;
@@ -332,6 +336,7 @@ class SSOTokenTest extends TestCase
 	 * @covers \Staffbase\plugins\sdk\SSOToken::getClaim()
 	 * @covers \Staffbase\plugins\sdk\SSOToken::getBranchId()
 	 * @covers \Staffbase\plugins\sdk\SSOToken::getBranchSlug()
+     * @covers \Staffbase\plugins\sdk\SSOData::getSessionId()
 	 */
 	public function testAccessorsGiveCorrectValues() {
 
