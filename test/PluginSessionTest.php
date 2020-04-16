@@ -16,6 +16,7 @@ namespace Staffbase\plugins\test;
 use ReflectionClass;
 use phpseclib\Crypt\RSA;
 use PHPUnit\Framework\TestCase;
+use SessionHandlerInterface;
 use Staffbase\plugins\sdk\Exceptions\SSOAuthenticationException;
 use Staffbase\plugins\sdk\Exceptions\SSOException;
 use Staffbase\plugins\sdk\PluginSession;
@@ -467,6 +468,43 @@ class PluginSessionTest extends TestCase
         $this->assertEquals(PHP_SESSION_ACTIVE, session_status());
 
         $this->assertEquals($sessionId, session_id());
+    }
+
+    public function testDestroyOtherSession() {
+
+        $sessionHash = 'HOjLTR6+D5YIY0/waqJQp3Bg=';
+        $sessionId = 'HOjLTR6-D5YIY0-waqJQp3Bg-';
+
+        $tokenData = $this->tokenData;
+        $tokenData[PluginSession::CLAIM_SESSION_ID] = $sessionHash;
+        $token = SSOTokenTest::createSignedTokenFromData($this->privateKey, $tokenData);
+
+        // successfull remote call handler mock
+        $handler = $this->getMockBuilder(SessionHandlerInterface::class)
+            ->setMethodsExcept()
+            ->getMock();
+
+        $handler->method('close')->willReturn(true);
+        $handler->method('destroy')->willReturn(true);
+        $handler->method('open')->willReturn(true);
+        $handler->method('write')->willReturn(true);
+        $handler->method('read')->willReturn($sessionId);
+
+        $this->setupEnvironment(null, $token, true);
+
+        /** @var SessionHandlerInterface $handler */
+        new PluginSession($this->pluginId, $this->publicKey);
+
+        $this->setupEnvironment(null, $this->token, false);
+
+        /** @var PluginSession $session */
+        $session = new PluginSession($this->pluginId, $this->publicKey, $handler);
+
+        $handler->expects($this->once())
+            ->method('destroy')
+            ->with($sessionId);
+
+        $session->destroySession($sessionHash);
     }
 
 }

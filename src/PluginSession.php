@@ -284,4 +284,24 @@ class PluginSession extends SSOData
 		return $this->userView;
 	}
 
+    /**
+     * Destroy the session with the given id
+     *
+     * @param String $sessionId
+     * @return bool true on success or false on failure.
+     */
+    public function destroySession(String $sessionId) {
+        $currentId = session_id();
+        session_write_close();
+
+        session_id($this->createCompatibleSessionId($sessionId));
+        session_start();
+        $result = session_destroy();
+
+        session_id($currentId);
+        session_start();
+
+        return $result;
+    }
+
 }
