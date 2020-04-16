@@ -63,8 +63,11 @@ class PluginSessionTest extends TestCase
 		$_GET[PluginSession::QUERY_PARAM_PID] = $queryParamPid;
 		$_GET[PluginSession::QUERY_PARAM_JWT] = $queryParamJwt;
 
-		if($clearSession)
-			$_SESSION = [];
+		if($clearSession) {
+		    session_write_close();
+            session_abort();
+            $_SESSION = [];
+        }
 	}
 
 	/**
@@ -415,5 +418,55 @@ class PluginSessionTest extends TestCase
 
 		new $Session($this->pluginId, $this->publicKey, null, 0, $handler);
 	}
+
+    /**
+     * @test
+     *
+     * Test that a session is created.
+     *
+     * @covers \Staffbase\plugins\sdk\PluginSession::__construct
+     */
+	public function testSessionIsCreated() {
+        $tokenData = $this->tokenData;
+		$this->setupEnvironment(null, $this->token, true);
+
+		$mock = $this->getMockBuilder($this->classname)
+			->disableOriginalConstructor()
+			->getMock();
+
+		$reflectedClass = new ReflectionClass($this->classname);
+		$constructor = $reflectedClass->getConstructor();
+
+		$this->assertEquals(PHP_SESSION_NONE, session_status());
+        $constructor->invoke($mock, $this->pluginId, $this->publicKey);
+        $this->assertEquals(PHP_SESSION_ACTIVE, session_status());
+
+        $this->assertEquals($tokenData[PluginSession::CLAIM_SESSION_ID], session_id());
+    }
+
+    public function testSessionIdCheck() {
+
+	    $sessionHash = 'HOjLTR6+D5YIY0/waqJQp3Bg=';
+	    $sessionId = 'HOjLTR6-D5YIY0-waqJQp3Bg-';
+
+        $tokenData = $this->tokenData;
+        $tokenData[PluginSession::CLAIM_SESSION_ID] = $sessionHash;
+        $token = SSOTokenTest::createSignedTokenFromData($this->privateKey, $tokenData);
+
+        $this->setupEnvironment(null, $token, true);
+
+        $mock = $this->getMockBuilder($this->classname)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $reflectedClass = new ReflectionClass($this->classname);
+        $constructor = $reflectedClass->getConstructor();
+
+        $this->assertEquals(PHP_SESSION_NONE, session_status());
+        $constructor->invoke($mock, $this->pluginId, $this->publicKey);
+        $this->assertEquals(PHP_SESSION_ACTIVE, session_status());
+
+        $this->assertEquals($sessionId, session_id());
+    }
 
 }

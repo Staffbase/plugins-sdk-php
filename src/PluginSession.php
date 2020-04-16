@@ -149,6 +149,12 @@ class PluginSession extends SSOData
         $this->exitRemoteCall();
     }
 
+    private function createCompatibleSessionId(String $string): String
+    {
+        $allowedChars = '/[^a-zA-Z0-9,-]/';
+        return preg_replace($allowedChars, '-', $string);
+    }
+
 	/**
 	 * Exit the script
 	 *
@@ -166,9 +172,11 @@ class PluginSession extends SSOData
      */
 	protected function openSession($name) {
 
+	    $sessionId = $this->createCompatibleSessionId($this->sso->getSessionId());
+
+	    session_id($sessionId);
 		session_name($name);
 		session_start();
-
 	}
 
 	/**
@@ -183,7 +191,7 @@ class PluginSession extends SSOData
 	 * (DEPRECATED) Translate a base64 string to PEM encoded public key.
 	 *
 	 * @param string $data base64 encoded key
-	 *
+	 * @deprecated
 	 * @return string PEM encoded key
 	 */
 	public static function base64ToPEMPublicKey($data) {
