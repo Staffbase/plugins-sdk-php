@@ -65,10 +65,10 @@ class PluginSessionTest extends TestCase
 		$_GET[PluginSession::QUERY_PARAM_JWT] = $queryParamJwt;
 
 		if($clearSession) {
-		    session_write_close();
-            session_abort();
-            $_SESSION = [];
-        }
+			session_write_close();
+			session_abort();
+			$_SESSION = [];
+		}
 	}
 
 	/**
@@ -417,15 +417,15 @@ class PluginSessionTest extends TestCase
 		new $Session($this->pluginId, $this->publicKey, null, 0, $handler);
 	}
 
-    /**
-     * @test
-     *
-     * Test that a session is created.
-     *
-     * @covers \Staffbase\plugins\sdk\PluginSession::__construct
-     */
+	/**
+	 * @test
+	 *
+	 * Test that a session is created.
+	 *
+	 * @covers \Staffbase\plugins\sdk\PluginSession::__construct
+	 */
 	public function testSessionIsCreated() {
-        $tokenData = $this->tokenData;
+		$tokenData = $this->tokenData;
 		$this->setupEnvironment(null, $this->token, true);
 
 		$mock = $this->getMockBuilder($this->classname)
@@ -436,72 +436,72 @@ class PluginSessionTest extends TestCase
 		$constructor = $reflectedClass->getConstructor();
 
 		$this->assertEquals(PHP_SESSION_NONE, session_status());
-        $constructor->invoke($mock, $this->pluginId, $this->publicKey);
-        $this->assertEquals(PHP_SESSION_ACTIVE, session_status());
+		$constructor->invoke($mock, $this->pluginId, $this->publicKey);
+		$this->assertEquals(PHP_SESSION_ACTIVE, session_status());
 
-        $this->assertEquals($tokenData[PluginSession::CLAIM_SESSION_ID], session_id());
-    }
+		$this->assertEquals($tokenData[PluginSession::CLAIM_SESSION_ID], session_id());
+	}
 
-    public function testSessionIdCheck() {
+	public function testSessionIdCheck() {
 
-	    $sessionHash = 'HOjLTR6+D5YIY0/waqJQp3Bg=';
-	    $sessionId = 'HOjLTR6-D5YIY0-waqJQp3Bg-';
+		$sessionHash = 'HOjLTR6+D5YIY0/waqJQp3Bg=';
+		$sessionId = 'HOjLTR6-D5YIY0-waqJQp3Bg-';
 
-        $tokenData = $this->tokenData;
-        $tokenData[PluginSession::CLAIM_SESSION_ID] = $sessionHash;
-        $token = SSOTokenTest::createSignedTokenFromData($this->privateKey, $tokenData);
+		$tokenData = $this->tokenData;
+		$tokenData[PluginSession::CLAIM_SESSION_ID] = $sessionHash;
+		$token = SSOTokenTest::createSignedTokenFromData($this->privateKey, $tokenData);
 
-        $this->setupEnvironment(null, $token, true);
+		$this->setupEnvironment(null, $token, true);
 
-        $mock = $this->getMockBuilder($this->classname)
-            ->disableOriginalConstructor()
-            ->getMock();
+		$mock = $this->getMockBuilder($this->classname)
+			->disableOriginalConstructor()
+			->getMock();
 
-        $reflectedClass = new ReflectionClass($this->classname);
-        $constructor = $reflectedClass->getConstructor();
+		$reflectedClass = new ReflectionClass($this->classname);
+		$constructor = $reflectedClass->getConstructor();
 
-        $this->assertEquals(PHP_SESSION_NONE, session_status());
-        $constructor->invoke($mock, $this->pluginId, $this->publicKey);
-        $this->assertEquals(PHP_SESSION_ACTIVE, session_status());
+		$this->assertEquals(PHP_SESSION_NONE, session_status());
+		$constructor->invoke($mock, $this->pluginId, $this->publicKey);
+		$this->assertEquals(PHP_SESSION_ACTIVE, session_status());
 
-        $this->assertEquals($sessionId, session_id());
-    }
+		$this->assertEquals($sessionId, session_id());
+	}
 
-    public function testDestroyOtherSession() {
+	public function testDestroyOtherSession() {
 
-        $sessionHash = 'HOjLTR6+D5YIY0/waqJQp3Bg=';
-        $sessionId = 'HOjLTR6-D5YIY0-waqJQp3Bg-';
+		$sessionHash = 'HOjLTR6+D5YIY0/waqJQp3Bg=';
+		$sessionId = 'HOjLTR6-D5YIY0-waqJQp3Bg-';
 
-        $tokenData = $this->tokenData;
-        $tokenData[PluginSession::CLAIM_SESSION_ID] = $sessionHash;
-        $token = SSOTokenTest::createSignedTokenFromData($this->privateKey, $tokenData);
+		$tokenData = $this->tokenData;
+		$tokenData[PluginSession::CLAIM_SESSION_ID] = $sessionHash;
+		$token = SSOTokenTest::createSignedTokenFromData($this->privateKey, $tokenData);
 
-        // successfull remote call handler mock
-        $handler = $this->getMockBuilder(SessionHandlerInterface::class)
-            ->setMethodsExcept()
-            ->getMock();
+		// successfull remote call handler mock
+		$handler = $this->getMockBuilder(SessionHandlerInterface::class)
+			->setMethodsExcept()
+			->getMock();
 
-        $handler->method('close')->willReturn(true);
-        $handler->method('destroy')->willReturn(true);
-        $handler->method('open')->willReturn(true);
-        $handler->method('write')->willReturn(true);
-        $handler->method('read')->willReturn($sessionId);
+		$handler->method('close')->willReturn(true);
+		$handler->method('destroy')->willReturn(true);
+		$handler->method('open')->willReturn(true);
+		$handler->method('write')->willReturn(true);
+		$handler->method('read')->willReturn($sessionId);
 
-        $this->setupEnvironment(null, $token, true);
+		$this->setupEnvironment(null, $token, true);
 
-        /** @var SessionHandlerInterface $handler */
-        new PluginSession($this->pluginId, $this->publicKey);
+		/** @var SessionHandlerInterface $handler */
+		new PluginSession($this->pluginId, $this->publicKey);
 
-        $this->setupEnvironment(null, $this->token, false);
+		$this->setupEnvironment(null, $this->token, false);
 
-        /** @var PluginSession $session */
-        $session = new PluginSession($this->pluginId, $this->publicKey, $handler);
+		/** @var PluginSession $session */
+		$session = new PluginSession($this->pluginId, $this->publicKey, $handler);
 
-        $handler->expects($this->once())
-            ->method('destroy')
-            ->with($sessionId);
+		$handler->expects($this->once())
+			->method('destroy')
+			->with($sessionId);
 
-        $session->destroySession($sessionHash);
-    }
+		$session->destroySession($sessionHash);
+	}
 
 }

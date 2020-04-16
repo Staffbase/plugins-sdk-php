@@ -42,9 +42,9 @@ class PluginSession extends SSOData
 	 */
 	private $userView = true;
 
-    /**
-     * @var SSOToken token data from the parsed jwt
-     */
+	/**
+	 * @var SSOToken token data from the parsed jwt
+	 */
 	private $sso = null;
 
 	/**
@@ -93,24 +93,24 @@ class PluginSession extends SSOData
 			$this->pluginInstanceId = $this->sso->getInstanceId();
 		}
 
-        // dispatch remote calls from Staffbase
-        if ($this->sso) {
-            $this->deleteInstance($remoteCallHandler);
-        }
+		// dispatch remote calls from Staffbase
+		if ($this->sso) {
+			$this->deleteInstance($remoteCallHandler);
+		}
 
 		// decide if we are in user view or not
-        $this->userView = !$this->isAdminView();
+		$this->userView = !$this->isAdminView();
 
-        $this->openSession($pluginId);
+		$this->openSession($pluginId);
 
-        if ($this->sso !== null) {
-            $_SESSION[$this->pluginInstanceId][self::KEY_SSO] = $this->sso->getData();
-        }
+		if ($this->sso !== null) {
+			$_SESSION[$this->pluginInstanceId][self::KEY_SSO] = $this->sso->getData();
+		}
 
-        // requests with spoofed PID are not allowed
-        if (!isset($_SESSION[$this->pluginInstanceId][self::KEY_SSO])
-            || empty($_SESSION[$this->pluginInstanceId][self::KEY_SSO]))
-            throw new SSOAuthenticationException('Tried to access an instance without previous authentication.');
+		// requests with spoofed PID are not allowed
+		if (!isset($_SESSION[$this->pluginInstanceId][self::KEY_SSO])
+			|| empty($_SESSION[$this->pluginInstanceId][self::KEY_SSO]))
+			throw new SSOAuthenticationException('Tried to access an instance without previous authentication.');
 	}
 
 	/**
@@ -122,38 +122,38 @@ class PluginSession extends SSOData
 	}
 
 	private function isAdminView() {
-        return $this->isEditor() && (!isset($_GET[self::QUERY_PARAM_USERVIEW]) || $_GET[self::QUERY_PARAM_USERVIEW] !== 'true');
-    }
+		return $this->isEditor() && (!isset($_GET[self::QUERY_PARAM_USERVIEW]) || $_GET[self::QUERY_PARAM_USERVIEW] !== 'true');
+	}
 
 	private function deleteInstance($remoteCallHandler){
-        if (!$this->sso->isDeleteInstanceCall() || !$remoteCallHandler) {
-            return;
-        }
+		if (!$this->sso->isDeleteInstanceCall() || !$remoteCallHandler) {
+			return;
+		}
 
-        $instanceId = $this->sso->getInstanceId();
+		$instanceId = $this->sso->getInstanceId();
 
-        if ($remoteCallHandler instanceOf DeleteInstanceCallHandlerInterface) {
-            $result = $remoteCallHandler->deleteInstance($instanceId);
-        } else {
-            // we will accept unhandled calls with a warning
-            $result = true;
-            error_log("Warning: An instance deletion call for instance $instanceId was not handled.");
-        }
+		if ($remoteCallHandler instanceOf DeleteInstanceCallHandlerInterface) {
+			$result = $remoteCallHandler->deleteInstance($instanceId);
+		} else {
+			// we will accept unhandled calls with a warning
+			$result = true;
+			error_log("Warning: An instance deletion call for instance $instanceId was not handled.");
+		}
 
-        // finish the remote call
-        if($result)
-            $remoteCallHandler->exitSuccess();
-        else
-            $remoteCallHandler->exitFailure();
+		// finish the remote call
+		if($result)
+			$remoteCallHandler->exitSuccess();
+		else
+			$remoteCallHandler->exitFailure();
 
-        $this->exitRemoteCall();
-    }
+		$this->exitRemoteCall();
+	}
 
-    private function createCompatibleSessionId(String $string): String
-    {
-        $allowedChars = '/[^a-zA-Z0-9,-]/';
-        return preg_replace($allowedChars, '-', $string);
-    }
+	private function createCompatibleSessionId(String $string): String
+	{
+		$allowedChars = '/[^a-zA-Z0-9,-]/';
+		return preg_replace($allowedChars, '-', $string);
+	}
 
 	/**
 	 * Exit the script
@@ -165,16 +165,16 @@ class PluginSession extends SSOData
 		exit;
 	}
 
-    /**
-     * Open a session.
-     *
-     * @param string $name of the session
-     */
+	/**
+	 * Open a session.
+	 *
+	 * @param string $name of the session
+	 */
 	protected function openSession($name) {
 
-	    $sessionId = $this->createCompatibleSessionId($this->sso->getSessionId());
+		$sessionId = $this->createCompatibleSessionId($this->sso->getSessionId());
 
-	    session_id($sessionId);
+		session_id($sessionId);
 		session_name($name);
 		session_start();
 	}
@@ -196,7 +196,7 @@ class PluginSession extends SSOData
 	 */
 	public static function base64ToPEMPublicKey($data) {
 
-		error_log("Warning: PluginSession::base64ToPEMPublicKey() is deprecated. Please switch over to  SSOToken::base64ToPEMPublicKey().");
+		error_log("Warning: PluginSession::base64ToPEMPublicKey() is deprecated. Please switch over to	SSOToken::base64ToPEMPublicKey().");
 
 		return SSOToken::base64ToPEMPublicKey($data);
 	}
@@ -284,24 +284,24 @@ class PluginSession extends SSOData
 		return $this->userView;
 	}
 
-    /**
-     * Destroy the session with the given id
-     *
-     * @param String $sessionId
-     * @return bool true on success or false on failure.
-     */
-    public function destroySession(String $sessionId) {
-        $currentId = session_id();
-        session_write_close();
+	/**
+	 * Destroy the session with the given id
+	 *
+	 * @param String $sessionId
+	 * @return bool true on success or false on failure.
+	 */
+	public function destroySession(String $sessionId) {
+		$currentId = session_id();
+		session_write_close();
 
-        session_id($this->createCompatibleSessionId($sessionId));
-        session_start();
-        $result = session_destroy();
+		session_id($this->createCompatibleSessionId($sessionId));
+		session_start();
+		$result = session_destroy();
 
-        session_id($currentId);
-        session_start();
+		session_id($currentId);
+		session_start();
 
-        return $result;
-    }
+		return $result;
+	}
 
 }
