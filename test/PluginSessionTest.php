@@ -501,7 +501,49 @@ class PluginSessionTest extends TestCase
 			->method('destroy')
 			->with($sessionId);
 
+		$handler->expects($this->exactly(2))
+            ->method('write')
+            ->with($this->logicalOr(
+                $this->equalTo($sessionId),
+                $this->equalTo($this->tokenData[PluginSession::CLAIM_SESSION_ID])
+            ));
+
+        $handler->expects($this->exactly(2))
+            ->method('open');
+
 		$session->destroySession($sessionHash);
 	}
 
+    public function testDestroyOwnSession() {
+
+	    $sessionId = $this->tokenData[PluginSession::CLAIM_SESSION_ID];
+        $this->setupEnvironment(null, $this->token, false);
+
+        // successfull remote call handler mock
+        $handler = $this->getMockBuilder(SessionHandlerInterface::class)
+            ->setMethodsExcept()
+            ->getMock();
+
+        $handler->method('close')->willReturn(true);
+        $handler->method('destroy')->willReturn(true);
+        $handler->method('open')->willReturn(true);
+        $handler->method('write')->willReturn(true);
+        $handler->method('read')->willReturn($sessionId);
+
+        /** @var PluginSession $session */
+        $session = new PluginSession($this->pluginId, $this->publicKey, $handler);
+
+        $handler->expects($this->once())
+            ->method('destroy')
+            ->with($sessionId);
+
+        $handler->expects($this->once())
+            ->method('write')
+            ->with($sessionId);
+
+        $handler->expects($this->once())
+            ->method('open');
+
+        $session->destroySession($sessionId);
+    }
 }
