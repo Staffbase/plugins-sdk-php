@@ -27,6 +27,7 @@ class PluginSession extends SSOData
 {
 	const QUERY_PARAM_JWT = 'jwt';
 	const QUERY_PARAM_PID = 'pid';
+	const QUERY_PARAM_SID = 'sessionID';
 	const QUERY_PARAM_USERVIEW = 'userView';
 
 	const KEY_SSO  = 'sso';
@@ -36,6 +37,11 @@ class PluginSession extends SSOData
 	 * @var String $pluginInstanceId the id of the currently used instance.
 	 */
 	private $pluginInstanceId  = null;
+
+	/**
+	 * @var String $sessionId the id of the current session.
+	 */
+	private $sessionId = null;
 
 	/**
 	 * @var boolean $userView flag for userView mode.
@@ -72,6 +78,7 @@ class PluginSession extends SSOData
 
 		$pid = isset($_GET[self::QUERY_PARAM_PID]) ? $_GET[self::QUERY_PARAM_PID] : null;
 		$jwt = isset($_GET[self::QUERY_PARAM_JWT]) ? $_GET[self::QUERY_PARAM_JWT] : null;
+		$sid = isset($_GET[self::QUERY_PARAM_SID]) ? $_GET[self::QUERY_PARAM_SID] : null;
 
 		// lets hint to bad class usage, as these cases should never happen.
 		if($pid && $jwt) {
@@ -83,14 +90,15 @@ class PluginSession extends SSOData
 		}
 
 		$this->pluginInstanceId = $pid;
+		$this->sessionId = $sid;
 
 		// we update the SSO info every time we get a token
 		if ($jwt) {
 			// decrypt the token
 			$this->sso = new SSOToken($appSecret, $jwt, $leeway);
 
-			// update data
 			$this->pluginInstanceId = $this->sso->getInstanceId();
+			$this->sessionId = $this->sso->getSessionId();
 		}
 
 		// dispatch remote calls from Staffbase
@@ -98,14 +106,14 @@ class PluginSession extends SSOData
 			$this->deleteInstance($remoteCallHandler);
 		}
 
-		// decide if we are in user view or not
-		$this->userView = !$this->isAdminView();
-
 		$this->openSession($pluginId);
 
 		if ($this->sso !== null) {
 			$_SESSION[$this->pluginInstanceId][self::KEY_SSO] = $this->sso->getData();
 		}
+
+		// decide if we are in user view or not
+		$this->userView = !$this->isAdminView();
 
 		// requests with spoofed PID are not allowed
 		if (!isset($_SESSION[$this->pluginInstanceId][self::KEY_SSO])
@@ -170,9 +178,9 @@ class PluginSession extends SSOData
 	 *
 	 * @param string $name of the session
 	 */
-	protected function openSession($name) {
+	protected function openSession(string $name) {
 
-		$sessionId = $this->createCompatibleSessionId($this->sso->getSessionId());
+		$sessionId = $this->createCompatibleSessionId($this->sessionId);
 
 		session_id($sessionId);
 		session_name($name);
@@ -284,32 +292,32 @@ class PluginSession extends SSOData
 		return $this->userView;
 	}
 
-    /**
-     * Destroy the session with the given id
-     *
-     * @param String $sessionId
-     * @return bool true on success or false on failure.
-     */
-    public function destroySession(String $sessionId = null) {
+	/**
+	 * Destroy the session with the given id
+	 *
+	 * @param String $sessionId
+	 * @return bool true on success or false on failure.
+	 */
+	public function destroySession(String $sessionId = null) {
 
-        $sessionId = $sessionId ?: $this->sso->getSessionId();
+		$sessionId = $sessionId ?: $this->sessionId;
 
-        // save the current session
-        $currentId = session_id();
-        session_write_close();
+		// save the current session
+		$currentId = session_id();
+		session_write_close();
 
-        // switch to the target session and removes it
-        session_id($this->createCompatibleSessionId($sessionId));
-        session_start();
-        $result = session_destroy();
+		// switch to the target session and removes it
+		session_id($this->createCompatibleSessionId($sessionId));
+		session_start();
+		$result = session_destroy();
 
-        // switches back to the original session
-        if ($currentId !== $sessionId) {
-            session_id($currentId);
-            session_start();
-        }
+		// switches back to the original session
+		if ($currentId !== $sessionId) {
+			session_id($currentId);
+			session_start();
+		}
 
-        return $result;
-    }
+		return $result;
+	}
 
 }
