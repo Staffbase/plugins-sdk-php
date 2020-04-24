@@ -52,6 +52,7 @@ class SSODataTest extends TestCase
         $tokenData[SSOData::CLAIM_USER_TAGS] = ['profile:field1:val', 'profile:field2:val'];
         $tokenData[SSOData::CLAIM_BRANCH_ID] = "dev-id";
         $tokenData[SSOData::CLAIM_BRANCH_SLUG] = "dev-slug";
+        $tokenData[SSOData::CLAIM_SESSION_ID] = "session-id";
 
         return $tokenData;
     }
@@ -86,6 +87,7 @@ class SSODataTest extends TestCase
         $accessors[SSOData::CLAIM_USER_TAGS] = 'getTags';
         $accessors[SSOData::CLAIM_BRANCH_ID] = "getBranchId";
         $accessors[SSOData::CLAIM_BRANCH_SLUG] = "getBranchSlug";
+        $accessors[SSOData::CLAIM_SESSION_ID] = 'getSessionId';
 
         return $accessors;
     }
@@ -115,6 +117,7 @@ class SSODataTest extends TestCase
      * @covers \Staffbase\plugins\sdk\SSOData::getTags()
      * @covers \Staffbase\plugins\sdk\SSOData::getBranchId()
      * @covers \Staffbase\plugins\sdk\SSOData::getTags()
+     * @covers \Staffbase\plugins\sdk\SSOData::getSessionId()
      */
     public function testAccessorsGiveCorrectValues()
     {

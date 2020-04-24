@@ -25,6 +25,7 @@ abstract class SSOData
     const CLAIM_NOT_BEFORE             = 'nbf';
     const CLAIM_ISSUED_AT              = 'iat';
     const CLAIM_ISSUER                 = 'iss';
+    const CLAIM_SESSION_ID             = 'sid';
     const CLAIM_INSTANCE_ID            = 'instance_id';
     const CLAIM_INSTANCE_NAME          = 'instance_name';
     const CLAIM_BRANCH_ID              = 'branch_id';
@@ -81,7 +82,7 @@ abstract class SSOData
      */
     protected function getClaimSafe($name) {
 
-        if ($this->hasClaim($name)) 
+        if ($this->hasClaim($name))
             return $this->getClaim($name);
 
         return null;
@@ -157,6 +158,18 @@ abstract class SSOData
     public function getBranchSlug() {
 
         return $this->getClaimSafe(self::CLAIM_BRANCH_SLUG);
+    }
+
+    /**
+     * Get the cipher of the session id for the session the token was issued.
+     *
+     * The id will always be present.
+     *
+     * @return string
+     */
+    public function getSessionId() {
+
+        return $this->getClaimSafe(self::CLAIM_SESSION_ID);
     }
 
     /**
