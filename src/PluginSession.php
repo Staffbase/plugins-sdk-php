@@ -90,7 +90,7 @@ class PluginSession extends SSOData
 		}
 
 		$this->pluginInstanceId = $pid;
-		$this->sessionId = $sid;
+		$this->sessionId = $sid ?: $pid;
 
 		// we update the SSO info every time we get a token
 		if ($jwt) {
@@ -98,7 +98,7 @@ class PluginSession extends SSOData
 			$this->sso = new SSOToken($appSecret, $jwt, $leeway);
 
 			$this->pluginInstanceId = $this->sso->getInstanceId();
-			$this->sessionId = $this->sso->getSessionId();
+			$this->sessionId = $this->sso->getSessionId() ?: $this->sso->getInstanceId();
 		}
 
 		// dispatch remote calls from Staffbase
