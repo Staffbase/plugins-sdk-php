@@ -76,9 +76,9 @@ class PluginSession extends SSOData
 			session_set_save_handler($sessionHandler, true);
 
 
-		$pid = isset($_GET[self::QUERY_PARAM_PID]) ? $_GET[self::QUERY_PARAM_PID] : null;
-		$jwt = isset($_GET[self::QUERY_PARAM_JWT]) ? $_GET[self::QUERY_PARAM_JWT] : null;
-		$sid = isset($_GET[self::QUERY_PARAM_SID]) ? $_GET[self::QUERY_PARAM_SID] : null;
+		$pid = isset($_REQUEST[self::QUERY_PARAM_PID]) ? $_REQUEST[self::QUERY_PARAM_PID] : null;
+		$jwt = isset($_REQUEST[self::QUERY_PARAM_JWT]) ? $_REQUEST[self::QUERY_PARAM_JWT] : null;
+		$sid = isset($_REQUEST[self::QUERY_PARAM_SID]) ? $_REQUEST[self::QUERY_PARAM_SID] : null;
 
 		// lets hint to bad class usage, as these cases should never happen.
 		if($pid && $jwt) {
