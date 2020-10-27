@@ -61,8 +61,8 @@ class PluginSessionTest extends TestCase
 	 */
 	private function setupEnvironment($queryParamPid = null, $queryParamJwt = null, $clearSession = true) {
 
-		$_GET[PluginSession::QUERY_PARAM_PID] = $queryParamPid;
-		$_GET[PluginSession::QUERY_PARAM_JWT] = $queryParamJwt;
+		$_REQUEST[PluginSession::QUERY_PARAM_PID] = $queryParamPid;
+		$_REQUEST[PluginSession::QUERY_PARAM_JWT] = $queryParamJwt;
 
 		if($clearSession) {
 			session_write_close();
