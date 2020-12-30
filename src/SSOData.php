@@ -1,12 +1,12 @@
 <?php
 /**
  * SSO data implementation, based on this doc:
- * https://developers.staffbase.com/api/plugin-sso/
+ * https://developers.staffbase.com/guide/customplugin-overview
  *
  * PHP version 5.5.9
  *
  * @category  Authentication
- * @copyright 2017-2019 Staffbase, GmbH.
+ * @copyright 2017-2020 Staffbase, GmbH.
  * @author    Vitaliy Ivanov
  * @license   http://www.apache.org/licenses/LICENSE-2.0
  * @link      https://github.com/staffbase/plugins-sdk-php
@@ -20,27 +20,29 @@ namespace Staffbase\plugins\sdk;
  */
 abstract class SSOData
 {
-    const CLAIM_AUDIENCE               = 'aud';
-    const CLAIM_EXPIRE_AT              = 'exp';
-    const CLAIM_NOT_BEFORE             = 'nbf';
-    const CLAIM_ISSUED_AT              = 'iat';
-    const CLAIM_ISSUER                 = 'iss';
-    const CLAIM_SESSION_ID             = 'sid';
-    const CLAIM_INSTANCE_ID            = 'instance_id';
-    const CLAIM_INSTANCE_NAME          = 'instance_name';
-    const CLAIM_BRANCH_ID              = 'branch_id';
-    const CLAIM_BRANCH_SLUG            = 'branch_slug';
-    const CLAIM_USER_ID                = 'sub';
-    const CLAIM_USER_EXTERNAL_ID       = 'external_id';
-    const CLAIM_USER_FULL_NAME         = 'name';
-    const CLAIM_USER_FIRST_NAME        = 'given_name';
-    const CLAIM_USER_LAST_NAME         = 'family_name';
-    const CLAIM_USER_ROLE              = 'role';
-    const CLAIM_ENTITY_TYPE            = 'type';
-    const CLAIM_THEME_TEXT_COLOR       = 'theming_text';
-    const CLAIM_THEME_BACKGROUND_COLOR = 'theming_bg';
-    const CLAIM_USER_LOCALE            = 'locale';
-    const CLAIM_USER_TAGS              = 'tags';
+    const CLAIM_AUDIENCE                    = 'aud';
+    const CLAIM_EXPIRE_AT                   = 'exp';
+    const CLAIM_NOT_BEFORE                  = 'nbf';
+    const CLAIM_ISSUED_AT                   = 'iat';
+    const CLAIM_ISSUER                      = 'iss';
+    const CLAIM_SESSION_ID                  = 'sid';
+    const CLAIM_INSTANCE_ID                 = 'instance_id';
+    const CLAIM_INSTANCE_NAME               = 'instance_name';
+    const CLAIM_BRANCH_ID                   = 'branch_id';
+    const CLAIM_BRANCH_SLUG                 = 'branch_slug';
+    const CLAIM_USER_ID                     = 'sub';
+    const CLAIM_USER_EXTERNAL_ID            = 'external_id';
+    const CLAIM_USER_USERNAME               = 'username';
+    const CLAIM_USER_PRIMARY_EMAIL_ADDRESS  = 'primary_email_address';
+    const CLAIM_USER_FULL_NAME              = 'name';
+    const CLAIM_USER_FIRST_NAME             = 'given_name';
+    const CLAIM_USER_LAST_NAME              = 'family_name';
+    const CLAIM_USER_ROLE                   = 'role';
+    const CLAIM_ENTITY_TYPE                 = 'type';
+    const CLAIM_THEME_TEXT_COLOR            = 'theming_text';
+    const CLAIM_THEME_BACKGROUND_COLOR      = 'theming_bg';
+    const CLAIM_USER_LOCALE                 = 'locale';
+    const CLAIM_USER_TAGS                   = 'tags';
 
     const USER_ROLE_EDITOR = 'editor';
 
@@ -215,6 +217,26 @@ abstract class SSOData
     public function getUserExternalId() {
 
         return $this->getClaimSafe(self::CLAIM_USER_EXTERNAL_ID);
+    }
+
+    /**
+     * Get the username of the user accessing.
+     *
+     * @return null|string
+     */
+    public function getUserUsername() {
+
+        return $this->getClaimSafe(self::CLAIM_USER_USERNAME);
+    }
+
+    /**
+     * Get the primary email address of the user accessing.
+     *
+     * @return null|string
+     */
+    public function getUserPrimaryEmailAddress() {
+
+        return $this->getClaimSafe(self::CLAIM_USER_PRIMARY_EMAIL_ADDRESS);
     }
 
     /**

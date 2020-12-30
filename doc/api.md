@@ -12,6 +12,8 @@
     * [getInstanceName](#getinstancename)
     * [getUserId](#getuserid)
     * [getUserExternalId](#getuserexternalid)
+    * [getUserUsername](#getuserusername)
+    * [getUserPrimaryEmailAddress](#getuserprimaryemailaddress)
     * [getFullName](#getfullname)
     * [getFirstName](#getfirstname)
     * [getLastName](#getlastname)
@@ -43,6 +45,8 @@
     * [getInstanceName](#getinstancename-1)
     * [getUserId](#getuserid-1)
     * [getUserExternalId](#getuserexternalid-1)
+    * [getUserUsername](#getuserusername-1)
+    * [getUserPrimaryEmailAddress](#getuserprimaryemailaddress-1)
     * [getFullName](#getfullname-1)
     * [getFirstName](#getfirstname-1)
     * [getLastName](#getlastname-1)
@@ -206,6 +210,38 @@ PluginSession::getUserExternalId(  ): null|string
 
 Example use case would be to map user from an external store
 to the entry defined in the token.
+
+
+
+
+
+---
+
+### getUserUsername
+
+Get the username of the user accessing.
+
+```php
+PluginSession::getUserUsername(  ): null|string
+```
+
+
+
+
+
+
+
+---
+
+### getUserPrimaryEmailAddress
+
+Get the primary email address of the user accessing.
+
+```php
+PluginSession::getUserPrimaryEmailAddress(  ): null|string
+```
+
+
 
 
 
@@ -729,6 +765,36 @@ SSOToken::getUserExternalId(  ): null|string
 
 Example use case would be to map user from an external store
 to the entry defined in the token.
+
+
+
+
+
+---
+
+### getUserUsername
+
+Get the username of the user accessing.
+
+```php
+SSOToken::getUserUsername(  ): null|string
+```
+
+
+
+
+
+
+---
+
+### getUserPrimaryEmailAddress
+
+Get the primary email address of the user accessing.
+
+```php
+SSOToken::getUserPrimaryEmailAddress(  ): null|string
+```
+
 
 
 

@@ -1,12 +1,12 @@
 <?php
 /**
  * SSO data Test implementation, based on this doc:
- * https://developers.staffbase.com/api/plugin-sso/
+ * https://developers.staffbase.com/guide/customplugin-overview
  *
  * PHP version 5.5.9
  *
  * @category  Authentication
- * @copyright 2017-2019 Staffbase, GmbH.
+ * @copyright 2017-2020 Staffbase, GmbH.
  * @author    Vitaliy Ivanov
  * @license   http://www.apache.org/licenses/LICENSE-2.0
  * @link      https://github.com/staffbase/plugins-sdk-php
@@ -41,6 +41,8 @@ class SSODataTest extends TestCase
         $tokenData[SSOData::CLAIM_INSTANCE_NAME] = 'Our locations';
         $tokenData[SSOData::CLAIM_USER_ID] = '541954c3e4b08bbdce1a340a';
         $tokenData[SSOData::CLAIM_USER_EXTERNAL_ID] = 'jdoe';
+        $tokenData[SSOData::CLAIM_USER_USERNAME] = 'john.doe';
+        $tokenData[SSOData::CLAIM_USER_PRIMARY_EMAIL_ADDRESS] = 'jdoe@email.com';
         $tokenData[SSOData::CLAIM_USER_FULL_NAME] = 'John Doe';
         $tokenData[SSOData::CLAIM_USER_FIRST_NAME] = 'John';
         $tokenData[SSOData::CLAIM_USER_LAST_NAME] = 'Doe';
@@ -76,6 +78,8 @@ class SSODataTest extends TestCase
         $accessors[SSOData::CLAIM_INSTANCE_NAME] = 'getInstanceName';
         $accessors[SSOData::CLAIM_USER_ID] = 'getUserId';
         $accessors[SSOData::CLAIM_USER_EXTERNAL_ID] = 'getUserExternalId';
+        $accessors[SSOData::CLAIM_USER_USERNAME] = 'getUserUsername';
+        $accessors[SSOData::CLAIM_USER_PRIMARY_EMAIL_ADDRESS] = 'getUserPrimaryEmailAddress';
         $accessors[SSOData::CLAIM_USER_FULL_NAME] = 'getFullName';
         $accessors[SSOData::CLAIM_USER_FIRST_NAME] = 'getFirstName';
         $accessors[SSOData::CLAIM_USER_LAST_NAME] = 'getLastName';
@@ -106,6 +110,8 @@ class SSODataTest extends TestCase
      * @covers \Staffbase\plugins\sdk\SSOData::getInstanceName()
      * @covers \Staffbase\plugins\sdk\SSOData::getUserId()
      * @covers \Staffbase\plugins\sdk\SSOData::getUserExternalId()
+     * @covers \Staffbase\plugins\sdk\SSOData::getUserUsername()
+     * @covers \Staffbase\plugins\sdk\SSOData::getUserPrimaryEmailAddress()
      * @covers \Staffbase\plugins\sdk\SSOData::getFullName()
      * @covers \Staffbase\plugins\sdk\SSOData::getFirstName()
      * @covers \Staffbase\plugins\sdk\SSOData::getLastName()
