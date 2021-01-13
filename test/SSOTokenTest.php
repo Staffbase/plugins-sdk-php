@@ -89,6 +89,42 @@ class SSOTokenTest extends TestCase
 	}
 
 	/**
+	 * Create an unsigned token by omitting sign().
+	 *
+	 * @param array $tokenData associative array of claims
+	 *
+	 * @return string Encoded token.
+	 */
+	private static function createUnsignedTokenFromData($tokenData) {
+
+		$config = Configuration::forUnsecuredSigner();
+
+		return ($config->builder())
+			->issuedBy($tokenData[SSOToken::CLAIM_ISSUER])
+			->permittedFor($tokenData[SSOToken::CLAIM_AUDIENCE])
+			->issuedAt($tokenData[SSOToken::CLAIM_ISSUED_AT])
+			->canOnlyBeUsedAfter($tokenData[SSOToken::CLAIM_NOT_BEFORE])
+			->expiresAt($tokenData[SSOToken::CLAIM_EXPIRE_AT])
+			->relatedTo($tokenData[SSOToken::CLAIM_USER_ID])
+			->withClaim(SSOToken::CLAIM_INSTANCE_ID, $tokenData[SSOToken::CLAIM_INSTANCE_ID])
+			->withClaim(SSOToken::CLAIM_INSTANCE_NAME, $tokenData[SSOToken::CLAIM_INSTANCE_NAME])
+			->withClaim(SSOToken::CLAIM_USER_EXTERNAL_ID, $tokenData[SSOToken::CLAIM_USER_EXTERNAL_ID])
+			->withClaim(SSOToken::CLAIM_USER_FULL_NAME, $tokenData[SSOToken::CLAIM_USER_FULL_NAME])
+			->withClaim(SSOToken::CLAIM_USER_FIRST_NAME, $tokenData[SSOToken::CLAIM_USER_FIRST_NAME])
+			->withClaim(SSOToken::CLAIM_USER_LAST_NAME, $tokenData[SSOToken::CLAIM_USER_LAST_NAME])
+			->withClaim(SSOToken::CLAIM_USER_ROLE, $tokenData[SSOToken::CLAIM_USER_ROLE])
+			->withClaim(SSOToken::CLAIM_ENTITY_TYPE, $tokenData[SSOToken::CLAIM_ENTITY_TYPE])
+			->withClaim(SSOToken::CLAIM_THEME_TEXT_COLOR, $tokenData[SSOToken::CLAIM_THEME_TEXT_COLOR])
+			->withClaim(SSOToken::CLAIM_THEME_BACKGROUND_COLOR, $tokenData[SSOToken::CLAIM_THEME_BACKGROUND_COLOR])
+			->withClaim(SSOToken::CLAIM_USER_LOCALE, $tokenData[SSOToken::CLAIM_USER_LOCALE])
+			->withClaim(SSOToken::CLAIM_USER_TAGS, $tokenData[SSOToken::CLAIM_USER_TAGS])
+			->withClaim(SSOToken::CLAIM_BRANCH_ID, $tokenData[SSOToken::CLAIM_BRANCH_ID])
+			->withClaim(SSOToken::CLAIM_BRANCH_SLUG, $tokenData[SSOToken::CLAIM_BRANCH_SLUG])
+			->withClaim(SSOToken::CLAIM_SESSION_ID, $tokenData[SSOToken::CLAIM_SESSION_ID])
+			->getToken($config->signer(), $config->signingKey());
+	}
+
+	/**
 	 * @test
 	 *
 	 * Test constructor throws exception on empty secret.
@@ -247,6 +283,25 @@ class SSOTokenTest extends TestCase
 
 		$this->expectException(SSOAuthenticationException::class);
 		$this->expectExceptionMessage('Token lacks instance id.');
+
+		new SSOToken($this->publicKey, $token);
+	}
+
+	/**
+	 * @test
+	 *
+	 * Test constructor throws exception on a unsigned token.
+	 *
+	 * @covers \Staffbase\plugins\sdk\SSOToken::__construct
+	 */
+	public function testConstructorToFailOnUnsignedToken() {
+
+		$tokenData = SSODataTest::getTokenData();
+
+		$token = self::createUnsignedTokenFromData($tokenData);
+
+		$this->expectException(SSOAuthenticationException::class);
+		$this->expectExceptionMessage('Token verification failed.');
 
 		new SSOToken($this->publicKey, $token);
 	}
