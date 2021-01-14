@@ -6,7 +6,7 @@
  * PHP version 5.5.9
  *
  * @category  Authentication
- * @copyright 2017-2019 Staffbase, GmbH.
+ * @copyright 2017-2021 Staffbase, GmbH.
  * @author    Vitaliy Ivanov
  * @license   http://www.apache.org/licenses/LICENSE-2.0
  * @link      https://github.com/staffbase/plugins-sdk-php
@@ -16,6 +16,7 @@ namespace Staffbase\plugins\test;
 
 use PHPUnit\Framework\TestCase;
 use Staffbase\plugins\sdk\SSOData;
+use DateTimeImmutable;
 
 class SSODataTest extends TestCase
 {
@@ -30,12 +31,14 @@ class SSODataTest extends TestCase
     public static function getTokenData()
     {
 
+        $date = new DateTimeImmutable();
+
         $tokenData = [];
 
         $tokenData[SSOData::CLAIM_AUDIENCE] = 'testPlugin';
-        $tokenData[SSOData::CLAIM_EXPIRE_AT] = strtotime('10 minutes');
-        $tokenData[SSOData::CLAIM_NOT_BEFORE] = strtotime('-1 minute');
-        $tokenData[SSOData::CLAIM_ISSUED_AT] = time();
+        $tokenData[SSOData::CLAIM_EXPIRE_AT] = $date->modify('10 minutes');
+        $tokenData[SSOData::CLAIM_NOT_BEFORE] = $date->modify('-1 minute');
+        $tokenData[SSOData::CLAIM_ISSUED_AT] = $date;
         $tokenData[SSOData::CLAIM_ISSUER] = 'api.staffbase.com';
         $tokenData[SSOData::CLAIM_INSTANCE_ID] = '55c79b6ee4b06c6fb19bd1e2';
         $tokenData[SSOData::CLAIM_INSTANCE_NAME] = 'Our locations';

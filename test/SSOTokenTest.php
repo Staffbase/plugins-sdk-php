@@ -6,7 +6,7 @@
  * PHP version 5.5.9
  *
  * @category  Authentication
- * @copyright 2017-2019 Staffbase, GmbH.
+ * @copyright 2017-2021 Staffbase, GmbH.
  * @author    Vitaliy Ivanov
  * @license   http://www.apache.org/licenses/LICENSE-2.0
  * @link      https://github.com/staffbase/plugins-sdk-php
@@ -19,10 +19,13 @@ use ReflectionClass;
 use phpseclib\Crypt\RSA;
 use PHPUnit\Framework\TestCase;
 use Lcobucci\JWT\Builder;
+use Lcobucci\JWT\Configuration;
+use Lcobucci\JWT\Signer\Key\InMemory;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
 use Staffbase\plugins\sdk\Exceptions\SSOAuthenticationException;
 use Staffbase\plugins\sdk\Exceptions\SSOException;
 use Staffbase\plugins\sdk\SSOToken;
+use DateTimeImmutable;
 
 class SSOTokenTest extends TestCase
 {
@@ -58,18 +61,17 @@ class SSOTokenTest extends TestCase
 	 */
 	public static function createSignedTokenFromData($privateKey, $tokenData) {
 
-		$signer   = new Sha256();
-		$key = new Key($privateKey);
+		$config = Configuration::forSymmetricSigner(new Sha256(), InMemory::plainText($privateKey));
 
-		return (new Builder())
+		return ($config->builder())
 			->issuedBy($tokenData[SSOToken::CLAIM_ISSUER])
 			->permittedFor($tokenData[SSOToken::CLAIM_AUDIENCE])
 			->issuedAt($tokenData[SSOToken::CLAIM_ISSUED_AT])
 			->canOnlyBeUsedAfter($tokenData[SSOToken::CLAIM_NOT_BEFORE])
 			->expiresAt($tokenData[SSOToken::CLAIM_EXPIRE_AT])
+			->relatedTo($tokenData[SSOToken::CLAIM_USER_ID])
 			->withClaim(SSOToken::CLAIM_INSTANCE_ID, $tokenData[SSOToken::CLAIM_INSTANCE_ID])
 			->withClaim(SSOToken::CLAIM_INSTANCE_NAME, $tokenData[SSOToken::CLAIM_INSTANCE_NAME])
-			->withClaim(SSOToken::CLAIM_USER_ID, $tokenData[SSOToken::CLAIM_USER_ID])
 			->withClaim(SSOToken::CLAIM_USER_EXTERNAL_ID, $tokenData[SSOToken::CLAIM_USER_EXTERNAL_ID])
 			->withClaim(SSOToken::CLAIM_USER_FULL_NAME, $tokenData[SSOToken::CLAIM_USER_FULL_NAME])
 			->withClaim(SSOToken::CLAIM_USER_FIRST_NAME, $tokenData[SSOToken::CLAIM_USER_FIRST_NAME])
@@ -83,8 +85,7 @@ class SSOTokenTest extends TestCase
 			->withClaim(SSOToken::CLAIM_BRANCH_ID, $tokenData[SSOToken::CLAIM_BRANCH_ID])
 			->withClaim(SSOToken::CLAIM_BRANCH_SLUG, $tokenData[SSOToken::CLAIM_BRANCH_SLUG])
 			->withClaim(SSOToken::CLAIM_SESSION_ID, $tokenData[SSOToken::CLAIM_SESSION_ID])
-			->sign($signer, $key)
-			->getToken();
+			->getToken($config->signer(), $config->signingKey());
 	}
 
 	/**
@@ -96,15 +97,17 @@ class SSOTokenTest extends TestCase
 	 */
 	private static function createUnsignedTokenFromData($tokenData) {
 
-		return (new Builder())
+		$config = Configuration::forUnsecuredSigner();
+
+		return ($config->builder())
 			->issuedBy($tokenData[SSOToken::CLAIM_ISSUER])
 			->permittedFor($tokenData[SSOToken::CLAIM_AUDIENCE])
 			->issuedAt($tokenData[SSOToken::CLAIM_ISSUED_AT])
 			->canOnlyBeUsedAfter($tokenData[SSOToken::CLAIM_NOT_BEFORE])
 			->expiresAt($tokenData[SSOToken::CLAIM_EXPIRE_AT])
+			->relatedTo($tokenData[SSOToken::CLAIM_USER_ID])
 			->withClaim(SSOToken::CLAIM_INSTANCE_ID, $tokenData[SSOToken::CLAIM_INSTANCE_ID])
 			->withClaim(SSOToken::CLAIM_INSTANCE_NAME, $tokenData[SSOToken::CLAIM_INSTANCE_NAME])
-			->withClaim(SSOToken::CLAIM_USER_ID, $tokenData[SSOToken::CLAIM_USER_ID])
 			->withClaim(SSOToken::CLAIM_USER_EXTERNAL_ID, $tokenData[SSOToken::CLAIM_USER_EXTERNAL_ID])
 			->withClaim(SSOToken::CLAIM_USER_FULL_NAME, $tokenData[SSOToken::CLAIM_USER_FULL_NAME])
 			->withClaim(SSOToken::CLAIM_USER_FIRST_NAME, $tokenData[SSOToken::CLAIM_USER_FIRST_NAME])
@@ -118,7 +121,7 @@ class SSOTokenTest extends TestCase
 			->withClaim(SSOToken::CLAIM_BRANCH_ID, $tokenData[SSOToken::CLAIM_BRANCH_ID])
 			->withClaim(SSOToken::CLAIM_BRANCH_SLUG, $tokenData[SSOToken::CLAIM_BRANCH_SLUG])
 			->withClaim(SSOToken::CLAIM_SESSION_ID, $tokenData[SSOToken::CLAIM_SESSION_ID])
-			->getToken();
+			->getToken($config->signer(), $config->signingKey());
 	}
 
 	/**
@@ -197,7 +200,7 @@ class SSOTokenTest extends TestCase
 	public function testConstructorToFailOnExpiredToken() {
 
 		$tokenData = SSODataTest::getTokenData();
-		$tokenData[SSOToken::CLAIM_EXPIRE_AT] = strtotime("-1 minute");
+		$tokenData[SSOToken::CLAIM_EXPIRE_AT] = (new DateTimeImmutable())->modify("-1 minute");
 
 		$token = self::createSignedTokenFromData($this->privateKey, $tokenData);
 
@@ -216,7 +219,7 @@ class SSOTokenTest extends TestCase
 	public function testConstructorToFailOnFutureToken() {
 
 		$tokenData = SSODataTest::getTokenData();
-		$tokenData[SSOToken::CLAIM_NOT_BEFORE] = strtotime("+1 minute");
+		$tokenData[SSOToken::CLAIM_NOT_BEFORE] = (new DateTimeImmutable())->modify("+1 minute");
 
 		$token = self::createSignedTokenFromData($this->privateKey, $tokenData);
 
@@ -235,7 +238,7 @@ class SSOTokenTest extends TestCase
 	public function testConstructorToFailOnTokenIssuedInTheFuture() {
 
 		$tokenData = SSODataTest::getTokenData();
-		$tokenData[SSOToken::CLAIM_ISSUED_AT] = strtotime("+10 second");
+		$tokenData[SSOToken::CLAIM_ISSUED_AT] = (new DateTimeImmutable())->modify("+10 second");
 
 		$token = self::createSignedTokenFromData($this->privateKey, $tokenData);
 
@@ -255,7 +258,7 @@ class SSOTokenTest extends TestCase
 
 		$leeway = 11;
 		$tokenData = SSODataTest::getTokenData();
-		$tokenData[SSOToken::CLAIM_ISSUED_AT] = strtotime("+10 second");
+		$tokenData[SSOToken::CLAIM_ISSUED_AT] = (new DateTimeImmutable())->modify("+10 second");
 
 		$token = self::createSignedTokenFromData($this->privateKey, $tokenData);
 
@@ -297,8 +300,8 @@ class SSOTokenTest extends TestCase
 
 		$token = self::createUnsignedTokenFromData($tokenData);
 
-		$this->expectException(BadMethodCallException::class);
-		$this->expectExceptionMessage('This token is not signed');
+		$this->expectException(SSOAuthenticationException::class);
+		$this->expectExceptionMessage('Token verification failed.');
 
 		new SSOToken($this->publicKey, $token);
 	}
@@ -342,11 +345,18 @@ class SSOTokenTest extends TestCase
 		$ssoToken = new SSOToken($this->publicKey, $token);
 
 		foreach ($accessors as $key => $fn) {
+
+			$data = $tokenData[$key];
+
+			if ($data instanceof DateTimeImmutable) {
+				$data = $data->getTimestamp();
+			}
+
 			$this->assertEquals(
 				call_user_func([$ssoToken,$fn]),
-				$tokenData[$key],
+				$data,
 				"called $fn expected ".
-				is_array($tokenData[$key]) ? print_r($tokenData[$key], true) : $tokenData[$key]);
+				is_array($data) ? print_r($data, true) : $data);
 
 		}
 	}
