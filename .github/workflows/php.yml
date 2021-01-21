@@ -11,7 +11,7 @@ jobs:
     runs-on: ${{ matrix.operating-system }}
     strategy:
       matrix:
-        operating-system: ['ubuntu-latest', 'windows-latest', 'macos-latest']
+        operating-system: ['ubuntu-latest']
         php-versions: ['7.3', '7.4', '8.0']
         phpunit-versions: ['latest']
         include:
@@ -30,3 +30,10 @@ jobs:
         ini-values: post_max_size=256M, max_execution_time=180
         coverage: none        
         tools: php-cs-fixer, phpunit:${{ matrix.phpunit-versions }}
+        
+    - name: Install dependencies
+      if: steps.composer-cache.outputs.cache-hit != 'true'
+      run: composer update --prefer-dist --no-progress
+
+    - name: Run test suite
+      run: composer test  
