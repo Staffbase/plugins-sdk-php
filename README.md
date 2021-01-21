@@ -1,6 +1,7 @@
 # Plugin SDK for PHP
 
-[![Build Status](https://travis-ci.org/Staffbase/plugins-sdk-php.svg?branch=master)](https://travis-ci.org/Staffbase/plugins-sdk-php)
+[![Build Status](https://github.com/Staffbase/plugins-sdk-php/workflows/php/badge.svg)](https://github.com/Staffbase/plugins-sdk-php/actions)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 If you are developing your own plugin for your Staffbase app we describe the authentication flow of a plugin at https://developers.staffbase.com/guide/customplugin-overview/. While this documentation just covers the conceptual ideas of the interface of plugins though – the so called Plugin SSO – we want to provide a library to help you develop your first plugin for Staffbase even faster. This SDK provides the basic functionality to parse and verify a provided token for PHP.
 
