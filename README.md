@@ -1,6 +1,6 @@
 # Plugin SDK for PHP
 
-[![Build Status](https://github.com/Staffbase/plugins-sdk-php/workflows/php/badge.svg)](https://github.com/Staffbase/plugins-sdk-php/actions)
+[![Build Status](https://github.com/Staffbase/plugins-sdk-php/workflows/PHP%20Composer/badge.svg)](https://github.com/Staffbase/plugins-sdk-php/actions)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 If you are developing your own plugin for your Staffbase app we describe the authentication flow of a plugin at https://developers.staffbase.com/guide/customplugin-overview/. While this documentation just covers the conceptual ideas of the interface of plugins though – the so called Plugin SSO – we want to provide a library to help you develop your first plugin for Staffbase even faster. This SDK provides the basic functionality to parse and verify a provided token for PHP.
@@ -17,7 +17,7 @@ composer require staffbase/plugins-sdk-php
 
 Dependencies are also managed by Composer. When using this repository keep the following dependencies in mind (cf. [composer.json](composer.json)):
 
-* php: >=5.5.9
+* php: >=7.3
 * lcobucci/jwt: ^3.2
 
 ## API Reference
