@@ -1,7 +1,8 @@
 {
 	"name": "staffbase/plugins-sdk-php",
+	"version": "1.5.4",
 	"type": "library",
-	"description": "Staffbase php sdk library for plugins.",
+	"description": "Staffbase PHP SDK library for plugins.",
 	"keywords": ["staffbase", "plugins", "library", "php", "sdk"],
 	"homepage": "https://github.com/Staffbase/plugins-sdk-php",
 	"license": "Apache-2.0",
