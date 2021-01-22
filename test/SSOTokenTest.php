@@ -1,7 +1,7 @@
 <?php
 /**
  * SSO token Test implementation, based on this doc:
- * https://developers.staffbase.com/api/plugin-sso/
+ * https://developers.staffbase.com/guide/customplugin-overview
  *
  * PHP version 5.5.9
  *
@@ -73,6 +73,8 @@ class SSOTokenTest extends TestCase
 			->withClaim(SSOToken::CLAIM_INSTANCE_ID, $tokenData[SSOToken::CLAIM_INSTANCE_ID])
 			->withClaim(SSOToken::CLAIM_INSTANCE_NAME, $tokenData[SSOToken::CLAIM_INSTANCE_NAME])
 			->withClaim(SSOToken::CLAIM_USER_EXTERNAL_ID, $tokenData[SSOToken::CLAIM_USER_EXTERNAL_ID])
+			->withClaim(SSOToken::CLAIM_USER_USERNAME, $tokenData[SSOToken::CLAIM_USER_USERNAME])
+			->withClaim(SSOToken::CLAIM_USER_PRIMARY_EMAIL_ADDRESS, $tokenData[SSOToken::CLAIM_USER_PRIMARY_EMAIL_ADDRESS])
 			->withClaim(SSOToken::CLAIM_USER_FULL_NAME, $tokenData[SSOToken::CLAIM_USER_FULL_NAME])
 			->withClaim(SSOToken::CLAIM_USER_FIRST_NAME, $tokenData[SSOToken::CLAIM_USER_FIRST_NAME])
 			->withClaim(SSOToken::CLAIM_USER_LAST_NAME, $tokenData[SSOToken::CLAIM_USER_LAST_NAME])
@@ -109,6 +111,8 @@ class SSOTokenTest extends TestCase
 			->withClaim(SSOToken::CLAIM_INSTANCE_ID, $tokenData[SSOToken::CLAIM_INSTANCE_ID])
 			->withClaim(SSOToken::CLAIM_INSTANCE_NAME, $tokenData[SSOToken::CLAIM_INSTANCE_NAME])
 			->withClaim(SSOToken::CLAIM_USER_EXTERNAL_ID, $tokenData[SSOToken::CLAIM_USER_EXTERNAL_ID])
+			->withClaim(SSOToken::CLAIM_USER_USERNAME, $tokenData[SSOToken::CLAIM_USER_USERNAME])
+			->withClaim(SSOToken::CLAIM_USER_PRIMARY_EMAIL_ADDRESS, $tokenData[SSOToken::CLAIM_USER_PRIMARY_EMAIL_ADDRESS])
 			->withClaim(SSOToken::CLAIM_USER_FULL_NAME, $tokenData[SSOToken::CLAIM_USER_FULL_NAME])
 			->withClaim(SSOToken::CLAIM_USER_FIRST_NAME, $tokenData[SSOToken::CLAIM_USER_FIRST_NAME])
 			->withClaim(SSOToken::CLAIM_USER_LAST_NAME, $tokenData[SSOToken::CLAIM_USER_LAST_NAME])
@@ -321,6 +325,8 @@ class SSOTokenTest extends TestCase
 	 * @covers \Staffbase\plugins\sdk\SSOToken::getInstanceName()
 	 * @covers \Staffbase\plugins\sdk\SSOToken::getUserId()
 	 * @covers \Staffbase\plugins\sdk\SSOToken::getUserExternalId()
+	 * @covers \Staffbase\plugins\sdk\SSOToken::getUserUsername()
+	 * @covers \Staffbase\plugins\sdk\SSOToken::getUserPrimaryEmailAddress()
 	 * @covers \Staffbase\plugins\sdk\SSOToken::getFullName()
 	 * @covers \Staffbase\plugins\sdk\SSOToken::getFirstName()
 	 * @covers \Staffbase\plugins\sdk\SSOToken::getLastName()
