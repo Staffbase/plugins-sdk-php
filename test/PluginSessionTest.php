@@ -19,6 +19,7 @@ use PHPUnit\Framework\TestCase;
 use SessionHandlerInterface;
 use Staffbase\plugins\sdk\Exceptions\SSOAuthenticationException;
 use Staffbase\plugins\sdk\Exceptions\SSOException;
+use Staffbase\plugins\sdk\SSOTokenGenerator;
 use Staffbase\plugins\sdk\PluginSession;
 use Staffbase\plugins\sdk\RemoteCall\DeleteInstanceCallHandlerInterface;
 
@@ -47,7 +48,7 @@ class PluginSessionTest extends TestCase
 		$this->privateKey = $keypair['privatekey'];
 
 		$this->tokenData = SSODataTest::getTokenData();
-		$this->token = SSOTokenTest::createSignedTokenFromData($this->privateKey, $this->tokenData);
+		$this->token = SSOTokenGenerator::createSignedTokenFromData($this->privateKey, $this->tokenData);
 
 		$this->pluginInstanceId = $this->tokenData[PluginSession::CLAIM_INSTANCE_ID];
 	}
@@ -244,7 +245,7 @@ class PluginSessionTest extends TestCase
 
 		$tokenData = $this->tokenData;
 		$tokenData[PluginSession::CLAIM_USER_ROLE] = 'updatedRoleName';
-		$newToken = SSOTokenTest::createSignedTokenFromData($this->privateKey, $tokenData);
+		$newToken = SSOTokenGenerator::createSignedTokenFromData($this->privateKey, $tokenData);
 
 		$this->setupEnvironment(null, $newToken, false);
 
@@ -280,7 +281,7 @@ class PluginSessionTest extends TestCase
 		$tokenData = $this->tokenData;
 		$tokenData[PluginSession::CLAIM_INSTANCE_ID] = 'anotherTestInstanceId';
 		$tokenData[PluginSession::CLAIM_USER_ROLE] = 'anotherRoleInInstance';
-		$newToken = SSOTokenTest::createSignedTokenFromData($this->privateKey, $tokenData);
+		$newToken = SSOTokenGenerator::createSignedTokenFromData($this->privateKey, $tokenData);
 
 		$this->setupEnvironment(null, $newToken, false);
 
@@ -346,7 +347,7 @@ class PluginSessionTest extends TestCase
 
 		$tokenData = $this->tokenData;
 		$tokenData[PluginSession::CLAIM_USER_ID] = 'delete';
-		$token = SSOTokenTest::createSignedTokenFromData($this->privateKey, $tokenData);
+		$token = SSOTokenGenerator::createSignedTokenFromData($this->privateKey, $tokenData);
 
 		$this->setupEnvironment(null, $token, false);
 
@@ -387,7 +388,7 @@ class PluginSessionTest extends TestCase
 
 		$tokenData = $this->tokenData;
 		$tokenData[PluginSession::CLAIM_USER_ID] = 'delete';
-		$token = SSOTokenTest::createSignedTokenFromData($this->privateKey, $tokenData);
+		$token = SSOTokenGenerator::createSignedTokenFromData($this->privateKey, $tokenData);
 
 		$this->setupEnvironment(null, $token, false);
 
@@ -449,7 +450,7 @@ class PluginSessionTest extends TestCase
 
 		$tokenData = $this->tokenData;
 		$tokenData[PluginSession::CLAIM_SESSION_ID] = $sessionHash;
-		$token = SSOTokenTest::createSignedTokenFromData($this->privateKey, $tokenData);
+		$token = SSOTokenGenerator::createSignedTokenFromData($this->privateKey, $tokenData);
 
 		$this->setupEnvironment(null, $token, true);
 
@@ -474,7 +475,7 @@ class PluginSessionTest extends TestCase
 
 		$tokenData = $this->tokenData;
 		$tokenData[PluginSession::CLAIM_SESSION_ID] = $sessionHash;
-		$token = SSOTokenTest::createSignedTokenFromData($this->privateKey, $tokenData);
+		$token = SSOTokenGenerator::createSignedTokenFromData($this->privateKey, $tokenData);
 
 		// successfull remote call handler mock
 		$handler = $this->getMockBuilder(SessionHandlerInterface::class)
