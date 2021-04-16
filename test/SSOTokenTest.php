@@ -14,7 +14,10 @@
 namespace Staffbase\plugins\test;
 
 use BadMethodCallException;
+use DateTimeImmutable;
+use Lcobucci\JWT\Configuration;
 use Lcobucci\JWT\Signer\Key;
+use Lcobucci\JWT\Signer\Key\InMemory;
 use ReflectionClass;
 use phpseclib\Crypt\RSA;
 use PHPUnit\Framework\TestCase;
@@ -25,7 +28,6 @@ use Lcobucci\JWT\Signer\Rsa\Sha256;
 use Staffbase\plugins\sdk\Exceptions\SSOAuthenticationException;
 use Staffbase\plugins\sdk\Exceptions\SSOException;
 use Staffbase\plugins\sdk\SSOToken;
-use DateTimeImmutable;
 
 class SSOTokenTest extends TestCase
 {
@@ -63,7 +65,7 @@ class SSOTokenTest extends TestCase
 
 		$config = Configuration::forSymmetricSigner(new Sha256(), InMemory::plainText($privateKey));
 
-		return ($config->builder())
+		$token = $config->builder()
 			->issuedBy($tokenData[SSOToken::CLAIM_ISSUER])
 			->permittedFor($tokenData[SSOToken::CLAIM_AUDIENCE])
 			->issuedAt($tokenData[SSOToken::CLAIM_ISSUED_AT])
@@ -88,6 +90,8 @@ class SSOTokenTest extends TestCase
 			->withClaim(SSOToken::CLAIM_BRANCH_SLUG, $tokenData[SSOToken::CLAIM_BRANCH_SLUG])
 			->withClaim(SSOToken::CLAIM_SESSION_ID, $tokenData[SSOToken::CLAIM_SESSION_ID])
 			->getToken($config->signer(), $config->signingKey());
+
+		return $token->toString();
 	}
 
 	/**
@@ -101,7 +105,7 @@ class SSOTokenTest extends TestCase
 
 		$config = Configuration::forUnsecuredSigner();
 
-		return ($config->builder())
+		$token = $config->builder()
 			->issuedBy($tokenData[SSOToken::CLAIM_ISSUER])
 			->permittedFor($tokenData[SSOToken::CLAIM_AUDIENCE])
 			->issuedAt($tokenData[SSOToken::CLAIM_ISSUED_AT])
@@ -126,6 +130,8 @@ class SSOTokenTest extends TestCase
 			->withClaim(SSOToken::CLAIM_BRANCH_SLUG, $tokenData[SSOToken::CLAIM_BRANCH_SLUG])
 			->withClaim(SSOToken::CLAIM_SESSION_ID, $tokenData[SSOToken::CLAIM_SESSION_ID])
 			->getToken($config->signer(), $config->signingKey());
+
+		return $token->toString();
 	}
 
 	/**
@@ -203,8 +209,7 @@ class SSOTokenTest extends TestCase
 	 */
 	public function testConstructorToFailOnExpiredToken() {
 
-		$tokenData = SSODataTest::getTokenData();
-		$tokenData[SSOToken::CLAIM_EXPIRE_AT] = (new DateTimeImmutable())->modify("-1 minute");
+		$tokenData = SSODataTest::getTokenData("-1 minute");
 
 		$token = self::createSignedTokenFromData($this->privateKey, $tokenData);
 
@@ -222,8 +227,7 @@ class SSOTokenTest extends TestCase
 	 */
 	public function testConstructorToFailOnFutureToken() {
 
-		$tokenData = SSODataTest::getTokenData();
-		$tokenData[SSOToken::CLAIM_NOT_BEFORE] = (new DateTimeImmutable())->modify("+1 minute");
+		$tokenData = SSODataTest::getTokenData(null, "+1 minute");
 
 		$token = self::createSignedTokenFromData($this->privateKey, $tokenData);
 
@@ -241,8 +245,7 @@ class SSOTokenTest extends TestCase
 	 */
 	public function testConstructorToFailOnTokenIssuedInTheFuture() {
 
-		$tokenData = SSODataTest::getTokenData();
-		$tokenData[SSOToken::CLAIM_ISSUED_AT] = (new DateTimeImmutable())->modify("+10 second");
+		$tokenData = SSODataTest::getTokenData(null,null, "+10 second");
 
 		$token = self::createSignedTokenFromData($this->privateKey, $tokenData);
 
@@ -261,8 +264,7 @@ class SSOTokenTest extends TestCase
 	public function testConstructorAcceptsLeewayForTokenIssuedInTheFuture() {
 
 		$leeway = 11;
-		$tokenData = SSODataTest::getTokenData();
-		$tokenData[SSOToken::CLAIM_ISSUED_AT] = (new DateTimeImmutable())->modify("+10 second");
+		$tokenData = SSODataTest::getTokenData(null,null, "+10 second");
 
 		$token = self::createSignedTokenFromData($this->privateKey, $tokenData);
 
@@ -277,6 +279,7 @@ class SSOTokenTest extends TestCase
 	 * Test constructor throws exception on a token missing instance id.
 	 *
 	 * @covers \Staffbase\plugins\sdk\SSOToken::__construct
+	 * @covers \Staffbase\plugins\sdk\Validation\HasInstanceId
 	 */
 	public function testConstructorToFailOnMissingInstanceId() {
 
@@ -305,7 +308,7 @@ class SSOTokenTest extends TestCase
 		$token = self::createUnsignedTokenFromData($tokenData);
 
 		$this->expectException(SSOAuthenticationException::class);
-		$this->expectExceptionMessage('Token verification failed.');
+		$this->expectExceptionMessageMatches('/Token signer mismatch/');
 
 		new SSOToken($this->publicKey, $token);
 	}
@@ -345,13 +348,12 @@ class SSOTokenTest extends TestCase
 	public function testAccessorsGiveCorrectValues() {
 
 		$tokenData = SSODataTest::getTokenData();
-		$accessors = SSODataTest::getTokenAccesors();
+		$accessors = SSODataTest::getTokenAccessors();
 
 		$token = self::createSignedTokenFromData($this->privateKey, $tokenData);
 		$ssoToken = new SSOToken($this->publicKey, $token);
 
 		foreach ($accessors as $key => $fn) {
-
 			$data = $tokenData[$key];
 
 			if ($data instanceof DateTimeImmutable) {
@@ -360,10 +362,8 @@ class SSOTokenTest extends TestCase
 
 			$this->assertEquals(
 				call_user_func([$ssoToken,$fn]),
-				$data,
-				"called $fn expected ".
-				is_array($data) ? print_r($data, true) : $data);
-
+				$tokenData[$key],
+				"called $fn expected $data");
 		}
 	}
 }

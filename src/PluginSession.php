@@ -196,20 +196,6 @@ class PluginSession extends SSOData
 	}
 
 	/**
-	 * (DEPRECATED) Translate a base64 string to PEM encoded public key.
-	 *
-	 * @param string $data base64 encoded key
-	 * @deprecated
-	 * @return string PEM encoded key
-	 */
-	public static function base64ToPEMPublicKey($data) {
-
-		error_log("Warning: PluginSession::base64ToPEMPublicKey() is deprecated. Please switch over to	SSOToken::base64ToPEMPublicKey().");
-
-		return SSOToken::base64ToPEMPublicKey($data);
-	}
-
-	/**
 	 * Test if a claim is set.
 	 *
 	 * @param string $claim name.

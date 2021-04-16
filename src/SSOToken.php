@@ -14,14 +14,19 @@
 
 namespace Staffbase\plugins\sdk;
 
-use Lcobucci\JWT\Token;
-use Lcobucci\JWT\Parser;
+use DateInterval;
+use Lcobucci\Clock\SystemClock;
+use Lcobucci\JWT\Configuration;
 use Lcobucci\JWT\Signer\Key;
-use Lcobucci\JWT\ValidationData;
-use Lcobucci\JWT\Claim\Validatable;
+use Lcobucci\JWT\Token;
+use Lcobucci\JWT\Signer\Key\InMemory;
+use Lcobucci\JWT\Validation\Constraint\SignedWith;
+use Lcobucci\JWT\Validation\Constraint\StrictValidAt;
+use Lcobucci\JWT\Validation\RequiredConstraintsViolated;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
 use Staffbase\plugins\sdk\Exceptions\SSOException;
 use Staffbase\plugins\sdk\Exceptions\SSOAuthenticationException;
+use Staffbase\plugins\sdk\Validation\HasInstanceId;
 
 /**
  * A container which is able to decrypt and store the data transmitted
@@ -32,8 +37,17 @@ class SSOToken extends SSOData
 	/**
 	 * @var Token $token
 	 */
-	private $token = null;
+	private ?Token $token = null;
 
+	/**
+	 * @var Key $key
+	 */
+	private Key $key;
+
+	/**
+	 * @var Configuration $config
+	 */
+	private Configuration $config;
 	/**
 	 * Constructor
 	 *
@@ -54,102 +68,35 @@ class SSOToken extends SSOData
 		if (!is_numeric($leeway))
 			throw new SSOException('Parameter leeway has to be numeric.');
 
-		// convert secret to PEM if its a plain base64 string and does not yield an url
-		if(strpos(trim($appSecret),'-----') !== 0 && strpos(trim($appSecret), 'file://') !==0 )
-			$appSecret = self::base64ToPEMPublicKey($appSecret);
+		$this->key = $this->getKey(trim($appSecret));
+		$this->config = Configuration::forSymmetricSigner(new Sha256(), $this->key);
 
-		$this->parseToken($appSecret, $tokenData, $leeway);
+		$this->parseToken($tokenData, $leeway);
 	}
 
 	/**
 	 * Creates and validates an SSO token.
 	 *
-	 * @param string $appSecret Either a PEM formatted key or a file:// URL of the same.
 	 * @param string $tokenData The token text.
 	 * @param int $leeway count of seconds added to current timestamp
 	 *
 	 * @throws SSOAuthenticationException if the parsing/verification/validation of the token fails.
 	 */
-	protected function parseToken($appSecret, $tokenData, $leeway) {
-
+	protected function parseToken($tokenData, $leeway) {
 		// parse text
-		$this->token = (new Parser())->parse((string) $tokenData);
+		$this->token = $this->config->parser()->parse($tokenData);
 
-		// verify signature
-		$signer = new Sha256();
-		$key = new Key($appSecret);
+		$constrains = [
+			new StrictValidAt(SystemClock::fromUTC(), $this->getLeewayInterval($leeway)),
+			new SignedWith(new Sha256(),$this->key),
+			new HasInstanceId()
+		];
 
-		if (!$this->token->verify($signer, $key))
-			throw new SSOAuthenticationException('Token verification failed.');
-
-		// validate claims
-		$data = new ValidationData(time(), $leeway); // iat, nbf and exp are validated by default
-
-		if (!$this->token->validate($data)) {
-			$this->throwVerboseException($data);
+		try {
+			$this->config->validator()->assert($this->token, ...$constrains);
+		} catch (RequiredConstraintsViolated $violation) {
+			throw new SSOAuthenticationException($violation->getMessage());
 		}
-
-		// its a security risk to work with tokens lacking instance id
-		if (!trim($this->getInstanceId()))
-			throw new SSOAuthenticationException('Token lacks instance id.');
-	}
-
-	/**
-	 * Translate a base64 string to PEM encoded public key.
-	 *
-	 * @param string $data base64 encoded key
-	 *
-	 * @return string PEM encoded key
-	 */
-	public static function base64ToPEMPublicKey($data) {
-
-		$data = strtr($data, array(
-			"\r" => "",
-			"\n" => ""
-		));
-
-		return
-			"-----BEGIN PUBLIC KEY-----\n".
-			chunk_split($data, 64, "\n").
-			"-----END PUBLIC KEY-----\n";
-	}
-
-	/**
-	 * Validate the token with more verbose exceptions
-	 *
-	 * Due to minor shortcomings of the library we have to redo the validation
-	 * manually to get the reason for the failure and propagate it.
-	 * We emulate the validation process for the v3.x of the library.
-	 *
-	 * This will most likely have to change on library upgrade either
-	 * by using then supported verbosity or reimplementing validation
-	 * as done in the new flow.
-	 *
-	 * @param ValidationData $data to validate against
-	 *
-	 * @throws SSOAuthenticationException always.
-	 */
-	protected function throwVerboseException(ValidationData $data) {
-
-		foreach ($this->token->getClaims() as $claim) {
-			if ($claim instanceof Validatable) {
-				if (!$claim->validate($data)) {
-
-					$claimName  = $claim->getName();
-					$claimValue = $claim->getValue();
-
-					// get the short class-name of the validatable claim
-					$segments = explode('\\', get_class($claim));
-					$operator = array_pop($segments);
-					$operand  = $data->get($claimName);
-
-					throw new SSOAuthenticationException("Token Validation failed on claim '$claimName' $claimValue $operator $operand.");
-				}
-			}
-		}
-
-		// unknown reason, probably an addition to used library
-		throw new SSOAuthenticationException('Token Validation failed.');
 	}
 
 	/**
@@ -160,8 +107,7 @@ class SSOToken extends SSOData
 	 * @return boolean
 	 */
 	protected function hasClaim($claim) {
-
-		return $this->token->hasClaim($claim);
+		return $this->token->claims()->has($claim);
 	}
 
 	/**
@@ -172,8 +118,7 @@ class SSOToken extends SSOData
 	 * @return mixed
 	 */
 	protected function getClaim($claim) {
-
-		return $this->token->getClaim($claim);
+		return $this->token->claims()->get($claim);
 	}
 
 	/**
@@ -183,12 +128,42 @@ class SSOToken extends SSOData
 	 */
 	protected function getAllClaims() {
 
-		$res = [];
-		$claims = $this->token->getClaims();
+		return $this->token->claims()->all();
+	}
 
-		foreach($claims as $claim)
-			$res[$claim->getName()] = $claim->getValue();
+	/**
+	 * Decides between the new key methods, the JWT library offers
+	 *
+	 * @param string $appSecret
+	 * @return Key
+	 */
+	private function getKey(string $appSecret) {
+		if(strpos($appSecret,'-----') === 0 ) {
+			$key = InMemory::plainText($appSecret);
+		} else if (strpos($appSecret, 'file://') == 0 ) {
+			$key = InMemory::file($appSecret);
+		} else {
+			$key = InMemory::base64Encoded($appSecret);
+		}
+		return $key;
+	}
 
-		return $res;
+	/**
+	 * Formats the leeway integer value into a DateInterval
+	 *
+	 * @param int $leeway
+	 * @return DateInterval
+	 */
+	private function getLeewayInterval (int $leeway) {
+		$leewayInterval = "PT{$leeway}S";
+
+		try {
+			$interval = new DateInterval($leewayInterval);
+		} catch (\Exception $e) {
+			error_log("Wrong date interval $leewayInterval");
+			$interval = new DateInterval('PT0S');
+		}
+
+		return $interval;
 	}
 }
