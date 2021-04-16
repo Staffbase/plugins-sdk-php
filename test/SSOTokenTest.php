@@ -13,15 +13,10 @@
  */
 namespace Staffbase\plugins\test;
 
-use BadMethodCallException;
 use DateTimeImmutable;
-use Lcobucci\JWT\Configuration;
-use Lcobucci\JWT\Signer\Key;
-use Lcobucci\JWT\Signer\Key\InMemory;
 use ReflectionClass;
 use phpseclib\Crypt\RSA;
 use PHPUnit\Framework\TestCase;
-use Lcobucci\JWT\Builder;
 use Lcobucci\JWT\Configuration;
 use Lcobucci\JWT\Signer\Key\InMemory;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
@@ -359,6 +354,8 @@ class SSOTokenTest extends TestCase
 			if ($data instanceof DateTimeImmutable) {
 				$data = $data->getTimestamp();
 			}
+
+			$data = is_array($data) ? print_r($data, true) : $data;
 
 			$this->assertEquals(
 				call_user_func([$ssoToken,$fn]),

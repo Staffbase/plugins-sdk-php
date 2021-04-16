@@ -14,7 +14,6 @@
 
 namespace Staffbase\plugins\test;
 
-use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 use Staffbase\plugins\sdk\SSOData;
 use DateTimeImmutable;
@@ -39,7 +38,7 @@ class SSODataTest extends TestCase
         $npf = $npf ?? '-1 minutes';
         $iat = $iat ?? 'now';
 
-        $date = new DateTimeImmutable();
+        $date = new DateTimeImmutable($iat);
 
         $tokenData = [];
 
