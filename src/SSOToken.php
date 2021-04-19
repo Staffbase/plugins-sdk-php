@@ -132,6 +132,26 @@ class SSOToken extends SSOData
 	}
 
 	/**
+	 * Translate a base64 string to PEM encoded public key.
+	 *
+	 * @param string $data base64 encoded key
+	 *
+	 * @return string PEM encoded key
+	 */
+	public static function base64ToPEMPublicKey($data) {
+
+		$data = strtr($data, array(
+			"\r" => "",
+			"\n" => ""
+		));
+
+		return
+			"-----BEGIN PUBLIC KEY-----\n".
+			chunk_split($data, 64, "\n").
+			"-----END PUBLIC KEY-----\n";
+	}
+
+	/**
 	 * Decides between the new key methods, the JWT library offers
 	 *
 	 * @param string $appSecret
@@ -140,10 +160,10 @@ class SSOToken extends SSOData
 	private function getKey(string $appSecret) {
 		if(strpos($appSecret,'-----') === 0 ) {
 			$key = InMemory::plainText($appSecret);
-		} else if (strpos($appSecret, 'file://') == 0 ) {
+		} else if (strpos($appSecret, 'file://') === 0 ) {
 			$key = InMemory::file($appSecret);
 		} else {
-			$key = InMemory::base64Encoded($appSecret);
+			$key = InMemory::plainText($this->base64ToPEMPublicKey($appSecret));
 		}
 		return $key;
 	}
