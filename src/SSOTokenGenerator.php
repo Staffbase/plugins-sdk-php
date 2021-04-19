@@ -85,8 +85,7 @@ class SSOTokenGenerator
 			->withClaim(SSOToken::CLAIM_USER_LOCALE, $tokenData[SSOToken::CLAIM_USER_LOCALE])
 			->withClaim(SSOToken::CLAIM_USER_TAGS, $tokenData[SSOToken::CLAIM_USER_TAGS])
 			->withClaim(SSOToken::CLAIM_BRANCH_ID, $tokenData[SSOToken::CLAIM_BRANCH_ID])
-			->withClaim(SSOToken::CLAIM_BRANCH_SLUG, $tokenData[SSOToken::CLAIM_BRANCH_SLUG])
-			->withClaim(SSOToken::CLAIM_SESSION_ID, $tokenData[SSOToken::CLAIM_SESSION_ID]);
+			->withClaim(SSOToken::CLAIM_BRANCH_SLUG, $tokenData[SSOToken::CLAIM_BRANCH_SLUG]);
 
 		if (isset($tokenData[SSOToken::CLAIM_SESSION_ID])) {
 			$builder->withClaim(SSOToken::CLAIM_SESSION_ID, $tokenData[SSOToken::CLAIM_SESSION_ID]);
