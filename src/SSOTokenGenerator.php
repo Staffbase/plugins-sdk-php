@@ -19,6 +19,7 @@ use Lcobucci\JWT\Configuration;
 use Lcobucci\JWT\Signer\Key\InMemory;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
 use Lcobucci\JWT\Token;
+use Lcobucci\JWT\Token\RegisteredClaims;
 
 class SSOTokenGenerator
 {
@@ -64,31 +65,28 @@ class SSOTokenGenerator
 	{
 		$builder = $config->builder();
 		$token = $builder
-			->issuedBy($tokenData[SSOToken::CLAIM_ISSUER])
 			->permittedFor($tokenData[SSOToken::CLAIM_AUDIENCE])
 			->issuedAt($tokenData[SSOToken::CLAIM_ISSUED_AT])
 			->canOnlyBeUsedAfter($tokenData[SSOToken::CLAIM_NOT_BEFORE])
-			->expiresAt($tokenData[SSOToken::CLAIM_EXPIRE_AT])
-			->relatedTo($tokenData[SSOToken::CLAIM_USER_ID])
-			->withClaim(SSOToken::CLAIM_INSTANCE_ID, $tokenData[SSOToken::CLAIM_INSTANCE_ID])
-			->withClaim(SSOToken::CLAIM_INSTANCE_NAME, $tokenData[SSOToken::CLAIM_INSTANCE_NAME])
-			->withClaim(SSOToken::CLAIM_USER_EXTERNAL_ID, $tokenData[SSOToken::CLAIM_USER_EXTERNAL_ID])
-			->withClaim(SSOToken::CLAIM_USER_USERNAME, $tokenData[SSOToken::CLAIM_USER_USERNAME])
-			->withClaim(SSOToken::CLAIM_USER_PRIMARY_EMAIL_ADDRESS, $tokenData[SSOToken::CLAIM_USER_PRIMARY_EMAIL_ADDRESS])
-			->withClaim(SSOToken::CLAIM_USER_FULL_NAME, $tokenData[SSOToken::CLAIM_USER_FULL_NAME])
-			->withClaim(SSOToken::CLAIM_USER_FIRST_NAME, $tokenData[SSOToken::CLAIM_USER_FIRST_NAME])
-			->withClaim(SSOToken::CLAIM_USER_LAST_NAME, $tokenData[SSOToken::CLAIM_USER_LAST_NAME])
-			->withClaim(SSOToken::CLAIM_USER_ROLE, $tokenData[SSOToken::CLAIM_USER_ROLE])
-			->withClaim(SSOToken::CLAIM_ENTITY_TYPE, $tokenData[SSOToken::CLAIM_ENTITY_TYPE])
-			->withClaim(SSOToken::CLAIM_THEME_TEXT_COLOR, $tokenData[SSOToken::CLAIM_THEME_TEXT_COLOR])
-			->withClaim(SSOToken::CLAIM_THEME_BACKGROUND_COLOR, $tokenData[SSOToken::CLAIM_THEME_BACKGROUND_COLOR])
-			->withClaim(SSOToken::CLAIM_USER_LOCALE, $tokenData[SSOToken::CLAIM_USER_LOCALE])
-			->withClaim(SSOToken::CLAIM_USER_TAGS, $tokenData[SSOToken::CLAIM_USER_TAGS])
-			->withClaim(SSOToken::CLAIM_BRANCH_ID, $tokenData[SSOToken::CLAIM_BRANCH_ID])
-			->withClaim(SSOToken::CLAIM_BRANCH_SLUG, $tokenData[SSOToken::CLAIM_BRANCH_SLUG]);
+			->expiresAt($tokenData[SSOToken::CLAIM_EXPIRE_AT]);
 
-		if (isset($tokenData[SSOToken::CLAIM_SESSION_ID])) {
-			$builder->withClaim(SSOToken::CLAIM_SESSION_ID, $tokenData[SSOToken::CLAIM_SESSION_ID]);
+		if (isset($tokenData[SSOToken::CLAIM_ISSUER])) {
+			$token->issuedBy($tokenData[SSOToken::CLAIM_ISSUER]);
+		}
+
+		if (isset($tokenData[SSOToken::CLAIM_USER_ID])) {
+			$token->relatedTo($tokenData[SSOToken::CLAIM_USER_ID]);
+		}
+
+		// Remove all set keys as they throw an exception when used with withClaim
+		$claims = array_filter(
+			$tokenData,
+			fn ($key) => !in_array($key, RegisteredClaims::ALL),
+			ARRAY_FILTER_USE_KEY
+		);
+
+		foreach ($claims as $claim => $value) {
+  			$builder->withClaim($claim, $value);
 		}
 
 		return $token->getToken($config->signer(), $config->signingKey());

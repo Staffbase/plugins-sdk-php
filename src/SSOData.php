@@ -93,7 +93,8 @@ abstract class SSOData
     }
 
     /**
-     * Get targeted audience of the token.
+     * Get targeted audience of the token. Currently only
+     * one audience is supported.
      *
      * @return null|string
      */
@@ -101,7 +102,7 @@ abstract class SSOData
 
        $audience = $this->getClaimSafe(self::CLAIM_AUDIENCE);
 
-       return is_array($audience) ? $audience[0] : $audience;
+       return !is_array($audience) ? $audience : $audience[0] ?? null;
     }
 
     /**
