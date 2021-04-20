@@ -1,6 +1,6 @@
 {
 	"name": "staffbase/plugins-sdk-php",
-	"version": "1.5.4",
+	"version": "2.0.0",
 	"type": "library",
 	"description": "Staffbase PHP SDK library for plugins.",
 	"keywords": ["staffbase", "plugins", "library", "php", "sdk"],
@@ -13,8 +13,8 @@
 		}
 	],
 	"require": {
-		"php": "^7.3",
-		"lcobucci/jwt": "^3.2"
+		"php": "^7.4",
+		"lcobucci/jwt": "^4.1"
 
 	},
 	"require-dev": {
@@ -29,6 +29,8 @@
 		}
 	},
 	"scripts": {
-        "test": "phpunit"
-    }
+		"test": "phpunit --colors='always' --debug $PHPUNIT_ARGS",
+		"lint": "phpcs --standard=PSR2 --extensions=php --ignore=*/vendor/* src test",
+		"fix": "phpcbf --standard=PSR2 --extensions=php --ignore=*/vendor/* src test"
+	}
 }

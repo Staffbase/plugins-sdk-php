@@ -14,6 +14,8 @@
 
 namespace Staffbase\plugins\sdk;
 
+use DateTimeImmutable;
+
 /**
  * A container for the data transmitted from Staffbase app to a plugin
  * using the Staffbase single-sign-on.
@@ -91,19 +93,22 @@ abstract class SSOData
     }
 
     /**
-     * Get targeted audience of the token.
+     * Get targeted audience of the token. Currently only
+     * one audience is supported.
      *
      * @return null|string
      */
     public function getAudience() {
 
-        return $this->getClaimSafe(self::CLAIM_AUDIENCE);
+       $audience = $this->getClaimSafe(self::CLAIM_AUDIENCE);
+
+       return !is_array($audience) ? $audience : $audience[0] ?? null;
     }
 
     /**
      * Get the time when the token expires.
      *
-     * @return int
+     * @return DateTimeImmutable
      */
     public function getExpireAtTime() {
 
@@ -113,7 +118,7 @@ abstract class SSOData
     /**
      * Get the time when the token starts to be valid.
      *
-     * @return int
+     * @return DateTimeImmutable
      */
     public function getNotBeforeTime() {
 
@@ -123,7 +128,7 @@ abstract class SSOData
     /**
      * Get the time when the token was issued.
      *
-     * @return int
+     * @return DateTimeImmutable
      */
     public function getIssuedAtTime() {
 

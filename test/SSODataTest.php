@@ -3,7 +3,7 @@
  * SSO data Test implementation, based on this doc:
  * https://developers.staffbase.com/guide/customplugin-overview
  *
- * PHP version 5.5.9
+ * PHP version 7.4.0
  *
  * @category  Authentication
  * @copyright 2017-2021 Staffbase, GmbH.
@@ -26,18 +26,25 @@ class SSODataTest extends TestCase
      * Can be used in development in conjunction with
      * createSignedTokenFromData to issue development tokens.
      *
+     * @param string|null $exp
+     * @param string|null $npf
+     * @param string|null $iat
      * @return array Associative array of claims.
+     * @throws \Exception
      */
-    public static function getTokenData()
+    public static function getTokenData(?string $exp = '10 minutes', ?string $npf = '-1 minutes', ?string $iat = 'now')
     {
+        $exp = $exp ?? '10 minutes';
+        $npf = $npf ?? '-1 minutes';
+        $iat = $iat ?? 'now';
 
-        $date = new DateTimeImmutable();
+        $date = new DateTimeImmutable($iat);
 
         $tokenData = [];
 
         $tokenData[SSOData::CLAIM_AUDIENCE] = 'testPlugin';
-        $tokenData[SSOData::CLAIM_EXPIRE_AT] = $date->modify('10 minutes');
-        $tokenData[SSOData::CLAIM_NOT_BEFORE] = $date->modify('-1 minute');
+        $tokenData[SSOData::CLAIM_EXPIRE_AT] = $date->modify($exp);
+        $tokenData[SSOData::CLAIM_NOT_BEFORE] = $date->modify($npf);
         $tokenData[SSOData::CLAIM_ISSUED_AT] = $date;
         $tokenData[SSOData::CLAIM_ISSUER] = 'api.staffbase.com';
         $tokenData[SSOData::CLAIM_INSTANCE_ID] = '55c79b6ee4b06c6fb19bd1e2';
@@ -67,7 +74,7 @@ class SSODataTest extends TestCase
      *
      * @return array Associative array of claim accessors.
      */
-    public static function getTokenAccesors()
+    public static function getTokenAccessors()
     {
 
         $accessors = [];
@@ -132,7 +139,7 @@ class SSODataTest extends TestCase
     {
 
         $tokenData = self::getTokenData();
-        $accessors = self::getTokenAccesors();
+        $accessors = self::getTokenAccessors();
 
         $ssoData = $this->getMockForAbstractClass(SSOData::class);
 
@@ -151,12 +158,12 @@ class SSODataTest extends TestCase
             }));
 
         foreach ($accessors as $key => $fn) {
-
             $this->assertEquals(
                 call_user_func([$ssoData, $fn]),
                 $tokenData[$key],
                 "called $fn expected " .
-                is_array($tokenData[$key]) ? print_r($tokenData[$key], true) : $tokenData[$key]);
+                is_array($tokenData[$key]) ? print_r($tokenData[$key], true) : $tokenData[$key]
+            );
         }
     }
 
@@ -180,7 +187,6 @@ class SSODataTest extends TestCase
         ];
 
         foreach ($map as $arg => $expect) {
-
             $tokenData = self::getTokenData();
             $tokenData[SSOData::CLAIM_USER_ROLE] = $arg;
 
@@ -201,7 +207,8 @@ class SSODataTest extends TestCase
             $this->assertEquals(
                 $ssoData->isEditor(),
                 $expect,
-                "called isEditor on role [$arg] expected [$expect]");
+                "called isEditor on role [$arg] expected [$expect]"
+            );
         }
     }
 
