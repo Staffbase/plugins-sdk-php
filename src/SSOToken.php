@@ -57,7 +57,7 @@ class SSOToken extends SSOData
 	 *
 	 * @throws SSOException on invalid parameters.
 	 */
-	public function __construct($appSecret, $tokenData, $leeway = 0) {
+	public function __construct(string $appSecret, string $tokenData, int $leeway = 0) {
 
 		if (!trim($appSecret))
 			throw new SSOException('Parameter appSecret for SSOToken is empty.');
@@ -82,7 +82,7 @@ class SSOToken extends SSOData
 	 *
 	 * @throws SSOAuthenticationException if the parsing/verification/validation of the token fails.
 	 */
-	protected function parseToken($tokenData, $leeway) {
+	protected function parseToken(string $tokenData, int $leeway) {
 		// parse text
 		$this->token = $this->config->parser()->parse($tokenData);
 
@@ -138,7 +138,7 @@ class SSOToken extends SSOData
 	 *
 	 * @return string PEM encoded key
 	 */
-	public static function base64ToPEMPublicKey($data) {
+	public static function base64ToPEMPublicKey(string $data): string {
 
 		$data = strtr($data, array(
 			"\r" => "",
@@ -157,7 +157,7 @@ class SSOToken extends SSOData
 	 * @param string $appSecret
 	 * @return Key
 	 */
-	private function getKey(string $appSecret) {
+	private function getKey(string $appSecret): Key {
 		if(strpos($appSecret,'-----') === 0 ) {
 			$key = InMemory::plainText($appSecret);
 		} else if (strpos($appSecret, 'file://') === 0 ) {
@@ -169,12 +169,13 @@ class SSOToken extends SSOData
 	}
 
 	/**
-	 * Formats the leeway integer value into a DateInterval
+	 * Formats the leeway integer value into a DateInterval as this is
+	 * needed by the JWT library
 	 *
-	 * @param int $leeway
-	 * @return DateInterval
+	 * @param int $leeway count of seconds added to current timestamp
+	 * @return DateInterval DateInterval
 	 */
-	private function getLeewayInterval (int $leeway) {
+	private function getLeewayInterval (int $leeway): DateInterval {
 		$leewayInterval = "PT{$leeway}S";
 
 		try {
