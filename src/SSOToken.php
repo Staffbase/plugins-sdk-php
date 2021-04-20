@@ -57,16 +57,13 @@ class SSOToken extends SSOData
 	 *
 	 * @throws SSOException on invalid parameters.
 	 */
-	public function __construct(string $appSecret, string $tokenData, int $leeway = 0) {
+	public function __construct(string $appSecret, string $tokenData, ?int $leeway = 0) {
 
 		if (!trim($appSecret))
 			throw new SSOException('Parameter appSecret for SSOToken is empty.');
 
 		if (!trim($tokenData))
 			throw new SSOException('Parameter tokenData for SSOToken is empty.');
-
-		if (!is_numeric($leeway))
-			throw new SSOException('Parameter leeway has to be numeric.');
 
 		$this->key = $this->getKey(trim($appSecret));
 		$this->config = Configuration::forSymmetricSigner(new Sha256(), $this->key);

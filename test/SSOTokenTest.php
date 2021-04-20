@@ -91,28 +91,6 @@ class SSOTokenTest extends TestCase
 	/**
 	 * @test
 	 *
-	 * Test constructor throws exception on empty token.
-	 *
-	 * @covers \Staffbase\plugins\sdk\SSOToken::__construct
-	 */
-	public function testConstructorRefuseNonNumericLeeway() {
-
-		$mock = $this->getMockBuilder($this->classname)
-			->disableOriginalConstructor()
-			->onlyMethods(array('parseToken'))
-			->getMock();
-
-		$this->expectException(SSOException::class);
-		$this->expectExceptionMessage('Parameter leeway has to be numeric.');
-
-		$reflectedClass = new ReflectionClass($this->classname);
-		$constructor = $reflectedClass->getConstructor();
-		$constructor->invoke($mock, 'fake secret', 'fake token', 'dd');
-	}
-
-	/**
-	 * @test
-	 *
 	 * Test constructor throws exception on expired token.
 	 *
 	 * @covers \Staffbase\plugins\sdk\SSOToken::__construct
