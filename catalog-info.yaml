@@ -7,5 +7,5 @@ metadata:
   tags:
     - php
 spec:
-  type: service
+  type: library
   lifecycle: production
