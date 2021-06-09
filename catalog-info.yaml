@@ -1,0 +1,11 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: plugins-sdk-php
+  annotations:
+    github.com/project-slug: Staffbase/plugins-sdk-php
+  tags:
+    - php
+spec:
+  type: library
+  lifecycle: production
