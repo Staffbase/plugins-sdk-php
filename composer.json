@@ -13,12 +13,11 @@
 		}
 	],
 	"require": {
-		"php": "^7.4",
+		"php": "^8.0",
 		"lcobucci/jwt": "^4.1"
 
 	},
 	"require-dev": {
-		"cvuorinen/phpdoc-markdown-public": "^0.2.0",
 		"phpseclib/phpseclib": "^2.0",
 		"phpunit/phpunit": "^9.0"
 	},
