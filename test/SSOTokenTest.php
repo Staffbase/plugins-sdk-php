@@ -14,13 +14,13 @@
 namespace Staffbase\plugins\test;
 
 use DateTimeImmutable;
-use ReflectionClass;
 use phpseclib\Crypt\RSA;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 use Staffbase\plugins\sdk\Exceptions\SSOAuthenticationException;
 use Staffbase\plugins\sdk\Exceptions\SSOException;
-use Staffbase\plugins\sdk\SSOTokenGenerator;
 use Staffbase\plugins\sdk\SSOToken;
+use Staffbase\plugins\sdk\SSOTokenGenerator;
 
 class SSOTokenTest extends TestCase
 {
@@ -231,7 +231,7 @@ class SSOTokenTest extends TestCase
 	 * @covers \Staffbase\plugins\sdk\SSOToken::getClaim()
 	 * @covers \Staffbase\plugins\sdk\SSOToken::getBranchId()
 	 * @covers \Staffbase\plugins\sdk\SSOToken::getBranchSlug()
-	 * @covers \Staffbase\plugins\sdk\SSOData::getSessionId()
+	 * @covers \Staffbase\plugins\sdk\SSOData\SSOData::getSessionId()
 	 */
 	public function testAccessorsGiveCorrectValues() {
 

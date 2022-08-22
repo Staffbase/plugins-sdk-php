@@ -14,9 +14,9 @@
 
 namespace Staffbase\plugins\test;
 
-use PHPUnit\Framework\TestCase;
-use Staffbase\plugins\sdk\SSOData;
 use DateTimeImmutable;
+use PHPUnit\Framework\TestCase;
+use Staffbase\plugins\sdk\SSOData\SSOData;
 
 class SSODataTest extends TestCase
 {

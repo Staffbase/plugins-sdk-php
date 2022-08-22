@@ -18,7 +18,7 @@ use Lcobucci\JWT\Token;
 use Lcobucci\JWT\UnencryptedToken;
 use Lcobucci\JWT\Validation\Constraint;
 use Lcobucci\JWT\Validation\ConstraintViolation;
-use Staffbase\plugins\sdk\SSOData;
+use Staffbase\plugins\sdk\SSOData\SSOData;
 
 final class HasInstanceId implements Constraint
 {

@@ -15,10 +15,11 @@
 namespace Staffbase\plugins\sdk;
 
 use SessionHandlerInterface;
-use Staffbase\plugins\sdk\Exceptions\SSOException;
 use Staffbase\plugins\sdk\Exceptions\SSOAuthenticationException;
-use Staffbase\plugins\sdk\RemoteCall\RemoteCallInterface;
+use Staffbase\plugins\sdk\Exceptions\SSOException;
 use Staffbase\plugins\sdk\RemoteCall\DeleteInstanceCallHandlerInterface;
+use Staffbase\plugins\sdk\RemoteCall\RemoteCallInterface;
+use Staffbase\plugins\sdk\SSOData\SSOData;
 
 /**
  * A container which decrypts and stores the SSO data in a session for further requests.

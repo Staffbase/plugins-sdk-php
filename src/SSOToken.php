@@ -18,14 +18,15 @@ use DateInterval;
 use Lcobucci\Clock\SystemClock;
 use Lcobucci\JWT\Configuration;
 use Lcobucci\JWT\Signer\Key;
-use Lcobucci\JWT\Token;
 use Lcobucci\JWT\Signer\Key\InMemory;
+use Lcobucci\JWT\Signer\Rsa\Sha256;
+use Lcobucci\JWT\Token;
 use Lcobucci\JWT\Validation\Constraint\SignedWith;
 use Lcobucci\JWT\Validation\Constraint\StrictValidAt;
 use Lcobucci\JWT\Validation\RequiredConstraintsViolated;
-use Lcobucci\JWT\Signer\Rsa\Sha256;
-use Staffbase\plugins\sdk\Exceptions\SSOException;
 use Staffbase\plugins\sdk\Exceptions\SSOAuthenticationException;
+use Staffbase\plugins\sdk\Exceptions\SSOException;
+use Staffbase\plugins\sdk\SSOData\SSOData;
 use Staffbase\plugins\sdk\Validation\HasInstanceId;
 
 /**
