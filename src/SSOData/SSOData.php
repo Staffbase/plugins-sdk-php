@@ -14,136 +14,32 @@
 
 namespace Staffbase\plugins\sdk\SSOData;
 
-use DateTimeImmutable;
-
 /**
  * A container for the data transmitted from Staffbase app to a plugin
  * using the Staffbase single-sign-on.
  */
-abstract class SSOData
+abstract class SSOData extends SharedData
 {
-    const CLAIM_AUDIENCE                    = 'aud';
-    const CLAIM_EXPIRE_AT                   = 'exp';
-    const CLAIM_NOT_BEFORE                  = 'nbf';
-    const CLAIM_ISSUED_AT                   = 'iat';
-    const CLAIM_ISSUER                      = 'iss';
-    const CLAIM_SESSION_ID                  = 'sid';
-    const CLAIM_INSTANCE_ID                 = 'instance_id';
-    const CLAIM_INSTANCE_NAME               = 'instance_name';
-    const CLAIM_BRANCH_ID                   = 'branch_id';
-    const CLAIM_BRANCH_SLUG                 = 'branch_slug';
-    const CLAIM_USER_ID                     = 'sub';
-    const CLAIM_USER_EXTERNAL_ID            = 'external_id';
-    const CLAIM_USER_USERNAME               = 'username';
-    const CLAIM_USER_PRIMARY_EMAIL_ADDRESS  = 'primary_email_address';
-    const CLAIM_USER_FULL_NAME              = 'name';
-    const CLAIM_USER_FIRST_NAME             = 'given_name';
-    const CLAIM_USER_LAST_NAME              = 'family_name';
-    const CLAIM_USER_ROLE                   = 'role';
-    const CLAIM_ENTITY_TYPE                 = 'type';
-    const CLAIM_THEME_TEXT_COLOR            = 'theming_text';
-    const CLAIM_THEME_BACKGROUND_COLOR      = 'theming_bg';
-    const CLAIM_USER_LOCALE                 = 'locale';
-    const CLAIM_USER_TAGS                   = 'tags';
+  private const CLAIM_SESSION_ID                  = 'sid';
+  private const CLAIM_INSTANCE_ID                 = 'instance_id';
+  private const CLAIM_INSTANCE_NAME               = 'instance_name';
+  private const CLAIM_BRANCH_ID                   = 'branch_id';
+  private const CLAIM_BRANCH_SLUG                 = 'branch_slug';
+  private const CLAIM_USER_EXTERNAL_ID            = 'external_id';
+  private const CLAIM_USER_USERNAME               = 'username';
+  private const CLAIM_USER_PRIMARY_EMAIL_ADDRESS  = 'primary_email_address';
+  private const CLAIM_USER_FULL_NAME              = 'name';
+  private const CLAIM_USER_FIRST_NAME             = 'given_name';
+  private const CLAIM_USER_LAST_NAME              = 'family_name';
+  private const CLAIM_ENTITY_TYPE                 = 'type';
+  private const CLAIM_THEME_TEXT_COLOR            = 'theming_text';
+  private const CLAIM_THEME_BACKGROUND_COLOR      = 'theming_bg';
+  private const CLAIM_USER_LOCALE                 = 'locale';
+  private const CLAIM_USER_TAGS                   = 'tags';
 
-    const USER_ROLE_EDITOR = 'editor';
+  private const USER_ROLE_EDITOR = 'editor';
 
-    const REMOTE_CALL_DELETE = 'delete';
-
-    /**
-     * Test if a claim is set.
-     *
-     * @param string $claim name.
-     *
-     * @return boolean
-     */
-    abstract protected function hasClaim($claim);
-
-    /**
-     * Get a claim without checking for existence.
-     *
-     * @param string $claim name.
-     *
-     * @return mixed
-     */
-    abstract protected function getClaim($claim);
-
-    /**
-     * Get an array of all available claims and their values.
-     *
-     * @return array
-     */
-    abstract protected function getAllClaims();
-
-    /**
-     * Internal getter for all token properties.
-     *
-     * Has a check for undefined claims to make getter calls always valid.
-     *
-     * @param string Name of the claim.
-     *
-     * @return mixed
-     */
-    protected function getClaimSafe($name) {
-
-        if ($this->hasClaim($name))
-            return $this->getClaim($name);
-
-        return null;
-    }
-
-    /**
-     * Get targeted audience of the token. Currently only
-     * one audience is supported.
-     *
-     * @return null|string
-     */
-    public function getAudience() {
-
-       $audience = $this->getClaimSafe(self::CLAIM_AUDIENCE);
-
-       return !is_array($audience) ? $audience : $audience[0] ?? null;
-    }
-
-    /**
-     * Get the time when the token expires.
-     *
-     * @return DateTimeImmutable
-     */
-    public function getExpireAtTime() {
-
-        return $this->getClaimSafe(self::CLAIM_EXPIRE_AT);
-    }
-
-    /**
-     * Get the time when the token starts to be valid.
-     *
-     * @return DateTimeImmutable
-     */
-    public function getNotBeforeTime() {
-
-        return $this->getClaimSafe(self::CLAIM_NOT_BEFORE);
-    }
-
-    /**
-     * Get the time when the token was issued.
-     *
-     * @return DateTimeImmutable
-     */
-    public function getIssuedAtTime() {
-
-        return $this->getClaimSafe(self::CLAIM_ISSUED_AT);
-    }
-
-    /**
-     * Get issuer of the token.
-     *
-     * @return null|string
-     */
-    public function getIssuer() {
-
-        return $this->getClaimSafe(self::CLAIM_ISSUER);
-    }
+  private const REMOTE_CALL_DELETE = 'delete';
 
     /**
      * Get the branch id of the app that issued the token.
@@ -152,7 +48,8 @@ abstract class SSOData
      *
      * @return string
      */
-    public function getBranchId() {
+    public function getBranchId(): string
+	{
 
         return $this->getClaimSafe(self::CLAIM_BRANCH_ID);
     }
@@ -162,7 +59,8 @@ abstract class SSOData
      *
      * @return null|string
      */
-    public function getBranchSlug() {
+    public function getBranchSlug(): ?string
+	{
 
         return $this->getClaimSafe(self::CLAIM_BRANCH_SLUG);
     }
@@ -174,7 +72,8 @@ abstract class SSOData
      *
      * @return string
      */
-    public function getSessionId() {
+    public function getSessionId(): string
+	{
 
         return $this->getClaimSafe(self::CLAIM_SESSION_ID);
     }
@@ -186,7 +85,8 @@ abstract class SSOData
      *
      * @return string
      */
-    public function getInstanceId() {
+    public function getInstanceId(): string
+	{
 
         return $this->getClaimSafe(self::CLAIM_INSTANCE_ID);
     }
@@ -196,7 +96,8 @@ abstract class SSOData
      *
      * @return null|string
      */
-    public function getInstanceName() {
+    public function getInstanceName(): ?string
+	{
 
         return $this->getClaimSafe(self::CLAIM_INSTANCE_NAME);
     }
@@ -206,9 +107,10 @@ abstract class SSOData
      *
      * @return null|string
      */
-    public function getUserId() {
+    public function getUserId(): ?string
+	{
 
-        return $this->getClaimSafe(self::CLAIM_USER_ID);
+        return $this->getSubject();
     }
 
     /**
@@ -219,7 +121,8 @@ abstract class SSOData
      *
      * @return null|string
      */
-    public function getUserExternalId() {
+    public function getUserExternalId(): ?string
+	{
 
         return $this->getClaimSafe(self::CLAIM_USER_EXTERNAL_ID);
     }
@@ -229,7 +132,8 @@ abstract class SSOData
      *
      * @return null|string
      */
-    public function getUserUsername() {
+    public function getUserUsername(): ?string
+	{
 
         return $this->getClaimSafe(self::CLAIM_USER_USERNAME);
     }
@@ -239,7 +143,8 @@ abstract class SSOData
      *
      * @return null|string
      */
-    public function getUserPrimaryEmailAddress() {
+    public function getUserPrimaryEmailAddress(): ?string
+	{
 
         return $this->getClaimSafe(self::CLAIM_USER_PRIMARY_EMAIL_ADDRESS);
     }
@@ -249,7 +154,8 @@ abstract class SSOData
      *
      * @return null|string
      */
-    public function getFullName() {
+    public function getFullName(): ?string
+	{
 
         return $this->getClaimSafe(self::CLAIM_USER_FULL_NAME);
     }
@@ -259,7 +165,8 @@ abstract class SSOData
      *
      * @return null|string
      */
-    public function getFirstName() {
+    public function getFirstName(): ?string
+	{
 
         return $this->getClaimSafe(self::CLAIM_USER_FIRST_NAME);
     }
@@ -269,24 +176,12 @@ abstract class SSOData
      *
      * @return null|string
      */
-    public function getLastName() {
+    public function getLastName(): ?string
+	{
 
         return $this->getClaimSafe(self::CLAIM_USER_LAST_NAME);
     }
 
-    /**
-     * Get the role of the accessing user.
-     *
-     * If this is set to “editor”, the requesting user may manage the contents
-     * of the plugin instance, i.e. she has administration rights.
-     * The type of the accessing entity can be either a “user” or a “editor”.
-     *
-     * @return null|string
-     */
-    public function getRole() {
-
-        return $this->getClaimSafe(self::CLAIM_USER_ROLE);
-    }
 
     /**
      * Get the type of the token.
@@ -295,7 +190,8 @@ abstract class SSOData
      *
      * @return null|string
      */
-    public function getType() {
+    public function getType(): ?string
+	{
 
         return $this->getClaimSafe(self::CLAIM_ENTITY_TYPE);
     }
@@ -307,7 +203,8 @@ abstract class SSOData
      *
      * @return null|string
      */
-    public function getThemeTextColor() {
+    public function getThemeTextColor(): ?string
+	{
 
         return $this->getClaimSafe(self::CLAIM_THEME_TEXT_COLOR);
     }
@@ -319,7 +216,8 @@ abstract class SSOData
      *
      * @return null|string
      */
-    public function getThemeBackgroundColor() {
+    public function getThemeBackgroundColor(): ?string
+	{
 
         return $this->getClaimSafe(self::CLAIM_THEME_BACKGROUND_COLOR);
     }
@@ -329,7 +227,8 @@ abstract class SSOData
      *
      * @return string
      */
-    public function getLocale() {
+    public function getLocale(): string
+	{
 
         return $this->getClaimSafe(self::CLAIM_USER_LOCALE);
     }
@@ -339,7 +238,8 @@ abstract class SSOData
      *
      * @return array|null
      */
-    public function getTags() {
+    public function getTags(): ?array
+	{
 
         return $this->getClaimSafe(self::CLAIM_USER_TAGS);
     }
@@ -352,9 +252,10 @@ abstract class SSOData
      *
      * @return boolean
      */
-    public function isEditor() {
+    public function isEditor(): bool
+	{
 
-        return $this->getClaimSafe(self::CLAIM_USER_ROLE) === self::USER_ROLE_EDITOR;
+        return $this->getRole() === self::USER_ROLE_EDITOR;
     }
 
     /**
@@ -365,17 +266,8 @@ abstract class SSOData
      *
      * @return boolean
      */
-    public function isDeleteInstanceCall() {
+    public function isDeleteInstanceCall(): bool
+	{
         return $this->getUserId() === self::REMOTE_CALL_DELETE;
-    }
-
-    /**
-     * Get all stored data.
-     *
-     * @return array
-     */
-    public function getData() {
-
-        return $this->getAllClaims();
     }
 }
