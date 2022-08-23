@@ -24,8 +24,10 @@ use Staffbase\plugins\sdk\SSOData\SSOData;
 /**
  * A container which decrypts and stores the SSO data in a session for further requests.
  */
-class PluginSession extends SSOData
+class PluginSession
 {
+	use SSOData;
+
 	const QUERY_PARAM_JWT = 'jwt';
 	const QUERY_PARAM_PID = 'pid';
 	const QUERY_PARAM_SID = 'sessionID';
@@ -130,11 +132,13 @@ class PluginSession extends SSOData
 		$this->closeSession();
 	}
 
-	private function isAdminView() {
+	private function isAdminView(): bool
+	{
 		return $this->isEditor() && (!isset($_GET[self::QUERY_PARAM_USERVIEW]) || $_GET[self::QUERY_PARAM_USERVIEW] !== 'true');
 	}
 
-	private function deleteInstance($remoteCallHandler){
+	private function deleteInstance($remoteCallHandler): void
+	{
 		if (!$this->sso->isDeleteInstanceCall() || !$remoteCallHandler) {
 			return;
 		}
@@ -169,7 +173,8 @@ class PluginSession extends SSOData
 	 *
 	 * if a remote call was not handled by the user we die hard here
 	 */
-	protected function exitRemoteCall() {
+	protected function exitRemoteCall(): void
+	{
 		error_log("Warning: The exit procedure for a remote call was not properly handled.");
 		exit;
 	}
@@ -179,11 +184,12 @@ class PluginSession extends SSOData
 	 *
 	 * @param string $name of the session
 	 */
-	protected function openSession(string $name) {
+	protected function openSession(string $name): void
+	{
 
-		$sessionId = $this->createCompatibleSessionId($this->sessionId);
+		$sid = $this->createCompatibleSessionId($this->sessionId);
 
-		session_id($sessionId);
+		session_id($sid);
 		session_name($name);
 		session_start();
 	}
@@ -191,7 +197,8 @@ class PluginSession extends SSOData
 	/**
 	 * Close a session.
 	 */
-	protected function closeSession() {
+	protected function closeSession(): void
+	{
 
 		session_write_close();
 	}
@@ -203,7 +210,7 @@ class PluginSession extends SSOData
 	 *
 	 * @return boolean
 	 */
-	protected function hasClaim($claim) {
+	protected function hasClaim(string $claim): bool {
 
 		return isset($_SESSION[$this->pluginInstanceId][self::KEY_SSO][$claim]);
 	}
@@ -215,7 +222,7 @@ class PluginSession extends SSOData
 	 *
 	 * @return mixed
 	 */
-	protected function getClaim($claim) {
+	protected function getClaim(string $claim) {
 
 		return $_SESSION[$this->pluginInstanceId][self::KEY_SSO][$claim];
 	}
@@ -225,7 +232,7 @@ class PluginSession extends SSOData
 	 *
 	 * @return array
 	 */
-	protected function getAllClaims() {
+	protected function getAllClaims(): array {
 
 		return $_SESSION[$this->pluginInstanceId][self::KEY_SSO];
 	}
@@ -250,7 +257,8 @@ class PluginSession extends SSOData
 	 *
 	 * @return array
 	 */
-	public function getSessionData() {
+	public function getSessionData(): array
+	{
 
 		if(isset($_SESSION[$this->pluginInstanceId][self::KEY_DATA]))
 			return $_SESSION[$this->pluginInstanceId][self::KEY_DATA];
@@ -264,7 +272,8 @@ class PluginSession extends SSOData
 	 * @param mixed $key
 	 * @param mixed $val
 	 */
-	public function setSessionVar($key, $val) {
+	public function setSessionVar($key, $val): void
+	{
 
 		$_SESSION[$this->pluginInstanceId][self::KEY_DATA][$key] = $val;
 	}
@@ -274,7 +283,8 @@ class PluginSession extends SSOData
 	 *
 	 * @return bool
 	 */
-	public function isUserView() {
+	public function isUserView(): bool
+	{
 
 		return $this->userView;
 	}
@@ -285,7 +295,8 @@ class PluginSession extends SSOData
 	 * @param String $sessionId
 	 * @return bool true on success or false on failure.
 	 */
-	public function destroySession(String $sessionId = null) {
+	public function destroySession(String $sessionId = null): bool
+	{
 
 		$sessionId = $sessionId ?: $this->sessionId;
 

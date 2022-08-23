@@ -2,7 +2,7 @@
 <phpunit colors="true" bootstrap="vendor/autoload.php" stderr="true" >
 	<testsuites>
 		<testsuite name="Plugins SDK unit test suite">
-			<file>test/SSODataTest.php</file>
+			<file>test/SSOData/SSODataTest.php</file>
 			<file>test/SSOTokenTest.php</file>
 			<file>test/PluginSessionTest.php</file>
 		</testsuite>

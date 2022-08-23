@@ -37,6 +37,6 @@ final class HasInstanceId implements Constraint
 	}
 
 	private function hasInstanceId(Token $token): bool {
-		return !!$token->claims()->get(SSOData::CLAIM_INSTANCE_ID);
+		return (bool) $token->claims()->get(SSOData::$CLAIM_INSTANCE_ID);
 	}
 }

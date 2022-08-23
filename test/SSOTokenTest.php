@@ -97,7 +97,7 @@ class SSOTokenTest extends TestCase
 	 */
 	public function testConstructorToFailOnExpiredToken() {
 
-		$tokenData = SSODataTest::getTokenData("-1 minute");
+		$tokenData = SSOTestData::getTokenData("-1 minute");
 
 		$token = SSOTokenGenerator::createSignedTokenFromData($this->privateKey, $tokenData);
 
@@ -115,7 +115,7 @@ class SSOTokenTest extends TestCase
 	 */
 	public function testConstructorToFailOnFutureToken() {
 
-		$tokenData = SSODataTest::getTokenData(null, "+1 minute");
+		$tokenData = SSOTestData::getTokenData(null, "+1 minute");
 
 		$token = SSOTokenGenerator::createSignedTokenFromData($this->privateKey, $tokenData);
 
@@ -133,7 +133,7 @@ class SSOTokenTest extends TestCase
 	 */
 	public function testConstructorToFailOnTokenIssuedInTheFuture() {
 
-		$tokenData = SSODataTest::getTokenData(null,null, "+10 second");
+		$tokenData = SSOTestData::getTokenData(null,null, "+10 second");
 
 		$token = SSOTokenGenerator::createSignedTokenFromData($this->privateKey, $tokenData);
 
@@ -152,7 +152,7 @@ class SSOTokenTest extends TestCase
 	public function testConstructorAcceptsLeewayForTokenIssuedInTheFuture() {
 
 		$leeway = 11;
-		$tokenData = SSODataTest::getTokenData(null,null, "+10 second");
+		$tokenData = SSOTestData::getTokenData(null,null, "+10 second");
 
 		$token = SSOTokenGenerator::createSignedTokenFromData($this->privateKey, $tokenData);
 
@@ -171,8 +171,8 @@ class SSOTokenTest extends TestCase
 	 */
 	public function testConstructorToFailOnMissingInstanceId() {
 
-		$tokenData = SSODataTest::getTokenData();
-		$tokenData[SSOToken::CLAIM_INSTANCE_ID] = '';
+		$tokenData = SSOTestData::getTokenData();
+		$tokenData[SSOToken::$CLAIM_INSTANCE_ID] = '';
 
 		$token = SSOTokenGenerator::createSignedTokenFromData($this->privateKey, $tokenData);
 
@@ -191,7 +191,7 @@ class SSOTokenTest extends TestCase
 	 */
 	public function testConstructorToFailOnUnsignedToken() {
 
-		$tokenData = SSODataTest::getTokenData();
+		$tokenData = SSOTestData::getTokenData();
 
 		$token = SSOTokenGenerator::createUnsignedTokenFromData($tokenData);
 
@@ -212,6 +212,7 @@ class SSOTokenTest extends TestCase
 	 * @covers \Staffbase\plugins\sdk\SSOToken::getNotBeforeTime()
 	 * @covers \Staffbase\plugins\sdk\SSOToken::getIssuedAtTime()
 	 * @covers \Staffbase\plugins\sdk\SSOToken::getIssuer()
+	 * @covers \Staffbase\plugins\sdk\SSOToken::getId()
 	 * @covers \Staffbase\plugins\sdk\SSOToken::getInstanceId()
 	 * @covers \Staffbase\plugins\sdk\SSOToken::getInstanceName()
 	 * @covers \Staffbase\plugins\sdk\SSOToken::getUserId()
@@ -235,8 +236,8 @@ class SSOTokenTest extends TestCase
 	 */
 	public function testAccessorsGiveCorrectValues() {
 
-		$tokenData = SSODataTest::getTokenData();
-		$accessors = SSODataTest::getTokenAccessors();
+		$tokenData = SSOTestData::getTokenData();
+		$accessors = SSOTestData::getTokenAccessors();
 
 		$token = SSOTokenGenerator::createSignedTokenFromData($this->privateKey, $tokenData);
 		$ssoToken = new SSOToken($this->publicKey, $token);
@@ -251,8 +252,8 @@ class SSOTokenTest extends TestCase
 			$data = is_array($data) ? print_r($data, true) : $data;
 
 			$this->assertEquals(
-				call_user_func([$ssoToken,$fn]),
 				$tokenData[$key],
+				$ssoToken->$fn(),
 				"called $fn expected $data");
 		}
 	}

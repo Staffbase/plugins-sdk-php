@@ -26,6 +26,7 @@ use Lcobucci\JWT\Validation\Constraint\StrictValidAt;
 use Lcobucci\JWT\Validation\RequiredConstraintsViolated;
 use Staffbase\plugins\sdk\Exceptions\SSOAuthenticationException;
 use Staffbase\plugins\sdk\Exceptions\SSOException;
+use Staffbase\plugins\sdk\SSOData\SharedData;
 use Staffbase\plugins\sdk\SSOData\SSOData;
 use Staffbase\plugins\sdk\Validation\HasInstanceId;
 
@@ -33,10 +34,12 @@ use Staffbase\plugins\sdk\Validation\HasInstanceId;
  * A container which is able to decrypt and store the data transmitted
  * from Staffbase app to a plugin using the Staffbase single-sign-on.
  */
-class SSOToken extends SSOData
+class SSOToken
 {
+	use SharedData, SSOData;
+
 	/**
-	 * @var Token $token
+	 * @var Token | null $token
 	 */
 	private ?Token $token = null;
 
@@ -49,13 +52,15 @@ class SSOToken extends SSOData
 	 * @var Configuration $config
 	 */
 	private Configuration $config;
+
 	/**
 	 * Constructor
 	 *
 	 * @param string $appSecret Either a PEM key or a file:// URL.
 	 * @param string $tokenData The token text.
-	 * @param int $leeway count of seconds added to current timestamp
+	 * @param int|null $leeway count of seconds added to current timestamp
 	 *
+	 * @throws SSOAuthenticationException
 	 * @throws SSOException on invalid parameters.
 	 */
 	public function __construct(string $appSecret, string $tokenData, ?int $leeway = 0) {
@@ -80,7 +85,8 @@ class SSOToken extends SSOData
 	 *
 	 * @throws SSOAuthenticationException if the parsing/verification/validation of the token fails.
 	 */
-	protected function parseToken(string $tokenData, int $leeway) {
+	protected function parseToken(string $tokenData, int $leeway): void
+	{
 		// parse text
 		$this->token = $this->config->parser()->parse($tokenData);
 
@@ -104,7 +110,7 @@ class SSOToken extends SSOData
 	 *
 	 * @return boolean
 	 */
-	protected function hasClaim($claim) {
+	protected function hasClaim(string $claim): bool {
 		return $this->token->claims()->has($claim);
 	}
 
@@ -115,7 +121,7 @@ class SSOToken extends SSOData
 	 *
 	 * @return mixed
 	 */
-	protected function getClaim($claim) {
+	protected function getClaim(string $claim) {
 		return $this->token->claims()->get($claim);
 	}
 
@@ -124,7 +130,7 @@ class SSOToken extends SSOData
 	 *
 	 * @return array
 	 */
-	protected function getAllClaims() {
+	protected function getAllClaims(): array {
 
 		return $this->token->claims()->all();
 	}
@@ -161,7 +167,7 @@ class SSOToken extends SSOData
 		} else if (strpos($appSecret, 'file://') === 0 ) {
 			$key = InMemory::file($appSecret);
 		} else {
-			$key = InMemory::plainText($this->base64ToPEMPublicKey($appSecret));
+			$key = InMemory::plainText(self::base64ToPEMPublicKey($appSecret));
 		}
 		return $key;
 	}

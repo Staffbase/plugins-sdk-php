@@ -4,60 +4,19 @@ namespace Staffbase\plugins\sdk\SSOData;
 
 use DateTimeImmutable;
 
-abstract class SharedData {
+trait SharedData {
 
-	private const CLAIM_AUDIENCE                    = 'aud';
-	private const CLAIM_EXPIRE_AT                   = 'exp';
-	private const CLAIM_JWT_ID                 	    = 'jti';
-	private const CLAIM_ISSUED_AT                   = 'iat';
-	private const CLAIM_ISSUER                      = 'iss';
-	private const CLAIM_NOT_BEFORE                  = 'nbf';
-	private const CLAIM_SUBJECT                     = 'sub';
+	use ClaimAccess;
 
-	private const CLAIM_USER_ROLE                   = 'role';
+	public static string $CLAIM_AUDIENCE                    = 'aud';
+	public static string $CLAIM_EXPIRE_AT                   = 'exp';
+	public static string $CLAIM_JWT_ID		         	    = 'jti';
+	public static string $CLAIM_ISSUED_AT                   = 'iat';
+	public static string $CLAIM_ISSUER                      = 'iss';
+	public static string $CLAIM_NOT_BEFORE                  = 'nbf';
+	public static string $CLAIM_SUBJECT                     = 'sub';
 
-	/**
-	 * Test if a claim is set.
-	 *
-	 * @param string $claim name.
-	 *
-	 * @return boolean
-	 */
-	abstract protected function hasClaim(string $claim): bool;
-
-	/**
-	 * Get a claim without checking for existence.
-	 *
-	 * @param string $claim name.
-	 *
-	 * @return mixed
-	 */
-	abstract protected function getClaim(string $claim);
-
-	/**
-	 * Get an array of all available claims and their values.
-	 *
-	 * @return array
-	 */
-	abstract protected function getAllClaims(): array;
-
-	/**
-	 * Internal getter for all token properties.
-	 *
-	 * Has a check for undefined claims to make getter calls always valid.
-	 *
-	 * @param string Name of the claim.
-	 *
-	 * @return mixed
-	 */
-	protected function getClaimSafe(string $name) {
-
-		if ($this->hasClaim($name)) {
-			return $this->getClaim($name);
-		}
-
-		return null;
-	}
+	public static string $CLAIM_USER_ROLE                   = 'role';
 
 	/**
 	 * Get targeted audience of the token. Currently only
@@ -68,7 +27,7 @@ abstract class SharedData {
 	public function getAudience(): ?string
 	{
 
-		$audience = $this->getClaimSafe(self::CLAIM_AUDIENCE);
+		$audience = $this->getClaimSafe(self::$CLAIM_AUDIENCE);
 
 		return !is_array($audience) ? $audience : $audience[0] ?? null;
 	}
@@ -80,7 +39,7 @@ abstract class SharedData {
 	 */
 	public function getExpireAtTime(): ?DateTimeImmutable
 	{
-		return $this->getClaimSafe(self::CLAIM_EXPIRE_AT);
+		return $this->getClaimSafe(self::$CLAIM_EXPIRE_AT);
 	}
 
 	/**
@@ -90,7 +49,7 @@ abstract class SharedData {
 	 */
 	public function getNotBeforeTime(): ?DateTimeImmutable
 	{
-		return $this->getClaimSafe(self::CLAIM_NOT_BEFORE);
+		return $this->getClaimSafe(self::$CLAIM_NOT_BEFORE);
 	}
 
 	/**
@@ -100,7 +59,7 @@ abstract class SharedData {
 	 */
 	public function getIssuedAtTime(): ?DateTimeImmutable
 	{
-		return $this->getClaimSafe(self::CLAIM_ISSUED_AT);
+		return $this->getClaimSafe(self::$CLAIM_ISSUED_AT);
 	}
 
 	/**
@@ -110,7 +69,7 @@ abstract class SharedData {
 	 */
 	public function getIssuer(): ?string
 	{
-		return $this->getClaimSafe(self::CLAIM_ISSUER);
+		return $this->getClaimSafe(self::$CLAIM_ISSUER);
 	}
 
 	/**
@@ -120,7 +79,7 @@ abstract class SharedData {
 	 */
 	public function getId(): ?string
 	{
-		return $this->getClaimSafe(self::CLAIM_JWT_ID);
+		return $this->getClaimSafe(self::$CLAIM_JWT_ID);
 	}
 
 	/**
@@ -130,7 +89,7 @@ abstract class SharedData {
 	 */
 	public function getSubject(): ?string
 	{
-		return $this->getClaimSafe(self::CLAIM_SUBJECT);
+		return $this->getClaimSafe(self::$CLAIM_SUBJECT);
 	}
 
 	/**
@@ -144,7 +103,7 @@ abstract class SharedData {
 	 */
 	public function getRole(): ?string
 	{
-		return $this->getClaimSafe(self::CLAIM_USER_ROLE);
+		return $this->getClaimSafe(self::$CLAIM_USER_ROLE);
 	}
 
 	/**
