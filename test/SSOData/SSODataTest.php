@@ -30,11 +30,11 @@ class SSODataTest extends TestCase
      * @covers \Staffbase\plugins\sdk\SSOData\SharedData::getExpireAtTime()
      * @covers \Staffbase\plugins\sdk\SSOData\SharedData::getNotBeforeTime()
      * @covers \Staffbase\plugins\sdk\SSOData\SharedData::getIssuedAtTime()
-	 * @covers \Staffbase\plugins\sdk\SSOData\SharedData::getId()
-	 * @covers \Staffbase\plugins\sdk\SSOData\SharedData::getIssuer()
-	 * @covers \Staffbase\plugins\sdk\SSOData\SharedData::getSubject()
-	 * @covers \Staffbase\plugins\sdk\SSOData\SharedData::getRole()
-	 * @covers \Staffbase\plugins\sdk\SSOData\SSOData::getInstanceId()
+     * @covers \Staffbase\plugins\sdk\SSOData\SharedData::getId()
+     * @covers \Staffbase\plugins\sdk\SSOData\SharedData::getIssuer()
+     * @covers \Staffbase\plugins\sdk\SSOData\SharedData::getSubject()
+     * @covers \Staffbase\plugins\sdk\SSOData\SharedData::getRole()
+     * @covers \Staffbase\plugins\sdk\SSOData\SSOData::getInstanceId()
      * @covers \Staffbase\plugins\sdk\SSOData\SSOData::getInstanceName()
      * @covers \Staffbase\plugins\sdk\SSOData\SSOData::getUserId()
      * @covers \Staffbase\plugins\sdk\SSOData\SSOData::getUserExternalId()
@@ -53,7 +53,7 @@ class SSODataTest extends TestCase
      * @covers \Staffbase\plugins\sdk\SSOData\SSOData::getSessionId()
      */
     public function testAccessorsGiveCorrectValues(): void
-	{
+    {
 
         $tokenData = SSOTestData::getTokenData();
         $accessors = SSOTestData::getTokenAccessors();
@@ -64,15 +64,15 @@ class SSODataTest extends TestCase
             ->expects($this->exactly(count($accessors)))
             ->method('hasClaim')
             ->willReturnCallback(function ($key) use ($tokenData) {
-				return isset($tokenData[$key]);
-			});
+                return isset($tokenData[$key]);
+            });
 
         $ssoData
             ->expects($this->exactly(count($accessors)))
             ->method('getClaim')
             ->willReturnCallback(function ($key) use ($tokenData) {
-				return $tokenData[$key];
-			});
+                return $tokenData[$key];
+            });
 
         foreach ($accessors as $key => $fn) {
             $this->assertEquals(
@@ -90,7 +90,7 @@ class SSODataTest extends TestCase
      * @covers \Staffbase\plugins\sdk\SSOToken::isEditor
      */
     public function testIsEditorReturnsCorrectValues(): void
-	{
+    {
 
         $map = [
             null => false,
@@ -110,14 +110,14 @@ class SSODataTest extends TestCase
             $ssoData
                 ->method('hasClaim')
                 ->willReturnCallback(function ($key) use ($tokenData) {
-					return isset($tokenData[$key]);
-				});
+                    return isset($tokenData[$key]);
+                });
 
             $ssoData
                 ->method('getClaim')
                 ->willReturnCallback(function ($key) use ($tokenData) {
-					return $tokenData[$key];
-				});
+                    return $tokenData[$key];
+                });
 
             $this->assertEquals(
                 $ssoData->isEditor(),
@@ -133,7 +133,7 @@ class SSODataTest extends TestCase
      * @covers \Staffbase\plugins\sdk\SSOToken::getData
      */
     public function testGetDataReturnsCorrectValues(): void
-	{
+    {
 
         $tokenData = SSOTestData::getTokenData();
 
@@ -142,8 +142,8 @@ class SSODataTest extends TestCase
         $ssoData
             ->method('getAllClaims')
             ->willReturnCallback(function () use ($tokenData) {
-				return $tokenData;
-			});
+                return $tokenData;
+            });
 
         $this->assertEquals($ssoData->getData(), $tokenData, "comparing data array to token");
     }

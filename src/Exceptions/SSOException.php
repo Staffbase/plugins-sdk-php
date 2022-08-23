@@ -18,8 +18,10 @@ use Exception;
 
 /**
  * Class SSOException
- * 
+ *
  * A general SSO Exception type to group
  * exceptions from this library.
  */
-class SSOException extends Exception {}
+class SSOException extends Exception
+{
+}

@@ -24,23 +24,25 @@ namespace Staffbase\plugins\sdk\RemoteCall;
  */
 abstract class AbstractRemoteCallHandler implements RemoteCallInterface
 {
-	/**
-	 * Stop the execution by providing a 2XX HTTP response
-	 *
-	 * This will tell Staffbase that everything went OK.
-	 */
-	public function exitSuccess() {
-		header("HTTP/1.1 200 OK");
-		exit;
-	}
+    /**
+     * Stop the execution by providing a 2XX HTTP response
+     *
+     * This will tell Staffbase that everything went OK.
+     */
+    public function exitSuccess()
+    {
+        header("HTTP/1.1 200 OK");
+        exit;
+    }
 
-	/**
-	 * Stop the execution by providing a 5XX HTTP response
-	 * 
-	 * This will tell Staffbase that it should try again later.
-	 */
-	public function exitFailure() {
-		header('HTTP/1.1 500 Internal Server Error');
-		exit;
-	}
+    /**
+     * Stop the execution by providing a 5XX HTTP response
+     *
+     * This will tell Staffbase that it should try again later.
+     */
+    public function exitFailure()
+    {
+        header('HTTP/1.1 500 Internal Server Error');
+        exit;
+    }
 }

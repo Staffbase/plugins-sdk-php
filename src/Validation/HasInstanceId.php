@@ -13,7 +13,6 @@
 
 namespace Staffbase\plugins\sdk\Validation;
 
-
 use Lcobucci\JWT\Token;
 use Lcobucci\JWT\UnencryptedToken;
 use Lcobucci\JWT\Validation\Constraint;
@@ -22,21 +21,22 @@ use Staffbase\plugins\sdk\SSOData\SSOData;
 
 final class HasInstanceId implements Constraint
 {
-	/**
-	 * @inheritDoc
-	 */
-	public function assert(Token $token): void
-	{
-		if (!$token instanceof UnencryptedToken) {
-			throw new ConstraintViolation('You should pass a plain token');
-		}
+    /**
+     * @inheritDoc
+     */
+    public function assert(Token $token): void
+    {
+        if (!$token instanceof UnencryptedToken) {
+            throw new ConstraintViolation('You should pass a plain token');
+        }
 
-		if (!$this->hasInstanceId($token)){
-			throw new ConstraintViolation('Token lacks instance id.');
-		}
-	}
+        if (!$this->hasInstanceId($token)) {
+            throw new ConstraintViolation('Token lacks instance id.');
+        }
+    }
 
-	private function hasInstanceId(Token $token): bool {
-		return (bool) $token->claims()->get(SSOData::$CLAIM_INSTANCE_ID);
-	}
+    private function hasInstanceId(Token $token): bool
+    {
+        return (bool) $token->claims()->get(SSOData::$CLAIM_INSTANCE_ID);
+    }
 }

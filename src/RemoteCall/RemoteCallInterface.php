@@ -23,17 +23,17 @@ namespace Staffbase\plugins\sdk\RemoteCall;
  */
 interface RemoteCallInterface
 {
-	/**
-	 * Stop the execution by providing a 2XX HTTP response
-	 *
-	 * This will tell Staffbase that everything went OK.
-	 */
-	public function exitSuccess();
+    /**
+     * Stop the execution by providing a 2XX HTTP response
+     *
+     * This will tell Staffbase that everything went OK.
+     */
+    public function exitSuccess();
 
-	/**
-	 * Stop the execution by providing a non 2XX HTTP response
-	 * 
-	 * This will tell Staffbase that it should try again later.
-	 */
-	public function exitFailure();
+    /**
+     * Stop the execution by providing a non 2XX HTTP response
+     *
+     * This will tell Staffbase that it should try again later.
+     */
+    public function exitFailure();
 }

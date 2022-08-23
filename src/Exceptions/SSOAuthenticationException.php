@@ -16,7 +16,7 @@ namespace Staffbase\plugins\sdk\Exceptions;
 
 /**
  * Class SSOAuthenticationException
- * 
+ *
  * An SSO Exception type which indicates
  * a failure during the authentication process
  * caused by invalid input.
@@ -24,4 +24,6 @@ namespace Staffbase\plugins\sdk\Exceptions;
  * Can be used to identify cases which can
  * be handled with a soft http error eg.: 401.
  */
-class SSOAuthenticationException extends SSOException {}
+class SSOAuthenticationException extends SSOException
+{
+}
