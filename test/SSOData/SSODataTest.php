@@ -12,7 +12,7 @@
  * @link      https://github.com/staffbase/plugins-sdk-php
  */
 
-namespace Staffbase\plugins\test;
+namespace Staffbase\plugins\test\SSOData;
 
 use DateTimeImmutable;
 use Exception;
