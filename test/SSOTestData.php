@@ -3,6 +3,7 @@
 namespace Staffbase\plugins\test;
 
 use DateTimeImmutable;
+use Exception;
 
 class SSOTestData
 {

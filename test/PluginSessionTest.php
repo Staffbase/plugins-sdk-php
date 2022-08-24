@@ -57,11 +57,11 @@ class PluginSessionTest extends TestCase
     /**
      * Setup the environment for PluginSession.
      *
-     * @param string $queryParamPid PID query param emulation
-     * @param string $queryParamJwt JWT query param emulation
+     * @param string|null $queryParamPid PID query param emulation
+     * @param string|null $queryParamJwt JWT query param emulation
      * @param boolean $clearSession optionally clear out the $_SESSION array
      */
-    private function setupEnvironment($queryParamPid = null, $queryParamJwt = null, $clearSession = true)
+    private function setupEnvironment(string $queryParamPid = null, string $queryParamJwt = null, bool $clearSession = true)
     {
 
         $_REQUEST[PluginSession::QUERY_PARAM_PID] = $queryParamPid;
@@ -173,7 +173,7 @@ class PluginSessionTest extends TestCase
             ->getMock();
 
         $this->expectException(SSOException::class);
-        $this->expectExceptionMessage('Empty app secret.');
+        $this->expectExceptionMessage('Parameter appSecret for SSOToken is empty.');
 
         $reflectedClass = new ReflectionClass($this->classname);
         $constructor = $reflectedClass->getConstructor();
@@ -250,7 +250,7 @@ class PluginSessionTest extends TestCase
         /** @var PluginSession $session */
         $session = new $mock($this->pluginId, $this->publicKey);
 
-        $this->assertEquals($session->getRole(), $this->tokenData[PluginSession::$CLAIM_USER_ROLE]);
+        $this->assertEquals($this->tokenData[PluginSession::$CLAIM_USER_ROLE], $session->getRole());
 
         $tokenData = $this->tokenData;
         $tokenData[PluginSession::$CLAIM_USER_ROLE] = 'updatedRoleName';
@@ -298,8 +298,8 @@ class PluginSessionTest extends TestCase
         /** @var PluginSession $newSession */
         $newSession = new $mock($this->pluginId, $this->publicKey);
 
-        $this->assertEquals($newSession->getRole(), $tokenData[PluginSession::$CLAIM_USER_ROLE]);
-        $this->assertNotEquals($session->getRole(), $newSession->getRole());
+        $this->assertEquals($tokenData[PluginSession::$CLAIM_USER_ROLE], $newSession->getRole());
+        $this->assertNotEquals($newSession->getRole(), $session->getRole());
 
         $sessionVar  = 'myvariable';
         $sessionVal  = 'mysessiontestvalue';
@@ -308,9 +308,9 @@ class PluginSessionTest extends TestCase
         $session->setSessionVar($sessionVar, $sessionVal);
         $newSession->setSessionVar($sessionVar, $sessionVal2);
 
-        $this->assertNotEquals($session->getSessionVar($sessionVar), $newSession->getSessionVar($sessionVar));
-        $this->assertEquals($session->getSessionVar($sessionVar), $sessionVal);
-        $this->assertEquals($newSession->getSessionVar($sessionVar), $sessionVal2);
+        $this->assertNotEquals($session->getSessionVar($sessionVar, null), $newSession->getSessionVar($sessionVar, null));
+        $this->assertEquals($sessionVal, $session->getSessionVar($sessionVar, null));
+        $this->assertEquals($sessionVal2, $newSession->getSessionVar($sessionVar, null));
     }
 
     /**
@@ -344,7 +344,7 @@ class PluginSessionTest extends TestCase
             $session->setSessionVar($var, $val);
         }
 
-        $this->assertEquals($sessionData, $session->getSessionData());
+        $this->assertEquals($sessionData, $session->getSessionData(null));
     }
 
     /**
@@ -443,15 +443,8 @@ class PluginSessionTest extends TestCase
         $tokenData = $this->tokenData;
         $this->setupEnvironment(null, $this->token, true);
 
-        $mock = $this->getMockBuilder($this->classname)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $reflectedClass = new ReflectionClass($this->classname);
-        $constructor = $reflectedClass->getConstructor();
-
         $this->assertEquals(PHP_SESSION_NONE, session_status());
-        $constructor->invoke($mock, $this->pluginId, $this->publicKey);
+        $session = new PluginSession($this->pluginId, $this->publicKey);
         $this->assertEquals(PHP_SESSION_ACTIVE, session_status());
 
         $this->assertEquals($tokenData[PluginSession::$CLAIM_SESSION_ID], session_id());
@@ -469,15 +462,8 @@ class PluginSessionTest extends TestCase
 
         $this->setupEnvironment(null, $token, true);
 
-        $mock = $this->getMockBuilder($this->classname)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $reflectedClass = new ReflectionClass($this->classname);
-        $constructor = $reflectedClass->getConstructor();
-
         $this->assertEquals(PHP_SESSION_NONE, session_status());
-        $constructor->invoke($mock, $this->pluginId, $this->publicKey);
+        $session = new PluginSession($this->pluginId, $this->publicKey);
         $this->assertEquals(PHP_SESSION_ACTIVE, session_status());
 
         $this->assertEquals($sessionId, session_id());
