@@ -4,11 +4,7 @@ namespace Staffbase\plugins\sdk\SSOData;
 
 trait HeaderSSOData
 {
-    use ClaimAccess;
-
-    public static string $CLAIM_BRANCH_ID = "branchId";
-    public static string $CLAIM_USER_ID = "userId";
-    public static string $CLAIM_TOKEN_ID = "tokenId";
+    use SharedData, HeaderSSOClaims, ClaimAccess;
 
     /**
      * Get the branch id of the app that issued the token.

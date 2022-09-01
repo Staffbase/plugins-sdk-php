@@ -39,7 +39,7 @@ class SSOTokenTest extends TestCase
     {
 
         $rsa = new RSA();
-        $keypair = $rsa->createKey();
+        $keypair = $rsa->createKey(2048);
 
         $this->publicKey  = $keypair['publickey'];
         $this->privateKey = $keypair['privatekey'];

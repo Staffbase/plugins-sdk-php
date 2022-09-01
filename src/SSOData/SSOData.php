@@ -20,29 +20,7 @@ namespace Staffbase\plugins\sdk\SSOData;
  */
 trait SSOData
 {
-    use SharedData, ClaimAccess;
-
-    public static string $CLAIM_SESSION_ID = 'sid';
-    public static string $CLAIM_INSTANCE_ID = 'instance_id';
-    public static string $CLAIM_INSTANCE_NAME = 'instance_name';
-    public static string $CLAIM_BRANCH_ID = 'branch_id';
-    public static string $CLAIM_BRANCH_SLUG = 'branch_slug';
-    public static string $CLAIM_USER_EXTERNAL_ID = 'external_id';
-    public static string $CLAIM_USER_USERNAME = 'username';
-    public static string $CLAIM_USER_PRIMARY_EMAIL_ADDRESS = 'primary_email_address';
-    public static string $CLAIM_USER_FULL_NAME = 'name';
-    public static string $CLAIM_USER_FIRST_NAME = 'given_name';
-    public static string $CLAIM_USER_LAST_NAME = 'family_name';
-    public static string $CLAIM_ENTITY_TYPE = 'type';
-    public static string $CLAIM_THEME_TEXT_COLOR = 'theming_text';
-    public static string $CLAIM_THEME_BACKGROUND_COLOR = 'theming_bg';
-    public static string $CLAIM_USER_LOCALE = 'locale';
-    public static string $CLAIM_USER_TAGS = 'tags';
-    public static string $CLAIM_USER_ID = 'sub';
-
-    private static string $USER_ROLE_EDITOR = 'editor';
-
-    private static string $REMOTE_CALL_DELETE = 'delete';
+    use SharedData, SSODataClaims, ClaimAccess;
 
     /**
      * Get the branch id of the app that issued the token.
@@ -228,31 +206,5 @@ trait SSOData
     public function getTags(): ?array
     {
         return $this->getClaimSafe(self::$CLAIM_USER_TAGS);
-    }
-
-    /**
-     * Check if the user is an editor.
-     *
-     * Only when the editor role is explicitly
-     * provided the user will be marked as editor.
-     *
-     * @return boolean
-     */
-    public function isEditor(): bool
-    {
-        return $this->getClaimSafe(self::$CLAIM_USER_ROLE) === self::$USER_ROLE_EDITOR;
-    }
-
-    /**
-     * Check if the SSO call is an instance deletion call.
-     *
-     * If an editor deletes a plugin instance in Staffbase,
-     * this will be true.
-     *
-     * @return boolean
-     */
-    public function isDeleteInstanceCall(): bool
-    {
-        return $this->getUserId() === self::$REMOTE_CALL_DELETE;
     }
 }

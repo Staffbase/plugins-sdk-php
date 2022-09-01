@@ -4,9 +4,10 @@ namespace Staffbase\plugins\test\SSOData;
 
 use DateTimeImmutable;
 use Exception;
+use PHPUnit\Framework\TestCase;
 use Staffbase\plugins\sdk\SSOData\HeaderSSOData;
 
-class HeaderSSODataTest extends \PHPUnit\Framework\TestCase
+class HeaderSSODataTest extends TestCase
 {
     private const CLAIM_AUDIENCE                    = 'aud';
     private const CLAIM_EXPIRE_AT                   = 'exp';

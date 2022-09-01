@@ -43,7 +43,7 @@ class PluginSessionTest extends TestCase
 
         parent::__construct();
         $rsa = new RSA();
-        $keypair = $rsa->createKey();
+        $keypair = $rsa->createKey(2048);
 
         $this->publicKey  = $keypair['publickey'];
         $this->privateKey = $keypair['privatekey'];

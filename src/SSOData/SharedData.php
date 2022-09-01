@@ -7,17 +7,11 @@ use DateTimeImmutable;
 trait SharedData
 {
 
-    use ClaimAccess;
+    use SharedClaims, ClaimAccess;
 
-    public static string $CLAIM_AUDIENCE                    = 'aud';
-    public static string $CLAIM_EXPIRE_AT                   = 'exp';
-    public static string $CLAIM_JWT_ID                      = 'jti';
-    public static string $CLAIM_ISSUED_AT                   = 'iat';
-    public static string $CLAIM_ISSUER                      = 'iss';
-    public static string $CLAIM_NOT_BEFORE                  = 'nbf';
-    public static string $CLAIM_SUBJECT                     = 'sub';
+    private static string $USER_ROLE_EDITOR = 'editor';
 
-    public static string $CLAIM_USER_ROLE                   = 'role';
+    private static string $REMOTE_CALL_DELETE = 'delete';
 
     /**
      * Get targeted audience of the token. Currently only
@@ -115,5 +109,31 @@ trait SharedData
     public function getData(): array
     {
         return $this->getAllClaims();
+    }
+
+    /**
+     * Check if the SSO call is an instance deletion call.
+     *
+     * If an editor deletes a plugin instance in Staffbase,
+     * this will be true.
+     *
+     * @return boolean
+     */
+    public function isDeleteInstanceCall(): bool
+    {
+        return $this->getUserId() === self::$REMOTE_CALL_DELETE;
+    }
+
+    /**
+     * Check if the user is an editor.
+     *
+     * Only when the editor role is explicitly
+     * provided the user will be marked as editor.
+     *
+     * @return boolean
+     */
+    public function isEditor(): bool
+    {
+        return $this->getClaimSafe(self::$CLAIM_USER_ROLE) === self::$USER_ROLE_EDITOR;
     }
 }

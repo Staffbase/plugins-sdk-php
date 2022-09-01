@@ -1,17 +1,16 @@
 <?php
 
-interface SharedClaims
+namespace Staffbase\plugins\sdk\SSOData;
+
+trait SharedClaims
 {
-    function hasClaim(string $claim): bool;
-    function getClaim(string $claim);
-    function getClaimSafe(string $name);
-    function getAudience(): ?string;
-    function getExpireAtTime(): ?DateTimeImmutable;
-    function getNotBeforeTime(): ?DateTimeImmutable;
-    function getIssuedAtTime(): ?DateTimeImmutable;
-    function getIssuer(): ?string;
-    function getId(): ?string;
-    function getSubject(): ?string;
-    function getRole(): ?string;
-    function getData(): array;
+    public static string $CLAIM_AUDIENCE                    = 'aud';
+    public static string $CLAIM_EXPIRE_AT                   = 'exp';
+    public static string $CLAIM_JWT_ID                      = 'jti';
+    public static string $CLAIM_ISSUED_AT                   = 'iat';
+    public static string $CLAIM_ISSUER                      = 'iss';
+    public static string $CLAIM_NOT_BEFORE                  = 'nbf';
+    public static string $CLAIM_SUBJECT                     = 'sub';
+
+    public static string $CLAIM_USER_ROLE                   = 'role';
 }

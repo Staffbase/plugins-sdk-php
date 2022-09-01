@@ -3,7 +3,7 @@
  * SSO Session implementation, based on this doc:
  * https://developers.staffbase.com/api/plugin-sso/
  *
- * PHP version 5.5.9
+ * PHP version 7.4
  *
  * @category  Authentication
  * @copyright 2017-2019 Staffbase, GmbH.
@@ -83,6 +83,7 @@ class PluginSession
         }
 
         // delete the instance if the special sub is in the token data
+        // exits the request
         if ($this->sso && $remoteCallHandler) {
             $this->deleteInstance($remoteCallHandler);
         }

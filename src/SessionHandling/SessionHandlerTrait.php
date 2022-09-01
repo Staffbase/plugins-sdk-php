@@ -121,7 +121,7 @@ trait SessionHandlerTrait
 
     private function createCompatibleSessionId(String $string): String
     {
-        $allowedChars = '/[^a-zA-Z0-9,-]/';
-        return preg_replace($allowedChars, '-', $string);
+        $notAllowedCharsPattern = '/[^a-zA-Z0-9,-]/';
+        return preg_replace($notAllowedCharsPattern, '-', $string);
     }
 }
