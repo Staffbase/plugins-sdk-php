@@ -18,18 +18,13 @@ namespace Staffbase\plugins\sdk;
 
 use DateInterval;
 use Exception;
-use Lcobucci\Clock\SystemClock;
 use Lcobucci\JWT\Configuration;
 use Lcobucci\JWT\Signer\Key;
 use Lcobucci\JWT\Signer\Key\InMemory;
-use Lcobucci\JWT\Signer\Rsa\Sha256;
 use Lcobucci\JWT\Token;
-use Lcobucci\JWT\Validation\Constraint\SignedWith;
-use Lcobucci\JWT\Validation\Constraint\StrictValidAt;
 use Lcobucci\JWT\Validation\RequiredConstraintsViolated;
+use Lcobucci\JWT\Validation\ValidAt;
 use Staffbase\plugins\sdk\Exceptions\SSOAuthenticationException;
-use Staffbase\plugins\sdk\Exceptions\SSOException;
-use Staffbase\plugins\sdk\Validation\HasInstanceId;
 
 /**
  * A container which is able to decrypt and store the data transmitted
@@ -53,50 +48,17 @@ trait SSOTokenTrait
     private Configuration $config;
 
     /**
-     * Constructor
-     *
-     * @param string $appSecret Either a PEM key or a file:// URL.
-     * @param string $tokenData The token text.
-     * @param int|null $leeway count of seconds added to current timestamp
-     *
-     * @throws SSOAuthenticationException
-     * @throws SSOException on invalid parameters.
-     */
-    public function __construct(string $appSecret, string $tokenData, ?int $leeway = 0)
-    {
-
-        if (!trim($appSecret)) {
-            throw new SSOException('Parameter appSecret for SSOToken is empty.');
-        }
-
-        if (!trim($tokenData)) {
-            throw new SSOException('Parameter tokenData for SSOToken is empty.');
-        }
-
-        $this->signerKey = $this->getKey(trim($appSecret));
-        $this->config = Configuration::forSymmetricSigner(new Sha256(), $this->signerKey);
-
-        $this->parseToken($tokenData, $leeway);
-    }
-
-    /**
      * Creates and validates an SSO token.
      *
      * @param string $tokenData The token text.
-     * @param int $leeway count of seconds added to current timestamp
+	 * @param ValidAt[] $constrains an array of validation instances
      *
      * @throws SSOAuthenticationException if the parsing/verification/validation of the token fails.
      */
-    protected function parseToken(string $tokenData, int $leeway): void
+    protected function parseToken(string $tokenData, array $constrains = []): void
     {
         // parse text
         $this->token = $this->config->parser()->parse($tokenData);
-
-        $constrains = [
-            new StrictValidAt(SystemClock::fromUTC(), $this->getLeewayInterval($leeway)),
-            new SignedWith(new Sha256(), $this->signerKey),
-            new HasInstanceId()
-        ];
 
         try {
             $this->config->validator()->assert($this->token, ...$constrains);
