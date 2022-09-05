@@ -2,9 +2,9 @@
 
 namespace Staffbase\plugins\sdk;
 
-use Staffbase\plugins\sdk\SSOData\SSOData;
+use Staffbase\plugins\sdk\SSOData\SSODataTrait;
 
 class SSOToken
 {
-    use SSOData, SSOTokenTrait;
+    use SSODataTrait, SSOTokenTrait;
 }

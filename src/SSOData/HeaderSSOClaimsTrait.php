@@ -2,7 +2,7 @@
 
 namespace Staffbase\plugins\sdk\SSOData;
 
-trait HeaderSSOClaims
+trait HeaderSSOClaimsTrait
 {
     public static string $CLAIM_BRANCH_ID = "branchId";
     public static string $CLAIM_USER_ID = "userId";

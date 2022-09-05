@@ -4,10 +4,10 @@ namespace Staffbase\plugins\sdk\SSOData;
 
 use DateTimeImmutable;
 
-trait SharedData
+trait SharedDataTrait
 {
 
-    use SharedClaims, ClaimAccess;
+    use SharedClaimsTrait, ClaimAccessTrait;
 
     private static string $USER_ROLE_EDITOR = 'editor';
 

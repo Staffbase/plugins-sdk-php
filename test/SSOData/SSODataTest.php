@@ -15,8 +15,8 @@
 namespace Staffbase\plugins\test\SSOData;
 
 use PHPUnit\Framework\TestCase;
-use Staffbase\plugins\sdk\SSOData\SharedData;
-use Staffbase\plugins\sdk\SSOData\SSOData;
+use Staffbase\plugins\sdk\SSOData\SharedDataTrait;
+use Staffbase\plugins\sdk\SSOData\SSODataTrait;
 use Staffbase\plugins\test\SSOTestData;
 
 class SSODataTest extends TestCase
@@ -26,31 +26,31 @@ class SSODataTest extends TestCase
      *
      * Test accessors deliver correct values.
      *
-     * @covers \Staffbase\plugins\sdk\SSOData\SharedData::getAudience()
-     * @covers \Staffbase\plugins\sdk\SSOData\SharedData::getExpireAtTime()
-     * @covers \Staffbase\plugins\sdk\SSOData\SharedData::getNotBeforeTime()
-     * @covers \Staffbase\plugins\sdk\SSOData\SharedData::getIssuedAtTime()
-     * @covers \Staffbase\plugins\sdk\SSOData\SharedData::getId()
-     * @covers \Staffbase\plugins\sdk\SSOData\SharedData::getIssuer()
-     * @covers \Staffbase\plugins\sdk\SSOData\SharedData::getSubject()
-     * @covers \Staffbase\plugins\sdk\SSOData\SharedData::getRole()
-     * @covers \Staffbase\plugins\sdk\SSOData\SSOData::getInstanceId()
-     * @covers \Staffbase\plugins\sdk\SSOData\SSOData::getInstanceName()
-     * @covers \Staffbase\plugins\sdk\SSOData\SSOData::getUserId()
-     * @covers \Staffbase\plugins\sdk\SSOData\SSOData::getUserExternalId()
-     * @covers \Staffbase\plugins\sdk\SSOData\SSOData::getUserUsername()
-     * @covers \Staffbase\plugins\sdk\SSOData\SSOData::getUserPrimaryEmailAddress()
-     * @covers \Staffbase\plugins\sdk\SSOData\SSOData::getFullName()
-     * @covers \Staffbase\plugins\sdk\SSOData\SSOData::getFirstName()
-     * @covers \Staffbase\plugins\sdk\SSOData\SSOData::getLastName()
-     * @covers \Staffbase\plugins\sdk\SSOData\SSOData::getType()
-     * @covers \Staffbase\plugins\sdk\SSOData\SSOData::getThemeTextColor()
-     * @covers \Staffbase\plugins\sdk\SSOData\SSOData::getThemeBackgroundColor()
-     * @covers \Staffbase\plugins\sdk\SSOData\SSOData::getLocale()
-     * @covers \Staffbase\plugins\sdk\SSOData\SSOData::getTags()
-     * @covers \Staffbase\plugins\sdk\SSOData\SSOData::getBranchId()
-     * @covers \Staffbase\plugins\sdk\SSOData\SSOData::getTags()
-     * @covers \Staffbase\plugins\sdk\SSOData\SSOData::getSessionId()
+     * @covers \Staffbase\plugins\sdk\SSOData\SharedDataTrait::getAudience()
+     * @covers \Staffbase\plugins\sdk\SSOData\SharedDataTrait::getExpireAtTime()
+     * @covers \Staffbase\plugins\sdk\SSOData\SharedDataTrait::getNotBeforeTime()
+     * @covers \Staffbase\plugins\sdk\SSOData\SharedDataTrait::getIssuedAtTime()
+     * @covers \Staffbase\plugins\sdk\SSOData\SharedDataTrait::getId()
+     * @covers \Staffbase\plugins\sdk\SSOData\SharedDataTrait::getIssuer()
+     * @covers \Staffbase\plugins\sdk\SSOData\SharedDataTrait::getSubject()
+     * @covers \Staffbase\plugins\sdk\SSOData\SharedDataTrait::getRole()
+     * @covers \Staffbase\plugins\sdk\SSOData\SSODataTrait::getInstanceId()
+     * @covers \Staffbase\plugins\sdk\SSOData\SSODataTrait::getInstanceName()
+     * @covers \Staffbase\plugins\sdk\SSOData\SSODataTrait::getUserId()
+     * @covers \Staffbase\plugins\sdk\SSOData\SSODataTrait::getUserExternalId()
+     * @covers \Staffbase\plugins\sdk\SSOData\SSODataTrait::getUserUsername()
+     * @covers \Staffbase\plugins\sdk\SSOData\SSODataTrait::getUserPrimaryEmailAddress()
+     * @covers \Staffbase\plugins\sdk\SSOData\SSODataTrait::getFullName()
+     * @covers \Staffbase\plugins\sdk\SSOData\SSODataTrait::getFirstName()
+     * @covers \Staffbase\plugins\sdk\SSOData\SSODataTrait::getLastName()
+     * @covers \Staffbase\plugins\sdk\SSOData\SSODataTrait::getType()
+     * @covers \Staffbase\plugins\sdk\SSOData\SSODataTrait::getThemeTextColor()
+     * @covers \Staffbase\plugins\sdk\SSOData\SSODataTrait::getThemeBackgroundColor()
+     * @covers \Staffbase\plugins\sdk\SSOData\SSODataTrait::getLocale()
+     * @covers \Staffbase\plugins\sdk\SSOData\SSODataTrait::getTags()
+     * @covers \Staffbase\plugins\sdk\SSOData\SSODataTrait::getBranchId()
+     * @covers \Staffbase\plugins\sdk\SSOData\SSODataTrait::getTags()
+     * @covers \Staffbase\plugins\sdk\SSOData\SSODataTrait::getSessionId()
      */
     public function testAccessorsGiveCorrectValues(): void
     {
@@ -58,7 +58,7 @@ class SSODataTest extends TestCase
         $tokenData = SSOTestData::getTokenData();
         $accessors = SSOTestData::getTokenAccessors();
 
-        $ssoData = $this->getMockForTrait(SSOData::class);
+        $ssoData = $this->getMockForTrait(SSODataTrait::class);
 
         $ssoData
             ->expects($this->exactly(count($accessors)))
@@ -105,7 +105,7 @@ class SSODataTest extends TestCase
             $tokenData = SSOTestData::getTokenData();
             $tokenData[SSOTestData::CLAIM_USER_ROLE] = $arg;
 
-            $ssoData = $this->getMockForTrait(SSOData::class);
+            $ssoData = $this->getMockForTrait(SSODataTrait::class);
 
             $ssoData
                 ->method('hasClaim')
@@ -137,7 +137,7 @@ class SSODataTest extends TestCase
 
         $tokenData = SSOTestData::getTokenData();
 
-        $ssoData = $this->getMockForTrait(SharedData::class);
+        $ssoData = $this->getMockForTrait(SharedDataTrait::class);
 
         $ssoData
             ->method('getAllClaims')

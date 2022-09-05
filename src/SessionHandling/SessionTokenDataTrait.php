@@ -15,12 +15,12 @@ declare(strict_types=1);
 
 namespace Staffbase\plugins\sdk\SessionHandling;
 
-use Staffbase\plugins\sdk\SSOData\ClaimAccess;
+use Staffbase\plugins\sdk\SSOData\ClaimAccessTrait;
 
 trait SessionTokenDataTrait
 {
     use SessionHandlerTrait;
-    use ClaimAccess;
+    use ClaimAccessTrait;
 
     private static string $KEY_SSO = "sso";
 

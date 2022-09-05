@@ -18,9 +18,9 @@ namespace Staffbase\plugins\sdk\SSOData;
  * A trait for the data transmitted from Staffbase app to a plugin
  * using the Staffbase single-sign-on.
  */
-trait SSOData
+trait SSODataTrait
 {
-    use SharedData, SSODataClaims, ClaimAccess;
+    use SharedDataTrait, SSODataClaimsTrait, ClaimAccessTrait;
 
     /**
      * Get the branch id of the app that issued the token.

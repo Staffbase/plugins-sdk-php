@@ -9,11 +9,11 @@ use Staffbase\plugins\sdk\Exceptions\SSOException;
 use Staffbase\plugins\sdk\RemoteCall\DeleteInstanceTrait;
 use Staffbase\plugins\sdk\RemoteCall\RemoteCallInterface;
 use Staffbase\plugins\sdk\SessionHandling\SessionTokenDataTrait;
-use Staffbase\plugins\sdk\SSOData\HeaderSSOData;
+use Staffbase\plugins\sdk\SSOData\HeaderSSODataTrait;
 
 class HeaderSession
 {
-    use HeaderSSOData, SessionTokenDataTrait, DeleteInstanceTrait;
+    use HeaderSSODataTrait, SessionTokenDataTrait, DeleteInstanceTrait;
 
     /**
      * Session cookies from staffbase are prefixed with sid_ this should

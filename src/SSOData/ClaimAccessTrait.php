@@ -2,7 +2,7 @@
 
 namespace Staffbase\plugins\sdk\SSOData;
 
-trait ClaimAccess
+trait ClaimAccessTrait
 {
 
     /**

@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Staffbase\plugins\sdk;
 
 use DateInterval;
+use Exception;
 use Lcobucci\Clock\SystemClock;
 use Lcobucci\JWT\Configuration;
 use Lcobucci\JWT\Signer\Key;
@@ -28,8 +29,6 @@ use Lcobucci\JWT\Validation\Constraint\StrictValidAt;
 use Lcobucci\JWT\Validation\RequiredConstraintsViolated;
 use Staffbase\plugins\sdk\Exceptions\SSOAuthenticationException;
 use Staffbase\plugins\sdk\Exceptions\SSOException;
-use Staffbase\plugins\sdk\SSOData\SharedData;
-use Staffbase\plugins\sdk\SSOData\SSOData;
 use Staffbase\plugins\sdk\Validation\HasInstanceId;
 
 /**
@@ -44,9 +43,9 @@ trait SSOTokenTrait
     private ?Token $token = null;
 
     /**
-     * @var Key $key
+     * @var Key $signerKey
      */
-    private Key $key;
+    private Key $signerKey;
 
     /**
      * @var Configuration $config
@@ -74,8 +73,8 @@ trait SSOTokenTrait
             throw new SSOException('Parameter tokenData for SSOToken is empty.');
         }
 
-        $this->key = $this->getKey(trim($appSecret));
-        $this->config = Configuration::forSymmetricSigner(new Sha256(), $this->key);
+        $this->signerKey = $this->getKey(trim($appSecret));
+        $this->config = Configuration::forSymmetricSigner(new Sha256(), $this->signerKey);
 
         $this->parseToken($tokenData, $leeway);
     }
@@ -95,7 +94,7 @@ trait SSOTokenTrait
 
         $constrains = [
             new StrictValidAt(SystemClock::fromUTC(), $this->getLeewayInterval($leeway)),
-            new SignedWith(new Sha256(), $this->key),
+            new SignedWith(new Sha256(), $this->signerKey),
             new HasInstanceId()
         ];
 
@@ -158,7 +157,7 @@ trait SSOTokenTrait
 
         return
             "-----BEGIN PUBLIC KEY-----\n".
-            chunk_split($data, 64, "\n").
+            chunk_split($data, 64).
             "-----END PUBLIC KEY-----\n";
     }
 
@@ -193,7 +192,7 @@ trait SSOTokenTrait
 
         try {
             $interval = new DateInterval($leewayInterval);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             error_log("Wrong date interval $leewayInterval");
             $interval = new DateInterval('PT0S');
         }

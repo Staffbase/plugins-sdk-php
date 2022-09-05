@@ -2,7 +2,7 @@
 
 namespace Staffbase\plugins\sdk\SSOData;
 
-trait SSODataClaims
+trait SSODataClaimsTrait
 {
     public static string $CLAIM_SESSION_ID = 'sid';
     public static string $CLAIM_INSTANCE_ID = 'instance_id';

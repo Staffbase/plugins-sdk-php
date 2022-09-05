@@ -2,7 +2,7 @@
 
 namespace Staffbase\plugins\sdk\SSOData;
 
-trait SharedClaims
+trait SharedClaimsTrait
 {
     public static string $CLAIM_AUDIENCE                    = 'aud';
     public static string $CLAIM_EXPIRE_AT                   = 'exp';

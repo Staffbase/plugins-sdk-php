@@ -2,9 +2,9 @@
 
 namespace Staffbase\plugins\sdk\SSOData;
 
-trait HeaderSSOData
+trait HeaderSSODataTrait
 {
-    use SharedData, HeaderSSOClaims, ClaimAccess;
+    use SharedDataTrait, HeaderSSOClaimsTrait, ClaimAccessTrait;
 
     /**
      * Get the branch id of the app that issued the token.

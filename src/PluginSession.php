@@ -21,14 +21,14 @@ use Staffbase\plugins\sdk\Exceptions\SSOException;
 use Staffbase\plugins\sdk\RemoteCall\DeleteInstanceTrait;
 use Staffbase\plugins\sdk\RemoteCall\RemoteCallInterface;
 use Staffbase\plugins\sdk\SessionHandling\SessionTokenDataTrait;
-use Staffbase\plugins\sdk\SSOData\SSOData;
+use Staffbase\plugins\sdk\SSOData\SSODataTrait;
 
 /**
  * A container which decrypts and stores the SSO data in a session for further requests.
  */
 class PluginSession
 {
-    use SSOData, SessionTokenDataTrait, DeleteInstanceTrait;
+    use SSODataTrait, SessionTokenDataTrait, DeleteInstanceTrait;
 
     public const QUERY_PARAM_JWT = 'jwt';
     public const QUERY_PARAM_PID = 'pid';
@@ -121,16 +121,17 @@ class PluginSession
         return $this->userView;
     }
 
-    /**
-     * Decrypts the token and stores it in the class properties
-     *
-     * @param string $jwt
-     * @param string $appSecret
-     * @param int $leeway
-     *
-     * @throws SSOAuthenticationException
-     * @throws SSOException
-     */
+	/**
+	 * Decrypts the token and stores it in the class properties
+	 *
+	 * @param string $jwt
+	 * @param string $appSecret
+	 * @param int $leeway
+	 *
+	 * @return SSOToken
+	 * @throws SSOAuthenticationException
+	 * @throws SSOException
+	 */
     private function updateSSOInformation(string $jwt, string $appSecret, int $leeway = 0): SSOToken
     {
         // decrypt the token

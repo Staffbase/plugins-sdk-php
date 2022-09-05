@@ -2,9 +2,9 @@
 
 namespace Staffbase\plugins\sdk;
 
-use Staffbase\plugins\sdk\SSOData\HeaderSSOData;
+use Staffbase\plugins\sdk\SSOData\HeaderSSODataTrait;
 
 class HeaderToken
 {
-    use HeaderSSOData, SSOTokenTrait;
+    use HeaderSSODataTrait, SSOTokenTrait;
 }

@@ -25,5 +25,5 @@ interface DeleteInstanceCallHandlerInterface extends RemoteCallInterface
      * @param string $instanceId Plugin Instance identifier
      * @return bool False if the deletion goes wrong and should be retried later.
      */
-    public function deleteInstance($instanceId);
+    public function deleteInstance(string $instanceId): bool;
 }

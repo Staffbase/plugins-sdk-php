@@ -5,7 +5,7 @@ namespace Staffbase\plugins\test\SSOData;
 use DateTimeImmutable;
 use Exception;
 use PHPUnit\Framework\TestCase;
-use Staffbase\plugins\sdk\SSOData\HeaderSSOData;
+use Staffbase\plugins\sdk\SSOData\HeaderSSODataTrait;
 
 class HeaderSSODataTest extends TestCase
 {
@@ -85,17 +85,17 @@ class HeaderSSODataTest extends TestCase
      *
      * Test accessors deliver correct values.
      *
-     * @covers \Staffbase\plugins\sdk\SSOData\SharedData::getAudience()
-     * @covers \Staffbase\plugins\sdk\SSOData\SharedData::getExpireAtTime()
-     * @covers \Staffbase\plugins\sdk\SSOData\SharedData::getNotBeforeTime()
-     * @covers \Staffbase\plugins\sdk\SSOData\SharedData::getIssuedAtTime()
-     * @covers \Staffbase\plugins\sdk\SSOData\SharedData::getId()
-     * @covers \Staffbase\plugins\sdk\SSOData\SharedData::getIssuer()
-     * @covers \Staffbase\plugins\sdk\SSOData\SharedData::getSubject()
-     * @covers \Staffbase\plugins\sdk\SSOData\SharedData::getRole()
-     * @covers \Staffbase\plugins\sdk\SSOData\HeaderSSOData::getBranchId()
-     * @covers \Staffbase\plugins\sdk\SSOData\HeaderSSOData::getUserId()
-     * @covers \Staffbase\plugins\sdk\SSOData\HeaderSSOData::getTokenId()
+     * @covers \Staffbase\plugins\sdk\SSOData\SharedDataTrait::getAudience()
+     * @covers \Staffbase\plugins\sdk\SSOData\SharedDataTrait::getExpireAtTime()
+     * @covers \Staffbase\plugins\sdk\SSOData\SharedDataTrait::getNotBeforeTime()
+     * @covers \Staffbase\plugins\sdk\SSOData\SharedDataTrait::getIssuedAtTime()
+     * @covers \Staffbase\plugins\sdk\SSOData\SharedDataTrait::getId()
+     * @covers \Staffbase\plugins\sdk\SSOData\SharedDataTrait::getIssuer()
+     * @covers \Staffbase\plugins\sdk\SSOData\SharedDataTrait::getSubject()
+     * @covers \Staffbase\plugins\sdk\SSOData\SharedDataTrait::getRole()
+     * @covers \Staffbase\plugins\sdk\SSOData\HeaderSSODataTrait::getBranchId()
+     * @covers \Staffbase\plugins\sdk\SSOData\HeaderSSODataTrait::getUserId()
+     * @covers \Staffbase\plugins\sdk\SSOData\HeaderSSODataTrait::getTokenId()
      */
     public function testAccessorsGiveCorrectValues(): void
     {
@@ -103,7 +103,7 @@ class HeaderSSODataTest extends TestCase
         $tokenData = self::getTokenData();
         $accessors = self::getTokenAccessors();
 
-        $ssoData = $this->getMockForTrait(HeaderSSOData::class);
+        $ssoData = $this->getMockForTrait(HeaderSSODataTrait::class);
 
         $ssoData
             ->expects($this->exactly(count($accessors)))
