@@ -18,7 +18,7 @@ use SessionHandlerInterface;
 use Staffbase\plugins\sdk\AuthType\QueryParamToken;
 use Staffbase\plugins\sdk\Exceptions\SSOAuthenticationException;
 use Staffbase\plugins\sdk\Exceptions\SSOException;
-use Staffbase\plugins\sdk\RemoteCall\DeleteInstanceCallHandlerInterface;
+use Staffbase\plugins\sdk\RemoteCall\DeleteInstanceTrait;
 use Staffbase\plugins\sdk\RemoteCall\RemoteCallInterface;
 use Staffbase\plugins\sdk\SessionHandling\SessionTokenDataTrait;
 use Staffbase\plugins\sdk\SSOData\SSOData;
@@ -28,7 +28,7 @@ use Staffbase\plugins\sdk\SSOData\SSOData;
  */
 class PluginSession
 {
-    use SSOData, SessionTokenDataTrait;
+    use SSOData, SessionTokenDataTrait, DeleteInstanceTrait;
 
     public const QUERY_PARAM_JWT = 'jwt';
     public const QUERY_PARAM_PID = 'pid';
@@ -51,11 +51,6 @@ class PluginSession
     private bool $userView;
 
     /**
-     * @var SSOToken|null token data from the parsed jwt
-     */
-    private ?SSOToken $sso = null;
-
-    /**
      * Constructor
      *
      * @param string $pluginId the unique name of the plugin
@@ -67,8 +62,13 @@ class PluginSession
      * @throws SSOAuthenticationException
      * @throws SSOException
      */
-    public function __construct(string $pluginId, string $appSecret, ?SessionHandlerInterface $sessionHandler = null, int $leeway = 0, ?RemoteCallInterface $remoteCallHandler = null)
-    {
+    public function __construct(
+        string $pluginId,
+        string $appSecret,
+        ?SessionHandlerInterface $sessionHandler = null,
+        int $leeway = 0,
+        ?RemoteCallInterface $remoteCallHandler = null
+    ) {
         if (!$pluginId) {
             throw new SSOException('Empty plugin ID.');
         }
@@ -78,20 +78,20 @@ class PluginSession
         }
 
         // we update the SSO info every time we get a token
-        if ($jwt = $this->validateParams()) {
-            $this->updateSSOInformation($jwt, $appSecret, $leeway);
-        }
+        $sso =($jwt = $this->validateParams()) ? $this->updateSSOInformation($jwt, $appSecret, $leeway) : null;
 
         // delete the instance if the special sub is in the token data
         // exits the request
-        if ($this->sso && $remoteCallHandler) {
-            $this->deleteInstance($remoteCallHandler);
+        if ($sso && $remoteCallHandler && $sso->isDeleteInstanceCall()) {
+            $this->deleteInstance($sso->getInstanceId(), $remoteCallHandler);
         }
 
+        // starts the session
         $this->openSession($pluginId, $this->createCompatibleSessionId($this->sessionId));
 
-        if ($this->sso !== null) {
-            $this->setClaims($this->sso->getData());
+        // sets all claims if the token is refreshed
+        if ($sso !== null) {
+            $this->setClaims($sso->getData());
         }
 
         // decide if we are in user view or not
@@ -109,19 +109,6 @@ class PluginSession
     public function __destruct()
     {
         $this->closeSession();
-    }
-
-
-
-    /**
-     * Exit the script
-     *
-     * if a remote call was not handled by the user we die hard here
-     */
-    protected function exitRemoteCall(): void
-    {
-        error_log("Warning: The exit procedure for a remote call was not properly handled.");
-        exit;
     }
 
     /**
@@ -144,13 +131,15 @@ class PluginSession
      * @throws SSOAuthenticationException
      * @throws SSOException
      */
-    private function updateSSOInformation(string $jwt, string $appSecret, int $leeway = 0): void
+    private function updateSSOInformation(string $jwt, string $appSecret, int $leeway = 0): SSOToken
     {
         // decrypt the token
-        $this->sso = new SSOToken($appSecret, $jwt, $leeway);
+        $sso = new SSOToken($appSecret, $jwt, $leeway);
 
-        $this->pluginInstanceId = $this->sso->getInstanceId();
-        $this->sessionId = $this->sso->getSessionId() ?: $this->sso->getInstanceId();
+        $this->pluginInstanceId = $sso->getInstanceId();
+        $this->sessionId = $sso->getSessionId() ?: $sso->getInstanceId();
+
+        return $sso;
     }
 
     /**
@@ -182,32 +171,5 @@ class PluginSession
     private function isAdminView(): bool
     {
         return $this->isEditor() && (!isset($_GET[self::QUERY_PARAM_USERVIEW]) || $_GET[self::QUERY_PARAM_USERVIEW] !== 'true');
-    }
-
-
-    private function deleteInstance(RemoteCallInterface $remoteCallHandler): void
-    {
-        if (!$this->sso->isDeleteInstanceCall()) {
-            return;
-        }
-
-        $instanceId = $this->sso->getInstanceId();
-
-        if ($remoteCallHandler instanceof DeleteInstanceCallHandlerInterface) {
-            $result = $remoteCallHandler->deleteInstance($instanceId);
-        } else {
-            // we will accept unhandled calls with a warning
-            $result = true;
-            error_log("Warning: An instance deletion call for instance $instanceId was not handled.");
-        }
-
-        // finish the remote call
-        if ($result) {
-            $remoteCallHandler->exitSuccess();
-        } else {
-            $remoteCallHandler->exitFailure();
-        }
-
-        $this->exitRemoteCall();
     }
 }
