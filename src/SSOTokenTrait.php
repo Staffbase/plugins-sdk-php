@@ -51,7 +51,7 @@ trait SSOTokenTrait
      * Creates and validates an SSO token.
      *
      * @param string $tokenData The token text.
-	 * @param ValidAt[] $constrains an array of validation instances
+     * @param ValidAt[] $constrains an array of validation instances
      *
      * @throws SSOAuthenticationException if the parsing/verification/validation of the token fails.
      */

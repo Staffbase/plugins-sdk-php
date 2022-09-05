@@ -19,14 +19,14 @@ use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use Staffbase\plugins\sdk\Exceptions\SSOAuthenticationException;
 use Staffbase\plugins\sdk\Exceptions\SSOException;
-use Staffbase\plugins\sdk\SSOToken;
+use Staffbase\plugins\sdk\HeaderToken;
 use Staffbase\plugins\sdk\SSOTokenGenerator;
 
-class SSOTokenTest extends TestCase
+class HeaderTokenTest extends TestCase
 {
     private $publicKey;
     private $privateKey;
-    private $classname = SSOToken::class;
+    private $classname = HeaderToken::class;
 
     /**
      * Constructor
@@ -49,7 +49,7 @@ class SSOTokenTest extends TestCase
      *
      * Test constructor throws exception on empty secret.
      *
-     * @covers \Staffbase\plugins\sdk\SSOToken::__construct
+     * @covers \Staffbase\plugins\sdk\HeaderToken::__construct
      */
     public function testConstructorRefuseEmptySecret()
     {
@@ -71,7 +71,7 @@ class SSOTokenTest extends TestCase
      *
      * Test constructor throws exception on empty token.
      *
-     * @covers \Staffbase\plugins\sdk\SSOToken::__construct
+     * @covers \Staffbase\plugins\sdk\HeaderToken::__construct
      */
     public function testConstructorRefuseEmptyToken()
     {
@@ -93,155 +93,121 @@ class SSOTokenTest extends TestCase
      *
      * Test constructor throws exception on expired token.
      *
-     * @covers \Staffbase\plugins\sdk\SSOToken::__construct
+     * @covers \Staffbase\plugins\sdk\HeaderToken::__construct
      */
     public function testConstructorToFailOnExpiredToken()
     {
 
-        $tokenData = SSOTestData::getTokenData("-1 minute");
+        $tokenData = HeaderTestData::getTokenData("-1 minute");
 
         $token = SSOTokenGenerator::createSignedTokenFromData($this->privateKey, $tokenData);
 
         $this->expectException(SSOAuthenticationException::class);
 
-        new SSOToken($this->publicKey, $token);
+        new HeaderToken($this->publicKey, $token);
     }
 
     /**
      *
      * Test constructor throws exception on a token valid in the future.
      *
-     * @covers \Staffbase\plugins\sdk\SSOToken::__construct
+     * @covers \Staffbase\plugins\sdk\HeaderToken::__construct
      */
     public function testConstructorToFailOnFutureToken()
     {
 
-        $tokenData = SSOTestData::getTokenData(null, "+1 minute");
+        $tokenData = HeaderTestData::getTokenData(null, "+1 minute");
 
         $token = SSOTokenGenerator::createSignedTokenFromData($this->privateKey, $tokenData);
 
         $this->expectException(SSOAuthenticationException::class);
 
-        new SSOToken($this->publicKey, $token);
+        new HeaderToken($this->publicKey, $token);
     }
 
     /**
      *
      * Test constructor throws exception on a token issued in the future.
      *
-     * @covers \Staffbase\plugins\sdk\SSOToken::__construct
+     * @covers \Staffbase\plugins\sdk\HeaderToken::__construct
      */
     public function testConstructorToFailOnTokenIssuedInTheFuture()
     {
 
-        $tokenData = SSOTestData::getTokenData(null, null, "+10 second");
+        $tokenData = HeaderTestData::getTokenData(null, null, "+10 second");
 
         $token = SSOTokenGenerator::createSignedTokenFromData($this->privateKey, $tokenData);
 
         $this->expectException(SSOAuthenticationException::class);
 
-        new SSOToken($this->publicKey, $token);
+        new HeaderToken($this->publicKey, $token);
     }
 
     /**
      *
      * Test constructor accepts a token issued in the future, by providing a leeway.
      *
-     * @covers \Staffbase\plugins\sdk\SSOToken::__construct
+     * @covers \Staffbase\plugins\sdk\HeaderToken::__construct
      */
     public function testConstructorAcceptsLeewayForTokenIssuedInTheFuture()
     {
 
         $leeway = 11;
-        $tokenData = SSOTestData::getTokenData(null, null, "+10 second");
+        $tokenData = HeaderTestData::getTokenData(null, null, "+10 second");
 
         $token = SSOTokenGenerator::createSignedTokenFromData($this->privateKey, $tokenData);
 
-        $sso = new SSOToken($this->publicKey, $token, $leeway);
+        $sso = new HeaderToken($this->publicKey, $token, $leeway);
 
         $this->assertNotEmpty($sso);
     }
 
     /**
      *
-     * Test constructor throws exception on a token missing instance id.
-     *
-     * @covers \Staffbase\plugins\sdk\SSOToken::__construct
-     * @covers \Staffbase\plugins\sdk\Validation\HasInstanceId
-     */
-    public function testConstructorToFailOnMissingInstanceId()
-    {
-
-        $tokenData = SSOTestData::getTokenData();
-        $tokenData[SSOToken::$CLAIM_INSTANCE_ID] = '';
-
-        $token = SSOTokenGenerator::createSignedTokenFromData($this->privateKey, $tokenData);
-
-        $this->expectException(SSOAuthenticationException::class);
-        $this->expectExceptionMessage('Token lacks instance id.');
-
-        new SSOToken($this->publicKey, $token);
-    }
-
-    /**
-     *
      * Test constructor throws exception on a unsigned token.
      *
-     * @covers \Staffbase\plugins\sdk\SSOToken::__construct
+     * @covers \Staffbase\plugins\sdk\HeaderToken::__construct
      */
     public function testConstructorToFailOnUnsignedToken()
     {
 
-        $tokenData = SSOTestData::getTokenData();
+        $tokenData = HeaderTestData::getTokenData();
 
         $token = SSOTokenGenerator::createUnsignedTokenFromData($tokenData);
 
         $this->expectException(SSOAuthenticationException::class);
         $this->expectExceptionMessageMatches('/Token signer mismatch/');
 
-        new SSOToken($this->publicKey, $token);
+        new HeaderToken($this->publicKey, $token);
     }
 
     /**
      *
      * Test accessors deliver correct values.
      *
-     * @covers \Staffbase\plugins\sdk\SSOToken::__construct
-     * @covers \Staffbase\plugins\sdk\SSOToken::getAudience()
-     * @covers \Staffbase\plugins\sdk\SSOToken::getExpireAtTime()
-     * @covers \Staffbase\plugins\sdk\SSOToken::getNotBeforeTime()
-     * @covers \Staffbase\plugins\sdk\SSOToken::getIssuedAtTime()
-     * @covers \Staffbase\plugins\sdk\SSOToken::getIssuer()
-     * @covers \Staffbase\plugins\sdk\SSOToken::getId()
-     * @covers \Staffbase\plugins\sdk\SSOToken::getInstanceId()
-     * @covers \Staffbase\plugins\sdk\SSOToken::getInstanceName()
-     * @covers \Staffbase\plugins\sdk\SSOToken::getUserId()
-     * @covers \Staffbase\plugins\sdk\SSOToken::getUserExternalId()
-     * @covers \Staffbase\plugins\sdk\SSOToken::getUserUsername()
-     * @covers \Staffbase\plugins\sdk\SSOToken::getUserPrimaryEmailAddress()
-     * @covers \Staffbase\plugins\sdk\SSOToken::getFullName()
-     * @covers \Staffbase\plugins\sdk\SSOToken::getFirstName()
-     * @covers \Staffbase\plugins\sdk\SSOToken::getLastName()
-     * @covers \Staffbase\plugins\sdk\SSOToken::getRole()
-     * @covers \Staffbase\plugins\sdk\SSOToken::getType()
-     * @covers \Staffbase\plugins\sdk\SSOToken::getThemeTextColor()
-     * @covers \Staffbase\plugins\sdk\SSOToken::getThemeBackgroundColor()
-     * @covers \Staffbase\plugins\sdk\SSOToken::getLocale()
-     * @covers \Staffbase\plugins\sdk\SSOToken::getTags()
-     * @covers \Staffbase\plugins\sdk\SSOToken::hasClaim()
-     * @covers \Staffbase\plugins\sdk\SSOToken::getClaim()
-     * @covers \Staffbase\plugins\sdk\SSOToken::getBranchId()
-     * @covers \Staffbase\plugins\sdk\SSOToken::getBranchSlug()
-     * @covers \Staffbase\plugins\sdk\SSOToken::getSessionId()
+     * @covers \Staffbase\plugins\sdk\HeaderToken::__construct
+     * @covers \Staffbase\plugins\sdk\HeaderToken::getAudience()
+     * @covers \Staffbase\plugins\sdk\HeaderToken::getExpireAtTime()
+     * @covers \Staffbase\plugins\sdk\HeaderToken::getNotBeforeTime()
+     * @covers \Staffbase\plugins\sdk\HeaderToken::getIssuedAtTime()
+     * @covers \Staffbase\plugins\sdk\HeaderToken::getIssuer()
+     * @covers \Staffbase\plugins\sdk\HeaderToken::getId()
+     * @covers \Staffbase\plugins\sdk\HeaderToken::getUserId()
+     * @covers \Staffbase\plugins\sdk\HeaderToken::getRole()
+     * @covers \Staffbase\plugins\sdk\HeaderToken::hasClaim()
+     * @covers \Staffbase\plugins\sdk\HeaderToken::getClaim()
+     * @covers \Staffbase\plugins\sdk\HeaderToken::getBranchId()
+     * @covers \Staffbase\plugins\sdk\HeaderToken::getUserId()
+     * @covers \Staffbase\plugins\sdk\HeaderToken::getTokenId()
      */
     public function testAccessorsGiveCorrectValues()
     {
 
-        $tokenData = SSOTestData::getTokenData();
-        $accessors = SSOTestData::getTokenAccessors();
+        $tokenData = HeaderTestData::getTokenData();
+        $accessors = HeaderTestData::getTokenAccessors();
 
         $token = SSOTokenGenerator::createSignedTokenFromData($this->privateKey, $tokenData);
-        $ssoToken = new SSOToken($this->publicKey, $token);
+        $ssoToken = new HeaderToken($this->publicKey, $token);
 
         foreach ($accessors as $key => $fn) {
             $data = $tokenData[$key];

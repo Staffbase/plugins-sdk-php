@@ -121,17 +121,17 @@ class PluginSession
         return $this->userView;
     }
 
-	/**
-	 * Decrypts the token and stores it in the class properties
-	 *
-	 * @param string $jwt
-	 * @param string $appSecret
-	 * @param int $leeway
-	 *
-	 * @return SSOToken
-	 * @throws SSOAuthenticationException
-	 * @throws SSOException
-	 */
+    /**
+     * Decrypts the token and stores it in the class properties
+     *
+     * @param string $jwt
+     * @param string $appSecret
+     * @param int $leeway
+     *
+     * @return SSOToken
+     * @throws SSOAuthenticationException
+     * @throws SSOException
+     */
     private function updateSSOInformation(string $jwt, string $appSecret, int $leeway = 0): SSOToken
     {
         // decrypt the token

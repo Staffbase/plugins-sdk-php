@@ -75,7 +75,6 @@ class PluginSessionTest extends TestCase
     }
 
     /**
-     * @test
      *
      * Test constructor works as expected.
      *
@@ -107,7 +106,6 @@ class PluginSessionTest extends TestCase
     }
 
     /**
-     * @test
      *
      * Test constructor rejects spoofed PID requests.
      *
@@ -131,7 +129,6 @@ class PluginSessionTest extends TestCase
     }
 
     /**
-     * @test
      *
      * Test constructor throws exception on empty pluginId.
      *
@@ -156,7 +153,6 @@ class PluginSessionTest extends TestCase
     }
 
     /**
-     * @test
      *
      * Test constructor throws exception on empty secret.
      *
@@ -181,7 +177,6 @@ class PluginSessionTest extends TestCase
     }
 
     /**
-     * @test
      *
      * Test constructor throws exception missing both JWT and PID.
      *
@@ -206,7 +201,6 @@ class PluginSessionTest extends TestCase
     }
 
     /**
-     * @test
      *
      * Test constructor throws exception when provided with both JWT and PID.
      *
@@ -231,7 +225,6 @@ class PluginSessionTest extends TestCase
     }
 
     /**
-     * @test
      *
      * Test constructor updates SSO info on every JWT request.
      *
@@ -266,7 +259,6 @@ class PluginSessionTest extends TestCase
     }
 
     /**
-     * @test
      *
      * Test support for multiple instances.
      *
@@ -314,7 +306,6 @@ class PluginSessionTest extends TestCase
     }
 
     /**
-     * @test
      *
      * Test the session data is returned correctly.
      *
@@ -348,7 +339,6 @@ class PluginSessionTest extends TestCase
     }
 
     /**
-     * @test
      *
      * Test that a delete call triggers interace methods in correct order.
      *
@@ -390,7 +380,6 @@ class PluginSessionTest extends TestCase
     }
 
     /**
-     * @test
      *
      * Test that a delete call triggers interace methods in correct order.
      *
@@ -432,7 +421,6 @@ class PluginSessionTest extends TestCase
     }
 
     /**
-     * @test
      *
      * Test that a session is created.
      *
