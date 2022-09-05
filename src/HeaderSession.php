@@ -2,8 +2,8 @@
 
 namespace Staffbase\plugins\sdk;
 
-use RuntimeException;
 use SessionHandlerInterface;
+use Staffbase\plugins\sdk\Helper\URLHelper;
 use Staffbase\plugins\sdk\Exceptions\SSOAuthenticationException;
 use Staffbase\plugins\sdk\Exceptions\SSOException;
 use Staffbase\plugins\sdk\RemoteCall\DeleteInstanceCallHandlerInterface;
@@ -21,7 +21,13 @@ class HeaderSession
      */
     private const COOKIE_PREFIX = "sid_";
 
-    /**
+	/**
+	 * The path for the plugin in the experience studio has the pattern
+	 * `pluginId/instanceId/studio`
+	 */
+	private const EDITOR_STUDIO_PATH = "studio";
+
+	/**
      * @var String|null $pluginInstanceId the id of the currently used instance.
      */
     private ?string $pluginInstanceId = null;
@@ -88,6 +94,14 @@ class HeaderSession
         }
     }
 
+	/**
+	 * Destructor
+	 */
+	public function __destruct()
+	{
+		$this->closeSession();
+	}
+
     /**
      * Test if userView is enabled.
      *
@@ -104,7 +118,7 @@ class HeaderSession
     private function validateParams(string $pluginId): ?string
     {
         $jwt = $this->getHeaderAuthorizationToken();
-        $this->pluginInstanceId = getParam($pluginId);
+        $this->pluginInstanceId = URLHelper::getParam($pluginId);
 
         return $jwt;
     }
@@ -192,8 +206,13 @@ class HeaderSession
         return substr($value, 7);
     }
 
+	/**
+	 * Checks if the request is made as an editor
+	 *
+	 * @return bool
+	 */
     private function isAdminView(): bool
     {
-        return $this->isEditor() && (!isset($_GET[self::QUERY_PARAM_USERVIEW]) || $_GET[self::QUERY_PARAM_USERVIEW] !== 'true');
+        return $this->isEditor() && URLHelper::getParam(self::EDITOR_STUDIO_PATH);
     }
 }
