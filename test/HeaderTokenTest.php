@@ -3,11 +3,11 @@
  * SSO token Test implementation, based on this doc:
  * https://developers.staffbase.com/guide/customplugin-overview
  *
- * PHP version 5.5.9
+ * PHP version 7.4
  *
  * @category  Authentication
- * @copyright 2017-2021 Staffbase, GmbH.
- * @author    Vitaliy Ivanov
+ * @copyright 2017-2022 Staffbase, GmbH.
+ * @author    Daniel Grosse
  * @license   http://www.apache.org/licenses/LICENSE-2.0
  * @link      https://github.com/staffbase/plugins-sdk-php
  */

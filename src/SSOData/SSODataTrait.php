@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * SSO data implementation, based on this doc:
  * https://developers.staffbase.com/guide/customplugin-overview

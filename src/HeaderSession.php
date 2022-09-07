@@ -1,4 +1,18 @@
 <?php
+declare(strict_types=1);
+
+/**
+ * SSO data implementation to work with Session data received as
+ * header attribute.
+ *
+ * PHP version 7.4
+ *
+ * @category  Authentication
+ * @copyright 2017-2022 Staffbase, GmbH.
+ * @author    Daniel Grosse
+ * @license   http://www.apache.org/licenses/LICENSE-2.0
+ * @link      https://github.com/staffbase/plugins-sdk-php
+ */
 
 namespace Staffbase\plugins\sdk;
 
@@ -11,6 +25,9 @@ use Staffbase\plugins\sdk\RemoteCall\RemoteCallInterface;
 use Staffbase\plugins\sdk\SessionHandling\SessionTokenDataTrait;
 use Staffbase\plugins\sdk\SSOData\HeaderSSODataTrait;
 
+/**
+ * A container which decrypts and stores the SSO data in a session for further requests.
+ */
 class HeaderSession
 {
     use HeaderSSODataTrait, SessionTokenDataTrait, DeleteInstanceTrait;

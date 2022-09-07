@@ -1,4 +1,18 @@
 <?php
+declare(strict_types=1);
+
+/**
+ * Trait to handle a php session. Opening, closing and destroying the session.
+ * Accessing variables, stored in the session.
+ *
+ * PHP version 7.4
+ *
+ * @category  SessionHandling
+ * @copyright 2017-2022 Staffbase, GmbH.
+ * @author    Daniel Grosse
+ * @license   http://www.apache.org/licenses/LICENSE-2.0
+ * @link      https://github.com/staffbase/plugins-sdk-php
+ */
 
 namespace Staffbase\plugins\sdk\SessionHandling;
 

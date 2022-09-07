@@ -6,7 +6,7 @@
  * PHP version 7.4.0
  *
  * @category  Authentication
- * @copyright 2017-2021 Staffbase, GmbH.
+ * @copyright 2017-2022 Staffbase, GmbH.
  * @author    Vitaliy Ivanov
  * @license   http://www.apache.org/licenses/LICENSE-2.0
  * @link      https://github.com/staffbase/plugins-sdk-php

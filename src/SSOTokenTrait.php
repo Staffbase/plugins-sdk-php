@@ -8,7 +8,7 @@ declare(strict_types=1);
  * PHP version 7.4
  *
  * @category  Authentication
- * @copyright 2017-2019 Staffbase, GmbH.
+ * @copyright 2017-2022 Staffbase, GmbH.
  * @author    Vitaliy Ivanov
  * @license   http://www.apache.org/licenses/LICENSE-2.0
  * @link      https://github.com/staffbase/plugins-sdk-php
@@ -121,6 +121,45 @@ trait SSOTokenTrait
             "-----BEGIN PUBLIC KEY-----\n".
             chunk_split($data, 64).
             "-----END PUBLIC KEY-----\n";
+    }
+
+    /**
+     * Set the configuration
+     *
+     * @param Configuration $value
+     * @return void
+     */
+    public function setConfig(Configuration $value): void
+    {
+        $this->config = $value;
+    }
+
+    /**
+     * Get the configuration
+     * @return Configuration
+     */
+    public function getConfig():Configuration
+    {
+        return $this->config;
+    }
+
+    /**
+     * Creates a key from the secret and stores it to the property
+     * @param string $secret
+     * @return void
+     */
+    public function setSignerKey(string $secret): void
+    {
+        $this->signerKey = $this->getKey($secret);
+    }
+
+    /**
+     * Get the Signer key
+     * @return Key
+     */
+    public function getSignerKey(): Key
+    {
+        return $this->signerKey;
     }
 
     /**

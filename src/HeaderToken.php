@@ -1,9 +1,21 @@
 <?php
+declare(strict_types=1);
+
+/**
+ * SSO token parser and validator
+ *
+ * PHP version 7.4
+ *
+ * @category  Authentication
+ * @copyright 2017-2022 Staffbase, GmbH.
+ * @author    Daniel Grosse
+ * @license   http://www.apache.org/licenses/LICENSE-2.0
+ * @link      https://github.com/staffbase/plugins-sdk-php
+ */
 
 namespace Staffbase\plugins\sdk;
 
 use Lcobucci\Clock\SystemClock;
-use Lcobucci\JWT\Configuration;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
 use Lcobucci\JWT\Validation\Constraint\SignedWith;
 use Lcobucci\JWT\Validation\Constraint\StrictValidAt;
@@ -11,7 +23,10 @@ use Staffbase\plugins\sdk\Exceptions\SSOAuthenticationException;
 use Staffbase\plugins\sdk\Exceptions\SSOException;
 use Staffbase\plugins\sdk\SSOData\HeaderSSODataTrait;
 
-class HeaderToken
+/**
+ * Class to parse and validate a JWT Token
+ */
+class HeaderToken extends AbstractToken
 {
     use HeaderSSODataTrait, SSOTokenTrait;
 
@@ -27,22 +42,6 @@ class HeaderToken
      */
     public function __construct(string $appSecret, string $tokenData, ?int $leeway = 0)
     {
-        if (!trim($appSecret)) {
-            throw new SSOException('Parameter appSecret for SSOToken is empty.');
-        }
-
-        if (!trim($tokenData)) {
-            throw new SSOException('Parameter tokenData for SSOToken is empty.');
-        }
-
-        $this->signerKey = $this->getKey(trim($appSecret));
-        $this->config = Configuration::forSymmetricSigner(new Sha256(), $this->signerKey);
-
-        $constrains = [
-            new StrictValidAt(SystemClock::fromUTC(), $this->getLeewayInterval($leeway)),
-            new SignedWith(new Sha256(), $this->signerKey),
-        ];
-
-        $this->parseToken($tokenData, $constrains);
+        parent::__construct($appSecret, $tokenData, $leeway);
     }
 }
