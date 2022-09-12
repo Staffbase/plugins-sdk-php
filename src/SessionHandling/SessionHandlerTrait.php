@@ -28,7 +28,7 @@ trait SessionHandlerTrait
      *
      * @param string $name of the session
      */
-    protected function openSession(string $name, ?string $sessionId): void
+    protected function openSession(?string $name, ?string $sessionId): void
     {
         session_id($sessionId);
         session_name($name);

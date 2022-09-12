@@ -16,13 +16,13 @@ declare(strict_types=1);
 
 namespace Staffbase\plugins\sdk;
 
-use SessionHandlerInterface;
+use InvalidArgumentException;
 use Staffbase\plugins\sdk\Helper\URLHelper;
 use Staffbase\plugins\sdk\Exceptions\SSOAuthenticationException;
 use Staffbase\plugins\sdk\Exceptions\SSOException;
 use Staffbase\plugins\sdk\RemoteCall\DeleteInstanceTrait;
 use Staffbase\plugins\sdk\RemoteCall\RemoteCallInterface;
-use Staffbase\plugins\sdk\SessionHandling\SessionTokenDataTrait;
+use Staffbase\plugins\sdk\SessionHandling\TokenDataTrait;
 use Staffbase\plugins\sdk\SSOData\HeaderSSODataTrait;
 
 /**
@@ -30,13 +30,7 @@ use Staffbase\plugins\sdk\SSOData\HeaderSSODataTrait;
  */
 class HeaderSession
 {
-    use HeaderSSODataTrait, SessionTokenDataTrait, DeleteInstanceTrait;
-
-    /**
-     * Session cookies from staffbase are prefixed with sid_ this should
-     * exclude every other possible cookie
-     */
-    private const COOKIE_PREFIX = "sid_";
+    use HeaderSSODataTrait, TokenDataTrait, DeleteInstanceTrait;
 
     /**
      * The path for the plugin in the experience studio has the pattern
@@ -50,16 +44,6 @@ class HeaderSession
     private ?string $pluginInstanceId = null;
 
     /**
-     * @var string|null $session_name the name of the session
-     */
-    private ?string $session_name;
-
-    /**
-     * @var String|null $sessionId the id of the current session.
-     */
-    private ?string $sessionId = null;
-
-    /**
      * @var boolean $userView flag for userView mode.
      */
     private bool $userView;
@@ -71,7 +55,6 @@ class HeaderSession
     public function __construct(
         string $pluginId,
         string $appSecret,
-        ?SessionHandlerInterface $sessionHandler = null,
         int $leeway = 0,
         ?RemoteCallInterface $remoteCallHandler = null
     ) {
@@ -79,42 +62,18 @@ class HeaderSession
             throw new SSOException('Empty plugin ID.');
         }
 
-        if ($sessionHandler) {
-            session_set_save_handler($sessionHandler, true);
-        }
-
         // we update the SSO info every time we get a token
-        $sso = ($jwt = $this->validateParams($pluginId)) ? new HeaderToken($appSecret, $jwt, $leeway) : null;
+        $sso = new HeaderToken($appSecret, $this->validateParams($pluginId), $leeway);
+        $this->setClaims($sso->getData());
 
         // delete the instance if the special sub is in the token data
         // exits the request
-        if ($sso && $remoteCallHandler && $sso->isDeleteInstanceCall()) {
+        if ($remoteCallHandler && $sso->isDeleteInstanceCall()) {
             $this->deleteInstance($this->pluginInstanceId, $remoteCallHandler);
-        }
-
-        $this->storeSessionInfoFromCookie();
-
-        $this->openSession($this->session_name, $this->sessionId);
-
-        if ($sso !== null) {
-            $this->setClaims($sso->getData());
         }
 
         // decide if we are in user view or not
         $this->userView = !$this->isAdminView();
-
-        // requests with spoofed PID are not allowed
-        if (empty($this->getAllClaims())) {
-            throw new SSOAuthenticationException('Tried to access an instance without previous authentication.');
-        }
-    }
-
-    /**
-     * Destructor
-     */
-    public function __destruct()
-    {
-        $this->closeSession();
     }
 
     /**
@@ -130,47 +89,62 @@ class HeaderSession
     /**
      * @throws SSOAuthenticationException
      */
-    private function validateParams(string $pluginId): ?string
+    private function validateParams(string $pluginId): string
     {
         $jwt = $this->getHeaderAuthorizationToken();
         $this->pluginInstanceId = URLHelper::getParam($pluginId);
+
+        if (!$this->isValidInstanceId($this->pluginInstanceId ?? "")) {
+            throw new InvalidArgumentException("Instance ID is not valid: $this->pluginInstanceId");
+        }
 
         return $jwt;
     }
 
     /**
+     * Checks if the instance id is a valid object id
+     * @param string $oid
+     * @return bool
+     */
+    private function isValidInstanceId(string $oid): bool
+    {
+        return strlen($oid) === 24 && strspn($oid, '0123456789ABCDEFabcdef') === 24;
+    }
+
+
+    /**
      * Tries the apache headers and the header directly to get the authorization token from.
      *
-     * @returns string|null the jwt token
+     * @returns string the jwt token
      * @throws SSOAuthenticationException if no header value is found
      */
-    private function getHeaderAuthorizationToken(): ?string
+    private function getHeaderAuthorizationToken(): string
     {
-        if (($headers = apache_request_headers()) && isset($headers['Authorization'])) {
+        if (($headers = $this->getHeaders()) && isset($headers['Authorization'])) {
             return $this->getToken($headers['Authorization']);
-        }
-
-        if (isset($_SERVER["HTTP_AUTHORIZATION"])) {
-            return $this->getToken($_SERVER["HTTP_AUTHORIZATION"]);
         }
 
         throw new SSOAuthenticationException("No Authorization field set.");
     }
 
-    /**
-     * Searches the cookie with the "sid" prefix and gets name and session id from it
-     * @return void
-     */
-    private function storeSessionInfoFromCookie(): void
+    private function getHeaders(): array
     {
-        $cookies = array_filter(
-            $_COOKIE,
-            static fn($key) => stripos($key, self::COOKIE_PREFIX) === 0,
-            ARRAY_FILTER_USE_KEY
-        );
+        if (function_exists("apache_request_headers") && $headers = apache_request_headers()) {
+            return $headers;
+        }
 
-        $this->session_name = array_key_first($cookies);
-        $this->sessionId = array_values($cookies)[0];
+        $headers = array();
+
+        // go through each server property and check if it is an HTTP header
+        // remove the prefix and extract the name of the property in lowercase
+        foreach (array_keys($_SERVER) as $skey) {
+            if (strpos($skey, "HTTP_") === 0) {
+                $headername = ucfirst(strtolower(str_replace("_", " ", substr($skey, 5))));
+                $headers[$headername] = $_SERVER[$skey];
+            }
+        }
+
+        return $headers;
     }
 
     /**
