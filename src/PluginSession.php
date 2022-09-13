@@ -27,7 +27,7 @@ use Staffbase\plugins\sdk\SSOData\SSODataTrait;
 /**
  * A container which decrypts and stores the SSO data in a session for further requests.
  */
-class PluginSession
+class PluginSession extends SSOData
 {
     use SSODataTrait, SessionTokenDataTrait, DeleteInstanceTrait;
 
