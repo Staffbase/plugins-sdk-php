@@ -41,15 +41,11 @@ class PluginSession extends SSOData
      */
     private ?string $pluginInstanceId = null;
 
-    /**
-     * @var String|null $sessionId the id of the current session.
-     */
-    private ?string $sessionId = null;
 
     /**
-     * @var boolean $userView flag for userView mode.
+     * @var boolean $isUserView flag for userView mode.
      */
-    private bool $userView;
+    private bool $isUserView;
 
     /**
      * Constructor
@@ -70,7 +66,7 @@ class PluginSession extends SSOData
         int $leeway = 0,
         ?RemoteCallInterface $remoteCallHandler = null
     ) {
-        if (!$pluginId) {
+        if (empty($pluginId)) {
             throw new SSOException('Empty plugin ID.');
         }
 
@@ -79,7 +75,8 @@ class PluginSession extends SSOData
         }
 
         // we update the SSO info every time we get a token
-        $sso =($jwt = $this->validateParams()) ? $this->updateSSOInformation($jwt, $appSecret, $leeway) : null;
+        $jwt = $this->validateParams();
+        $sso = $jwt ? $this->updateSSOInformation($jwt, $appSecret, $leeway) : null;
 
         // delete the instance if the special sub is in the token data
         // exits the request
@@ -91,12 +88,12 @@ class PluginSession extends SSOData
         $this->openSession($pluginId, $this->createCompatibleSessionId($this->sessionId));
 
         // sets all claims if the token is refreshed
-        if ($sso !== null) {
+        if ($sso instanceof SSOToken) {
             $this->setClaims($sso->getData());
         }
 
         // decide if we are in user view or not
-        $this->userView = !$this->isAdminView();
+        $this->isUserView = !$this->isAdminView();
 
         // requests with spoofed PID are not allowed
         if (empty($this->getAllClaims())) {
@@ -119,7 +116,7 @@ class PluginSession extends SSOData
      */
     public function isUserView(): bool
     {
-        return $this->userView;
+        return $this->isUserView;
     }
 
     /**
@@ -160,7 +157,7 @@ class PluginSession extends SSOData
             throw new SSOAuthenticationException('Tried to initialize the session with both PID and JWT provided.');
         }
 
-        if (!$pid && !$jwt) {
+        if (empty($pid) && empty($jwt)) {
             throw new SSOAuthenticationException('Missing PID or JWT query parameter in Request.');
         }
 

@@ -29,7 +29,7 @@ use Staffbase\plugins\sdk\Validation\HasInstanceId;
  */
 class SSOToken extends AbstractToken
 {
-    use SSODataTrait, SSOTokenTrait;
+    use SSODataTrait;
 
     /**
      * Constructor

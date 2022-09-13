@@ -16,6 +16,7 @@ declare(strict_types=1);
 namespace Staffbase\plugins\sdk\SSOData;
 
 use DateTimeImmutable;
+use TypeError;
 
 /**
  * Trait to access the shared claims of a JWT token.
@@ -37,10 +38,18 @@ trait SharedDataTrait
      */
     public function getAudience(): ?string
     {
-
+        /** @var array|string|null $audience */
         $audience = $this->getClaimSafe(self::$CLAIM_AUDIENCE);
 
-        return !is_array($audience) ? $audience : $audience[0] ?? null;
+        if (is_array($audience)) {
+            $audience = current($audience);
+        }
+
+        if (is_string($audience) || is_null($audience)) {
+            return $audience;
+        }
+
+        throw new TypeError('Audience must be of the type string or null, got: ' . gettype($audience));
     }
 
     /**

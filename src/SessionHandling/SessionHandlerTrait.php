@@ -24,9 +24,15 @@ trait SessionHandlerTrait
     private ?string $pluginInstanceId = null;
 
     /**
+     * @var String|null $sessionId the id of the current session.
+     */
+    private ?string $sessionId = null;
+
+    /**
      * Open a session.
      *
-     * @param string $name of the session
+     * @param string|null $name of the session
+     * @param string|null $sessionId
      */
     protected function openSession(?string $name, ?string $sessionId): void
     {
@@ -46,6 +52,7 @@ trait SessionHandlerTrait
     /**
      * Checks if the given key is set
      *
+     * @param mixed $key
      * @param string|null $parentKey
      *
      * @return bool
