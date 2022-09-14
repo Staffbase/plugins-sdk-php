@@ -173,7 +173,7 @@ class SSOTokenTest extends TestCase
     {
 
         $tokenData = SSOTestData::getTokenData();
-        $tokenData[SSOToken::$CLAIM_INSTANCE_ID] = '';
+        $tokenData[SSOToken::CLAIM_INSTANCE_ID] = '';
 
         $token = SSOTokenGenerator::createSignedTokenFromData($this->privateKey, $tokenData);
 

@@ -22,12 +22,14 @@ use Staffbase\plugins\sdk\Exceptions\SSOException;
 use Staffbase\plugins\sdk\RemoteCall\DeleteInstanceTrait;
 use Staffbase\plugins\sdk\RemoteCall\RemoteCallInterface;
 use Staffbase\plugins\sdk\SessionHandling\SessionTokenDataTrait;
+use Staffbase\plugins\sdk\SSOData\SharedClaimsInterface;
+use Staffbase\plugins\sdk\SSOData\SSODataClaimsInterface;
 use Staffbase\plugins\sdk\SSOData\SSODataTrait;
 
 /**
  * A container which decrypts and stores the SSO data in a session for further requests.
  */
-class PluginSession extends SSOData
+class PluginSession implements SharedClaimsInterface, SSODataClaimsInterface
 {
     use SSODataTrait, SessionTokenDataTrait, DeleteInstanceTrait;
 

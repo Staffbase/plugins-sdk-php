@@ -24,11 +24,11 @@ use TypeError;
 trait SharedDataTrait
 {
 
-    use SharedClaimsTrait, ClaimAccessTrait;
+    use ClaimAccessTrait;
 
-    private static string $USER_ROLE_EDITOR = 'editor';
+    private static string $userRoleEditor = 'editor';
 
-    private static string $REMOTE_CALL_DELETE = 'delete';
+    private static string $remoteCallDelete = 'delete';
 
     /**
      * Get targeted audience of the token. Currently only
@@ -39,7 +39,7 @@ trait SharedDataTrait
     public function getAudience(): ?string
     {
         /** @var array|string|null $audience */
-        $audience = $this->getClaimSafe(self::$CLAIM_AUDIENCE);
+        $audience = $this->getClaimSafe(SharedClaimsInterface::CLAIM_AUDIENCE);
 
         if (is_array($audience)) {
             $audience = current($audience);
@@ -59,7 +59,7 @@ trait SharedDataTrait
      */
     public function getExpireAtTime(): ?DateTimeImmutable
     {
-        return $this->getClaimSafe(self::$CLAIM_EXPIRE_AT);
+        return $this->getClaimSafe(SharedClaimsInterface::CLAIM_EXPIRE_AT);
     }
 
     /**
@@ -69,7 +69,7 @@ trait SharedDataTrait
      */
     public function getNotBeforeTime(): ?DateTimeImmutable
     {
-        return $this->getClaimSafe(self::$CLAIM_NOT_BEFORE);
+        return $this->getClaimSafe(SharedClaimsInterface::CLAIM_NOT_BEFORE);
     }
 
     /**
@@ -79,7 +79,7 @@ trait SharedDataTrait
      */
     public function getIssuedAtTime(): ?DateTimeImmutable
     {
-        return $this->getClaimSafe(self::$CLAIM_ISSUED_AT);
+        return $this->getClaimSafe(SharedClaimsInterface::CLAIM_ISSUED_AT);
     }
 
     /**
@@ -89,7 +89,7 @@ trait SharedDataTrait
      */
     public function getIssuer(): ?string
     {
-        return $this->getClaimSafe(self::$CLAIM_ISSUER);
+        return $this->getClaimSafe(SharedClaimsInterface::CLAIM_ISSUER);
     }
 
     /**
@@ -99,7 +99,7 @@ trait SharedDataTrait
      */
     public function getId(): ?string
     {
-        return $this->getClaimSafe(self::$CLAIM_JWT_ID);
+        return $this->getClaimSafe(SharedClaimsInterface::CLAIM_JWT_ID);
     }
 
     /**
@@ -109,7 +109,7 @@ trait SharedDataTrait
      */
     public function getSubject(): ?string
     {
-        return $this->getClaimSafe(self::$CLAIM_SUBJECT);
+        return $this->getClaimSafe(SharedClaimsInterface::CLAIM_SUBJECT);
     }
 
     /**
@@ -123,7 +123,7 @@ trait SharedDataTrait
      */
     public function getRole(): ?string
     {
-        return $this->getClaimSafe(self::$CLAIM_USER_ROLE);
+        return $this->getClaimSafe(SharedClaimsInterface::CLAIM_USER_ROLE);
     }
 
     /**
@@ -146,7 +146,7 @@ trait SharedDataTrait
      */
     public function isDeleteInstanceCall(): bool
     {
-        return $this->getUserId() === self::$REMOTE_CALL_DELETE;
+        return $this->getUserId() === self::$remoteCallDelete;
     }
 
     /**
@@ -159,6 +159,6 @@ trait SharedDataTrait
      */
     public function isEditor(): bool
     {
-        return $this->getClaimSafe(self::$CLAIM_USER_ROLE) === self::$USER_ROLE_EDITOR;
+        return $this->getClaimSafe(SharedClaimsInterface::CLAIM_USER_ROLE) === self::$userRoleEditor;
     }
 }

@@ -22,7 +22,7 @@ trait SessionTokenDataTrait
     use SessionHandlerTrait;
     use ClaimAccessTrait;
 
-    private static string $KEY_SSO = "sso";
+    private static string $keySso = "sso";
 
     /**
      * Test if a claim is set.
@@ -33,7 +33,7 @@ trait SessionTokenDataTrait
      */
     protected function hasClaim(string $claim): bool
     {
-        return $this->hasSessionVar($claim, self::$KEY_SSO);
+        return $this->hasSessionVar($claim, self::$keySso);
     }
 
     /**
@@ -45,7 +45,7 @@ trait SessionTokenDataTrait
      */
     protected function getClaim(string $claim)
     {
-        return $this->getSessionVar($claim, self::$KEY_SSO);
+        return $this->getSessionVar($claim, self::$keySso);
     }
 
     /**
@@ -55,7 +55,7 @@ trait SessionTokenDataTrait
      */
     protected function getAllClaims(): array
     {
-        return $this->getSessionData(self::$KEY_SSO);
+        return $this->getSessionData(self::$keySso);
     }
 
     /**
@@ -65,6 +65,6 @@ trait SessionTokenDataTrait
      */
     protected function setClaims($data): void
     {
-        $this->setSessionData($data, self::$KEY_SSO);
+        $this->setSessionData($data, self::$keySso);
     }
 }

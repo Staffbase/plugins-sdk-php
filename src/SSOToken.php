@@ -21,13 +21,15 @@ use Lcobucci\JWT\Validation\Constraint\SignedWith;
 use Lcobucci\JWT\Validation\Constraint\StrictValidAt;
 use Staffbase\plugins\sdk\Exceptions\SSOAuthenticationException;
 use Staffbase\plugins\sdk\Exceptions\SSOException;
+use Staffbase\plugins\sdk\SSOData\SharedClaimsInterface;
+use Staffbase\plugins\sdk\SSOData\SSODataClaimsInterface;
 use Staffbase\plugins\sdk\SSOData\SSODataTrait;
 use Staffbase\plugins\sdk\Validation\HasInstanceId;
 
 /**
  * Class to parse and validate a JWT Token
  */
-class SSOToken extends AbstractToken
+class SSOToken extends AbstractToken implements SharedClaimsInterface, SSODataClaimsInterface
 {
     use SSODataTrait;
 
