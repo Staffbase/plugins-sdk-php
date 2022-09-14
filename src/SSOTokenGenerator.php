@@ -64,21 +64,21 @@ class SSOTokenGenerator
     {
         $builder = $config->builder();
         $token = $builder
-            ->permittedFor($tokenData[SSOToken::CLAIM_AUDIENCE])
-            ->issuedAt($tokenData[SSOToken::CLAIM_ISSUED_AT])
-            ->canOnlyBeUsedAfter($tokenData[SSOToken::CLAIM_NOT_BEFORE])
-            ->expiresAt($tokenData[SSOToken::CLAIM_EXPIRE_AT]);
+            ->permittedFor($tokenData[SSOData\SharedClaimsInterface::CLAIM_AUDIENCE])
+            ->issuedAt($tokenData[SSOData\SharedClaimsInterface::CLAIM_ISSUED_AT])
+            ->canOnlyBeUsedAfter($tokenData[SSOData\SharedClaimsInterface::CLAIM_NOT_BEFORE])
+            ->expiresAt($tokenData[SSOData\SharedClaimsInterface::CLAIM_EXPIRE_AT]);
 
-        if (isset($tokenData[SSOToken::CLAIM_ISSUER])) {
-            $token->issuedBy($tokenData[SSOToken::CLAIM_ISSUER]);
+        if (isset($tokenData[SSOData\SharedClaimsInterface::CLAIM_ISSUER])) {
+            $token->issuedBy($tokenData[SSOData\SharedClaimsInterface::CLAIM_ISSUER]);
         }
 
-        if (isset($tokenData[SSOToken::CLAIM_USER_ID])) {
-            $token->relatedTo($tokenData[SSOToken::CLAIM_USER_ID]);
+        if (isset($tokenData[SSOData\SSODataClaimsInterface::CLAIM_USER_ID])) {
+            $token->relatedTo($tokenData[SSOData\SSODataClaimsInterface::CLAIM_USER_ID]);
         }
 
-        if (isset($tokenData[SSOToken::CLAIM_JWT_ID])) {
-            $token->identifiedBy($tokenData[SSOToken::CLAIM_JWT_ID]);
+        if (isset($tokenData[SSOData\SharedClaimsInterface::CLAIM_JWT_ID])) {
+            $token->identifiedBy($tokenData[SSOData\SharedClaimsInterface::CLAIM_JWT_ID]);
         }
 
         // Remove all set keys as they throw an exception when used with withClaim

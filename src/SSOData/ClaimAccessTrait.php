@@ -51,7 +51,7 @@ trait ClaimAccessTrait
      *
      * Has a check for undefined claims to make getter calls always valid.
      *
-     * @param string Name of the claim.
+     * @param string $name Name of the claim.
      *
      * @return mixed
      */

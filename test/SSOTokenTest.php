@@ -19,6 +19,7 @@ use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use Staffbase\plugins\sdk\Exceptions\SSOAuthenticationException;
 use Staffbase\plugins\sdk\Exceptions\SSOException;
+use Staffbase\plugins\sdk\SSOData\SSODataClaimsInterface;
 use Staffbase\plugins\sdk\SSOToken;
 use Staffbase\plugins\sdk\SSOTokenGenerator;
 
@@ -173,7 +174,7 @@ class SSOTokenTest extends TestCase
     {
 
         $tokenData = SSOTestData::getTokenData();
-        $tokenData[SSOToken::CLAIM_INSTANCE_ID] = '';
+        $tokenData[SSODataClaimsInterface::CLAIM_INSTANCE_ID] = '';
 
         $token = SSOTokenGenerator::createSignedTokenFromData($this->privateKey, $tokenData);
 

@@ -15,10 +15,6 @@ declare(strict_types=1);
 
 namespace Staffbase\plugins\sdk;
 
-use Lcobucci\Clock\SystemClock;
-use Lcobucci\JWT\Signer\Rsa\Sha256;
-use Lcobucci\JWT\Validation\Constraint\SignedWith;
-use Lcobucci\JWT\Validation\Constraint\StrictValidAt;
 use Staffbase\plugins\sdk\Exceptions\SSOAuthenticationException;
 use Staffbase\plugins\sdk\Exceptions\SSOException;
 use Staffbase\plugins\sdk\SSOData\SharedClaimsInterface;

@@ -19,6 +19,8 @@ use PHPUnit\Framework\TestCase;
 use SessionHandlerInterface;
 use Staffbase\plugins\sdk\Exceptions\SSOAuthenticationException;
 use Staffbase\plugins\sdk\Exceptions\SSOException;
+use Staffbase\plugins\sdk\SSOData\SharedClaimsInterface;
+use Staffbase\plugins\sdk\SSOData\SSODataClaimsInterface;
 use Staffbase\plugins\sdk\SSOTokenGenerator;
 use Staffbase\plugins\sdk\PluginSession;
 use Staffbase\plugins\sdk\RemoteCall\DeleteInstanceCallHandlerInterface;
@@ -51,7 +53,7 @@ class PluginSessionTest extends TestCase
         $this->tokenData = SSOTestData::getTokenData();
         $this->token = SSOTokenGenerator::createSignedTokenFromData($this->privateKey, $this->tokenData);
 
-        $this->pluginInstanceId = $this->tokenData[PluginSession::CLAIM_INSTANCE_ID];
+        $this->pluginInstanceId = $this->tokenData[SSODataClaimsInterface::CLAIM_INSTANCE_ID];
     }
 
     /**
@@ -185,7 +187,7 @@ class PluginSessionTest extends TestCase
     public function testConstructorRefuseEmptyEnv()
     {
 
-        $this->setupEnvironment(null, null);
+        $this->setupEnvironment();
 
         $mock = $this->getMockBuilder($this->classname)
             ->disableOriginalConstructor()
@@ -243,10 +245,10 @@ class PluginSessionTest extends TestCase
         /** @var PluginSession $session */
         $session = new $mock($this->pluginId, $this->publicKey);
 
-        $this->assertEquals($this->tokenData[PluginSession::CLAIM_USER_ROLE], $session->getRole());
+        $this->assertEquals($this->tokenData[SharedClaimsInterface::CLAIM_USER_ROLE], $session->getRole());
 
         $tokenData = $this->tokenData;
-        $tokenData[PluginSession::CLAIM_USER_ROLE] = 'updatedRoleName';
+        $tokenData[SharedClaimsInterface::CLAIM_USER_ROLE] = 'updatedRoleName';
         $newToken = SSOTokenGenerator::createSignedTokenFromData($this->privateKey, $tokenData);
 
         $this->setupEnvironment(null, $newToken, false);
@@ -254,7 +256,7 @@ class PluginSessionTest extends TestCase
         /** @var PluginSession $newSession */
         $newSession = new $mock($this->pluginId, $this->publicKey);
 
-        $this->assertEquals($newSession->getRole(), $tokenData[PluginSession::CLAIM_USER_ROLE]);
+        $this->assertEquals($newSession->getRole(), $tokenData[SharedClaimsInterface::CLAIM_USER_ROLE]);
         $this->assertEquals($session->getRole(), $newSession->getRole());
     }
 
@@ -281,8 +283,8 @@ class PluginSessionTest extends TestCase
 
 
         $tokenData = $this->tokenData;
-        $tokenData[PluginSession::CLAIM_INSTANCE_ID] = 'anotherTestInstanceId';
-        $tokenData[PluginSession::CLAIM_USER_ROLE] = 'anotherRoleInInstance';
+        $tokenData[SSODataClaimsInterface::CLAIM_INSTANCE_ID] = 'anotherTestInstanceId';
+        $tokenData[SharedClaimsInterface::CLAIM_USER_ROLE] = 'anotherRoleInInstance';
         $newToken = SSOTokenGenerator::createSignedTokenFromData($this->privateKey, $tokenData);
 
         $this->setupEnvironment(null, $newToken, false);
@@ -290,7 +292,7 @@ class PluginSessionTest extends TestCase
         /** @var PluginSession $newSession */
         $newSession = new $mock($this->pluginId, $this->publicKey);
 
-        $this->assertEquals($tokenData[PluginSession::CLAIM_USER_ROLE], $newSession->getRole());
+        $this->assertEquals($tokenData[SharedClaimsInterface::CLAIM_USER_ROLE], $newSession->getRole());
         $this->assertNotEquals($newSession->getRole(), $session->getRole());
 
         $sessionVar  = 'myvariable';
@@ -300,9 +302,9 @@ class PluginSessionTest extends TestCase
         $session->setSessionVar($sessionVar, $sessionVal);
         $newSession->setSessionVar($sessionVar, $sessionVal2);
 
-        $this->assertNotEquals($session->getSessionVar($sessionVar, null), $newSession->getSessionVar($sessionVar, null));
-        $this->assertEquals($sessionVal, $session->getSessionVar($sessionVar, null));
-        $this->assertEquals($sessionVal2, $newSession->getSessionVar($sessionVar, null));
+        $this->assertNotEquals($session->getSessionVar($sessionVar), $newSession->getSessionVar($sessionVar));
+        $this->assertEquals($sessionVal, $session->getSessionVar($sessionVar));
+        $this->assertEquals($sessionVal2, $newSession->getSessionVar($sessionVar));
     }
 
     /**
@@ -335,7 +337,7 @@ class PluginSessionTest extends TestCase
             $session->setSessionVar($var, $val);
         }
 
-        $this->assertEquals($sessionData, $session->getSessionData(null));
+        $this->assertEquals($sessionData, $session->getSessionData());
     }
 
     /**
@@ -348,7 +350,7 @@ class PluginSessionTest extends TestCase
     {
 
         $tokenData = $this->tokenData;
-        $tokenData[PluginSession::CLAIM_USER_ID] = 'delete';
+        $tokenData[SSODataClaimsInterface::CLAIM_USER_ID] = 'delete';
         $token = SSOTokenGenerator::createSignedTokenFromData($this->privateKey, $tokenData);
 
         $this->setupEnvironment(null, $token, false);
@@ -389,7 +391,7 @@ class PluginSessionTest extends TestCase
     {
 
         $tokenData = $this->tokenData;
-        $tokenData[PluginSession::CLAIM_USER_ID] = 'delete';
+        $tokenData[SSODataClaimsInterface::CLAIM_USER_ID] = 'delete';
         $token = SSOTokenGenerator::createSignedTokenFromData($this->privateKey, $tokenData);
 
         $this->setupEnvironment(null, $token, false);
@@ -429,13 +431,13 @@ class PluginSessionTest extends TestCase
     public function testSessionIsCreated()
     {
         $tokenData = $this->tokenData;
-        $this->setupEnvironment(null, $this->token, true);
+        $this->setupEnvironment(null, $this->token);
 
         $this->assertEquals(PHP_SESSION_NONE, session_status());
         $session = new PluginSession($this->pluginId, $this->publicKey);
         $this->assertEquals(PHP_SESSION_ACTIVE, session_status());
 
-        $this->assertEquals($tokenData[PluginSession::CLAIM_SESSION_ID], session_id());
+        $this->assertEquals($tokenData[SSODataClaimsInterface::CLAIM_SESSION_ID], session_id());
     }
 
     public function testSessionIdCheck()
@@ -445,10 +447,10 @@ class PluginSessionTest extends TestCase
         $sessionId = 'HOjLTR6-D5YIY0-waqJQp3Bg-';
 
         $tokenData = $this->tokenData;
-        $tokenData[PluginSession::CLAIM_SESSION_ID] = $sessionHash;
+        $tokenData[SSODataClaimsInterface::CLAIM_SESSION_ID] = $sessionHash;
         $token = SSOTokenGenerator::createSignedTokenFromData($this->privateKey, $tokenData);
 
-        $this->setupEnvironment(null, $token, true);
+        $this->setupEnvironment(null, $token);
 
         $this->assertEquals(PHP_SESSION_NONE, session_status());
         $session = new PluginSession($this->pluginId, $this->publicKey);
@@ -464,7 +466,7 @@ class PluginSessionTest extends TestCase
         $sessionId = 'HOjLTR6-D5YIY0-waqJQp3Bg-';
 
         $tokenData = $this->tokenData;
-        $tokenData[PluginSession::CLAIM_SESSION_ID] = $sessionHash;
+        $tokenData[SSODataClaimsInterface::CLAIM_SESSION_ID] = $sessionHash;
         $token = SSOTokenGenerator::createSignedTokenFromData($this->privateKey, $tokenData);
 
         // successfull remote call handler mock
@@ -478,7 +480,7 @@ class PluginSessionTest extends TestCase
         $handler->method('write')->willReturn(true);
         $handler->method('read')->willReturn($sessionId);
 
-        $this->setupEnvironment(null, $token, true);
+        $this->setupEnvironment(null, $token);
 
         /** @var SessionHandlerInterface $handler */
         new PluginSession($this->pluginId, $this->publicKey);
@@ -496,7 +498,7 @@ class PluginSessionTest extends TestCase
             ->method('write')
             ->with($this->logicalOr(
                 $this->equalTo($sessionId),
-                $this->equalTo($this->tokenData[PluginSession::CLAIM_SESSION_ID])
+                $this->equalTo($this->tokenData[SSODataClaimsInterface::CLAIM_SESSION_ID])
             ));
 
         $handler->expects($this->exactly(2))
@@ -508,7 +510,7 @@ class PluginSessionTest extends TestCase
     public function testDestroyOwnSession()
     {
 
-        $sessionId = $this->tokenData[PluginSession::CLAIM_SESSION_ID];
+        $sessionId = $this->tokenData[SSODataClaimsInterface::CLAIM_SESSION_ID];
         $this->setupEnvironment(null, $this->token, false);
 
         // successfull remote call handler mock

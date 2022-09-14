@@ -11,6 +11,7 @@ use Lcobucci\JWT\Signer\Key;
 use Lcobucci\JWT\Signer\Key\InMemory;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
 use Lcobucci\JWT\Token;
+use Lcobucci\JWT\Validation\Constraint;
 use Lcobucci\JWT\Validation\Constraint\SignedWith;
 use Lcobucci\JWT\Validation\Constraint\StrictValidAt;
 use Lcobucci\JWT\Validation\RequiredConstraintsViolated;
@@ -42,7 +43,7 @@ abstract class AbstractToken
      * @param string $appSecret Either a PEM key or a file:// URL.
      * @param string $tokenData The token text.
      * @param int|null $leeway count of seconds added to current timestamp
-     * @param ValidAt[] constrains
+     * @param Constraint[] $constrains constrains
      *
      * @throws SSOAuthenticationException
      * @throws SSOException on invalid parameters.

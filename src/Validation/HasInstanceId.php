@@ -17,7 +17,7 @@ use Lcobucci\JWT\Token;
 use Lcobucci\JWT\UnencryptedToken;
 use Lcobucci\JWT\Validation\Constraint;
 use Lcobucci\JWT\Validation\ConstraintViolation;
-use Staffbase\plugins\sdk\SSOToken;
+use Staffbase\plugins\sdk\SSOData\SSODataClaimsInterface;
 
 final class HasInstanceId implements Constraint
 {
@@ -37,6 +37,6 @@ final class HasInstanceId implements Constraint
 
     private function hasInstanceId(Token $token): bool
     {
-        return (bool) $token->claims()->get(SSOToken::CLAIM_INSTANCE_ID);
+        return (bool) $token->claims()->get(SSODataClaimsInterface::CLAIM_INSTANCE_ID);
     }
 }
