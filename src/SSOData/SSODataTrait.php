@@ -49,11 +49,9 @@ trait SSODataTrait
     /**
      * Get the cipher of the session id for the session the token was issued.
      *
-     * The id will always be present.
-     *
-     * @return string
+     * @return null|string
      */
-    public function getSessionId(): string
+    public function getSessionId(): ?string
     {
         return $this->getClaimSafe(SSODataClaimsInterface::CLAIM_SESSION_ID);
     }
