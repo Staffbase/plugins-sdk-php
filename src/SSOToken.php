@@ -15,6 +15,8 @@ declare(strict_types=1);
 
 namespace Staffbase\plugins\sdk;
 
+use Lcobucci\Clock\SystemClock;
+use Lcobucci\JWT\Validation\Constraint\StrictValidAt;
 use Staffbase\plugins\sdk\Exceptions\SSOAuthenticationException;
 use Staffbase\plugins\sdk\Exceptions\SSOException;
 use Staffbase\plugins\sdk\SSOData\SharedClaimsInterface;
@@ -42,9 +44,10 @@ class SSOToken extends AbstractToken implements SharedClaimsInterface, SSODataCl
     public function __construct(string $appSecret, string $tokenData, ?int $leeway = 0)
     {
         $constrains = [
+            new StrictValidAt(SystemClock::fromUTC(), $this->getLeewayInterval((int) $leeway)),
             new HasInstanceId()
         ];
 
-        parent::__construct($appSecret, $tokenData, $leeway, $constrains);
+        parent::__construct($appSecret, $tokenData, $constrains);
     }
 }

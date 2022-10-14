@@ -6,7 +6,7 @@ use Staffbase\plugins\sdk\SSOData\SharedDataTrait;
 use Staffbase\plugins\sdk\SSOData\SSODataTrait;
 
 /**
- * @deprecated Please use \Staffbase\plugins\sdk\SSOData\SSOData
+ * @deprecated Please use \Staffbase\plugins\sdk\SSOData\SSODataTrait
  */
 abstract class SSOData
 {

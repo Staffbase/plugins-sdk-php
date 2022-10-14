@@ -42,13 +42,12 @@ abstract class AbstractToken
      *
      * @param string $appSecret Either a PEM key or a file:// URL.
      * @param string $tokenData The token text.
-     * @param int|null $leeway count of seconds added to current timestamp
      * @param Constraint[] $constrains constrains
      *
      * @throws SSOAuthenticationException
      * @throws SSOException on invalid parameters.
      */
-    public function __construct(string $appSecret, string $tokenData, ?int $leeway = 0, array $constrains = [])
+    public function __construct(string $appSecret, string $tokenData, array $constrains = [])
     {
         if (!trim($appSecret)) {
             throw new SSOException('Parameter appSecret for SSOToken is empty.');
@@ -62,7 +61,6 @@ abstract class AbstractToken
         $this->setConfig(Configuration::forSymmetricSigner(new Sha256(), $this->getSignerKey()));
 
         $defaultConstrains = [
-            new StrictValidAt(SystemClock::fromUTC(), $this->getLeewayInterval((int) $leeway)),
             new SignedWith(new Sha256(), $this->getSignerKey()),
         ];
 
@@ -73,7 +71,7 @@ abstract class AbstractToken
      * Creates and validates an SSO token.
      *
      * @param string $tokenData The token text.
-     * @param ValidAt[] $constrains an array of validation instances
+     * @param Constraint[] $constrains an array of validation instances
      *
      * @throws SSOAuthenticationException if the parsing/verification/validation of the token fails.
      */
@@ -209,7 +207,7 @@ abstract class AbstractToken
      * @param int $leeway count of seconds added to current timestamp
      * @return DateInterval DateInterval
      */
-    private function getLeewayInterval(int $leeway): DateInterval
+    protected function getLeewayInterval(int $leeway): DateInterval
     {
         $leewayInterval = "PT{$leeway}S";
 
