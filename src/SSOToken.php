@@ -16,6 +16,7 @@ declare(strict_types=1);
 namespace Staffbase\plugins\sdk;
 
 use Lcobucci\Clock\SystemClock;
+use Lcobucci\JWT\Signer\Rsa\Sha256;
 use Lcobucci\JWT\Validation\Constraint\StrictValidAt;
 use Staffbase\plugins\sdk\Exceptions\SSOAuthenticationException;
 use Staffbase\plugins\sdk\Exceptions\SSOException;
@@ -48,6 +49,8 @@ class SSOToken extends AbstractToken implements SharedClaimsInterface, SSODataCl
             new HasInstanceId()
         ];
 
-        parent::__construct($appSecret, $tokenData, $constrains);
+        $signer = new Sha256();
+
+        parent::__construct($appSecret, $tokenData, $signer, $constrains);
     }
 }

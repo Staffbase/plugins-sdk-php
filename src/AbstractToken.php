@@ -5,17 +5,14 @@ namespace Staffbase\plugins\sdk;
 
 use DateInterval;
 use Exception;
-use Lcobucci\Clock\SystemClock;
 use Lcobucci\JWT\Configuration;
+use Lcobucci\JWT\Signer;
 use Lcobucci\JWT\Signer\Key;
 use Lcobucci\JWT\Signer\Key\InMemory;
-use Lcobucci\JWT\Signer\Rsa\Sha256;
 use Lcobucci\JWT\Token;
 use Lcobucci\JWT\Validation\Constraint;
 use Lcobucci\JWT\Validation\Constraint\SignedWith;
-use Lcobucci\JWT\Validation\Constraint\StrictValidAt;
 use Lcobucci\JWT\Validation\RequiredConstraintsViolated;
-use Lcobucci\JWT\Validation\ValidAt;
 use Staffbase\plugins\sdk\Exceptions\SSOAuthenticationException;
 use Staffbase\plugins\sdk\Exceptions\SSOException;
 
@@ -42,12 +39,13 @@ abstract class AbstractToken
      *
      * @param string $appSecret Either a PEM key or a file:// URL.
      * @param string $tokenData The token text.
+     * @param Signer $signer The algorithm which is used to sign the token
      * @param Constraint[] $constrains constrains
      *
      * @throws SSOAuthenticationException
      * @throws SSOException on invalid parameters.
      */
-    public function __construct(string $appSecret, string $tokenData, array $constrains = [])
+    public function __construct(string $appSecret, string $tokenData, Signer $signer, array $constrains = [])
     {
         if (!trim($appSecret)) {
             throw new SSOException('Parameter appSecret for SSOToken is empty.');
@@ -58,10 +56,10 @@ abstract class AbstractToken
         }
 
         $this->setSignerKey(trim($appSecret));
-        $this->setConfig(Configuration::forSymmetricSigner(new Sha256(), $this->getSignerKey()));
+        $this->setConfig(Configuration::forSymmetricSigner($signer, $this->getSignerKey()));
 
         $defaultConstrains = [
-            new SignedWith(new Sha256(), $this->getSignerKey()),
+            new SignedWith($signer, $this->getSignerKey()),
         ];
 
         $this->parseToken($tokenData, array_merge($defaultConstrains, $constrains));
