@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Staffbase\plugins\sdk;
 
 use Lcobucci\JWT\Configuration;
+use Lcobucci\JWT\Signer;
 use Lcobucci\JWT\Signer\Key\InMemory;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
 use Lcobucci\JWT\Token;
@@ -31,13 +32,14 @@ class SSOTokenGenerator
      *
      * @param string $privateKey private key
      * @param array $tokenData associative array of claims
+     * @param Signer|null $signer the Signer instance to sign the token, defaults to SHA256
      *
      * @return string Encoded token.
      */
-    public static function createSignedTokenFromData(string $privateKey, array $tokenData): string
+    public static function createSignedTokenFromData(string $privateKey, array $tokenData, Signer $signer = null): string
     {
 
-        $config = Configuration::forSymmetricSigner(new Sha256(), InMemory::plainText($privateKey));
+        $config = Configuration::forSymmetricSigner($signer ?: new Sha256(), InMemory::plainText($privateKey));
         return self::buildToken($config, $tokenData)->toString();
     }
 
