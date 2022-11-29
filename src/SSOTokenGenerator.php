@@ -66,10 +66,13 @@ class SSOTokenGenerator
     {
         $builder = $config->builder();
         $token = $builder
-            ->permittedFor($tokenData[SSOData\SharedClaimsInterface::CLAIM_AUDIENCE])
             ->issuedAt($tokenData[SSOData\SharedClaimsInterface::CLAIM_ISSUED_AT])
             ->canOnlyBeUsedAfter($tokenData[SSOData\SharedClaimsInterface::CLAIM_NOT_BEFORE])
             ->expiresAt($tokenData[SSOData\SharedClaimsInterface::CLAIM_EXPIRE_AT]);
+
+        if (isset($tokenData[SSOData\SharedClaimsInterface::CLAIM_AUDIENCE])) {
+            $token->permittedFor($tokenData[SSOData\SharedClaimsInterface::CLAIM_AUDIENCE]);
+        }
 
         if (isset($tokenData[SSOData\SharedClaimsInterface::CLAIM_ISSUER])) {
             $token->issuedBy($tokenData[SSOData\SharedClaimsInterface::CLAIM_ISSUER]);
@@ -86,7 +89,7 @@ class SSOTokenGenerator
         // Remove all set keys as they throw an exception when used with withClaim
         $claims = array_filter(
             $tokenData,
-            fn ($key) => !in_array($key, RegisteredClaims::ALL),
+            static fn ($key) => !in_array($key, RegisteredClaims::ALL, true),
             ARRAY_FILTER_USE_KEY
         );
 
