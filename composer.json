@@ -1,6 +1,6 @@
 {
 	"name": "staffbase/plugins-sdk-php",
-	"version": "2.1.1",
+	"version": "2.1.2",
 	"type": "library",
 	"description": "Staffbase PHP SDK library for plugins.",
 	"keywords": ["staffbase", "plugins", "library", "php", "sdk"],
