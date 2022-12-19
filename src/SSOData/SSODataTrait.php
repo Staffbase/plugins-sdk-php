@@ -27,11 +27,9 @@ trait SSODataTrait
     /**
      * Get the branch id of the app that issued the token.
      *
-     * The id will always be present.
-     *
-     * @return string
+     * @return null|string
      */
-    public function getBranchId(): string
+    public function getBranchId(): ?string
     {
         return $this->getClaimSafe(SSODataClaimsInterface::CLAIM_BRANCH_ID);
     }
@@ -61,9 +59,9 @@ trait SSODataTrait
      *
      * The id will always be present.
      *
-     * @return string
+     * @return null|string
      */
-    public function getInstanceId(): string
+    public function getInstanceId(): ?string
     {
         return $this->getClaimSafe(SSODataClaimsInterface::CLAIM_INSTANCE_ID);
     }
