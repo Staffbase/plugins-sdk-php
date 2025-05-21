@@ -36,11 +36,11 @@ class SSOTokenGenerator
      *
      * @return string Encoded token.
      */
-    public static function createSignedTokenFromData(string $privateKey, array $tokenData, Signer $signer = null): string
+    public static function createSignedTokenFromData(string $privateKey, array $tokenData, Signer $signer = null, array $headers = []): string
     {
 
         $config = Configuration::forSymmetricSigner($signer ?: new Sha256(), InMemory::plainText($privateKey));
-        return self::buildToken($config, $tokenData)->toString();
+        return self::buildToken($config, $tokenData, $headers)->toString();
     }
 
     /**
@@ -48,7 +48,7 @@ class SSOTokenGenerator
      * @param array $tokenData
      * @return Token
      */
-    private static function buildToken(Configuration $config, array $tokenData): Token
+    private static function buildToken(Configuration $config, array $tokenData, array $headers = []): Token
     {
         $builder = $config->builder();
         $token = $builder
@@ -72,12 +72,16 @@ class SSOTokenGenerator
         // Remove all set keys as they throw an exception when used with withClaim
         $claims = array_filter(
             $tokenData,
-            fn ($key) => !in_array($key, RegisteredClaims::ALL),
+            static fn ($key) => !in_array($key, RegisteredClaims::ALL),
             ARRAY_FILTER_USE_KEY
         );
 
         foreach ($claims as $claim => $value) {
-           $token = $token->withClaim($claim, $value);
+            $token = $token->withClaim($claim, $value);
+        }
+
+        foreach ($headers as $header => $value) {
+            $token = $token->withHeader($header, $value);
         }
 
         return $token->getToken($config->signer(), $config->signingKey());
