@@ -52,5 +52,8 @@ class SSOToken extends AbstractToken implements SharedClaimsInterface, SSODataCl
         $signer = new Sha256();
 
         parent::__construct($appSecret, $tokenData, $signer, $constrains);
+
+        $this->parseToken();
+        $this->validateToken();
     }
 }

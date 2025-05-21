@@ -44,20 +44,6 @@ class SSOTokenGenerator
     }
 
     /**
-     * Create an unsigned token by omitting sign().
-     *
-     * @param array $tokenData associative array of claims
-     *
-     * @return string Encoded token.
-     */
-    public static function createUnsignedTokenFromData(array $tokenData): string
-    {
-
-        $config = Configuration::forUnsecuredSigner();
-        return self::buildToken($config, $tokenData)->toString();
-    }
-
-    /**
      * @param Configuration $config
      * @param array $tokenData
      * @return Token
@@ -72,15 +58,15 @@ class SSOTokenGenerator
             ->expiresAt($tokenData[SSOData\SharedClaimsInterface::CLAIM_EXPIRE_AT]);
 
         if (isset($tokenData[SSOData\SharedClaimsInterface::CLAIM_ISSUER])) {
-            $token->issuedBy($tokenData[SSOData\SharedClaimsInterface::CLAIM_ISSUER]);
+            $token = $token->issuedBy($tokenData[SSOData\SharedClaimsInterface::CLAIM_ISSUER]);
         }
 
         if (isset($tokenData[SSOData\SSODataClaimsInterface::CLAIM_USER_ID])) {
-            $token->relatedTo($tokenData[SSOData\SSODataClaimsInterface::CLAIM_USER_ID]);
+           $token = $token->relatedTo($tokenData[SSOData\SSODataClaimsInterface::CLAIM_USER_ID]);
         }
 
         if (isset($tokenData[SSOData\SharedClaimsInterface::CLAIM_JWT_ID])) {
-            $token->identifiedBy($tokenData[SSOData\SharedClaimsInterface::CLAIM_JWT_ID]);
+            $token = $token->identifiedBy($tokenData[SSOData\SharedClaimsInterface::CLAIM_JWT_ID]);
         }
 
         // Remove all set keys as they throw an exception when used with withClaim
@@ -91,7 +77,7 @@ class SSOTokenGenerator
         );
 
         foreach ($claims as $claim => $value) {
-            $builder->withClaim($claim, $value);
+           $token = $token->withClaim($claim, $value);
         }
 
         return $token->getToken($config->signer(), $config->signingKey());

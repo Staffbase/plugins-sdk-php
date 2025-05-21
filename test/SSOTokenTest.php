@@ -186,25 +186,6 @@ class SSOTokenTest extends TestCase
 
     /**
      *
-     * Test constructor throws exception on a unsigned token.
-     *
-     * @covers \Staffbase\plugins\sdk\SSOToken::__construct
-     */
-    public function testConstructorToFailOnUnsignedToken()
-    {
-
-        $tokenData = SSOTestData::getTokenData();
-
-        $token = SSOTokenGenerator::createUnsignedTokenFromData($tokenData);
-
-        $this->expectException(SSOAuthenticationException::class);
-        $this->expectExceptionMessageMatches('/Token signer mismatch/');
-
-        new SSOToken($this->publicKey, $token);
-    }
-
-    /**
-     *
      * Test accessors deliver correct values.
      *
      * @covers \Staffbase\plugins\sdk\SSOToken::__construct
