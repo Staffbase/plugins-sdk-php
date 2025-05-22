@@ -19,20 +19,13 @@ use Staffbase\plugins\sdk\Exceptions\SSOException;
 abstract class AbstractToken
 {
 
-    /**
-     * @var Token $token
-     */
     private Token $token;
 
-    /**
-     * @var Key $signerKey
-     */
     private Key $signerKey;
 
-    /**
-     * @var Configuration $config
-     */
     private Configuration $config;
+
+    private array $constraints;
 
     /**
      * Constructor
@@ -45,7 +38,7 @@ abstract class AbstractToken
      * @throws SSOAuthenticationException
      * @throws SSOException on invalid parameters.
      */
-    public function __construct(string $appSecret, string $tokenData, Signer $signer, array $constrains = [])
+    public function __construct(string $appSecret, protected string $tokenData, Signer $signer, array $constrains = [])
     {
         if (!trim($appSecret)) {
             throw new SSOException('Parameter appSecret for SSOToken is empty.');
@@ -58,28 +51,31 @@ abstract class AbstractToken
         $this->setSignerKey(trim($appSecret));
         $this->setConfig(Configuration::forSymmetricSigner($signer, $this->getSignerKey()));
 
-        $defaultConstrains = [
+        $this->constraints = [
             new SignedWith($signer, $this->getSignerKey()),
+            ...$constrains,
         ];
-
-        $this->parseToken($tokenData, array_merge($defaultConstrains, $constrains));
     }
 
     /**
      * Creates and validates an SSO token.
      *
-     * @param string $tokenData The token text.
-     * @param Constraint[] $constrains an array of validation instances
+     */
+    protected function parseToken(): void
+    {
+        // parse text
+        $this->token = $this->config->parser()->parse($this->tokenData);
+    }
+
+    /**
+     * Creates and validates an SSO token.
      *
      * @throws SSOAuthenticationException if the parsing/verification/validation of the token fails.
      */
-    protected function parseToken(string $tokenData, array $constrains = []): void
+    protected function validateToken(): void
     {
-        // parse text
-        $this->token = $this->config->parser()->parse($tokenData);
-
         try {
-            $this->config->validator()->assert($this->token, ...$constrains);
+            $this->config->validator()->assert($this->token, ...$this->constraints);
         } catch (RequiredConstraintsViolated $violation) {
             throw new SSOAuthenticationException($violation->getMessage());
         }
@@ -89,8 +85,6 @@ abstract class AbstractToken
      * Test if a claim is set.
      *
      * @param string $claim name.
-     *
-     * @return boolean
      */
     protected function hasClaim(string $claim): bool
     {
@@ -111,8 +105,6 @@ abstract class AbstractToken
 
     /**
      * Get an array of all available claims and their values.
-     *
-     * @return array
      */
     protected function getAllClaims(): array
     {
@@ -136,8 +128,8 @@ abstract class AbstractToken
         ));
 
         return
-            "-----BEGIN PUBLIC KEY-----\n".
-            chunk_split($data, 64).
+            "-----BEGIN PUBLIC KEY-----\n" .
+            chunk_split($data, 64) .
             "-----END PUBLIC KEY-----\n";
     }
 
@@ -145,7 +137,6 @@ abstract class AbstractToken
      * Set the configuration
      *
      * @param Configuration $value
-     * @return void
      */
     public function setConfig(Configuration $value): void
     {
@@ -154,9 +145,8 @@ abstract class AbstractToken
 
     /**
      * Get the configuration
-     * @return Configuration
      */
-    public function getConfig():Configuration
+    public function getConfig(): Configuration
     {
         return $this->config;
     }
@@ -164,7 +154,6 @@ abstract class AbstractToken
     /**
      * Creates a key from the secret and stores it to the property
      * @param string $secret
-     * @return void
      */
     public function setSignerKey(string $secret): void
     {
@@ -173,7 +162,6 @@ abstract class AbstractToken
 
     /**
      * Get the Signer key
-     * @return Key
      */
     public function getSignerKey(): Key
     {
@@ -184,7 +172,6 @@ abstract class AbstractToken
      * Decides between the new key methods, the JWT library offers
      *
      * @param string $appSecret
-     * @return Key
      */
     private function getKey(string $appSecret): Key
     {

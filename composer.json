@@ -1,6 +1,6 @@
 {
 	"name": "staffbase/plugins-sdk-php",
-	"version": "2.1.2",
+	"version": "3.0.0",
 	"type": "library",
 	"description": "Staffbase PHP SDK library for plugins.",
 	"keywords": ["staffbase", "plugins", "library", "php", "sdk"],
@@ -13,12 +13,12 @@
 		}
 	],
 	"require": {
-		"php": "^7.4 || ^8.0",
-		"lcobucci/jwt": "^4.1 || ^5.0"
+		"php": "~8.3.0",
+		"lcobucci/jwt": "^5.5",
+ 		"lcobucci/clock": "^3.3"
 
 	},
 	"require-dev": {
-		"cvuorinen/phpdoc-markdown-public": "^0.2.0",
 		"phpseclib/phpseclib": "^2.0",
 		"phpunit/phpunit": "^9.0"
 	},
