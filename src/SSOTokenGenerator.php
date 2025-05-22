@@ -36,11 +36,11 @@ class SSOTokenGenerator
      *
      * @return string Encoded token.
      */
-    public static function createSignedTokenFromData(string $privateKey, array $tokenData, Signer $signer = null, array $headers = []): string
+    public static function createSignedTokenFromData(string $privateKey, array $tokenData, Signer $signer = null): string
     {
 
         $config = Configuration::forSymmetricSigner($signer ?: new Sha256(), InMemory::plainText($privateKey));
-        return self::buildToken($config, $tokenData, $headers)->toString();
+        return self::buildToken($config, $tokenData)->toString();
     }
 
     /**
@@ -48,7 +48,7 @@ class SSOTokenGenerator
      * @param array $tokenData
      * @return Token
      */
-    private static function buildToken(Configuration $config, array $tokenData, array $headers = []): Token
+    private static function buildToken(Configuration $config, array $tokenData): Token
     {
         $builder = $config->builder();
         $token = $builder
@@ -78,10 +78,6 @@ class SSOTokenGenerator
 
         foreach ($claims as $claim => $value) {
             $token = $token->withClaim($claim, $value);
-        }
-
-        foreach ($headers as $header => $value) {
-            $token = $token->withHeader($header, $value);
         }
 
         return $token->getToken($config->signer(), $config->signingKey());
