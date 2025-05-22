@@ -17,8 +17,8 @@ composer require staffbase/plugins-sdk-php
 
 Dependencies are also managed by Composer. When using this repository keep the following dependencies in mind (cf. [composer.json](composer.json)):
 
-* php: ^7.4.0 || ^8.0
-* lcobucci/jwt: ^4.1
+* php: ^8.0
+* lcobucci/jwt: ^5.5
 
 ## API Reference
 
