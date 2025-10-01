@@ -56,8 +56,8 @@
 	"extra": {
 		"hooks": {
 			"pre-commit": [
-				"composer -d packages/php fix",
-				"composer -d packages/php phpstan"
+				"composer fix",
+				"composer phpstan"
 			]
 		}
 	}
