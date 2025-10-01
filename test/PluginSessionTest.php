@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * SSO plugin session Test implementation, based on this doc:
  * https://developers.staffbase.com/api/plugin-sso/
@@ -11,6 +13,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0
  * @link      https://github.com/staffbase/plugins-sdk-php
  */
+
 namespace Staffbase\plugins\test;
 
 use ReflectionClass;
@@ -91,7 +94,7 @@ class PluginSessionTest extends TestCase
 
         $mock = $this->getMockBuilder($this->classname)
             ->disableOriginalConstructor()
-            ->onlyMethods(array('openSession', 'closeSession'))
+            ->onlyMethods(['openSession', 'closeSession'])
             ->getMock();
 
         $mock->expects($this->exactly(2))
@@ -118,10 +121,10 @@ class PluginSessionTest extends TestCase
 
         $mock = $this->getMockBuilder($this->classname)
             ->disableOriginalConstructor()
-            ->onlyMethods(array('openSession', 'closeSession'))
+            ->onlyMethods(['openSession', 'closeSession'])
             ->getMock();
 
-        $this->setupEnvironment($this->pluginInstanceId. 'spoof', null, false);
+        $this->setupEnvironment($this->pluginInstanceId . 'spoof', null, false);
 
         $this->expectException(SSOException::class);
 
@@ -143,7 +146,7 @@ class PluginSessionTest extends TestCase
 
         $mock = $this->getMockBuilder($this->classname)
             ->disableOriginalConstructor()
-            ->onlyMethods(array('openSession', 'closeSession'))
+            ->onlyMethods(['openSession', 'closeSession'])
             ->getMock();
 
         $this->expectException(SSOException::class);
@@ -167,7 +170,7 @@ class PluginSessionTest extends TestCase
 
         $mock = $this->getMockBuilder($this->classname)
             ->disableOriginalConstructor()
-            ->onlyMethods(array('openSession', 'closeSession'))
+            ->onlyMethods(['openSession', 'closeSession'])
             ->getMock();
 
         $this->expectException(SSOException::class);
@@ -191,7 +194,7 @@ class PluginSessionTest extends TestCase
 
         $mock = $this->getMockBuilder($this->classname)
             ->disableOriginalConstructor()
-            ->onlyMethods(array('openSession', 'closeSession'))
+            ->onlyMethods(['openSession', 'closeSession'])
             ->getMock();
 
         $this->expectException(SSOAuthenticationException::class);
@@ -215,7 +218,7 @@ class PluginSessionTest extends TestCase
 
         $mock = $this->getMockBuilder($this->classname)
             ->disableOriginalConstructor()
-            ->onlyMethods(array('openSession', 'closeSession'))
+            ->onlyMethods(['openSession', 'closeSession'])
             ->getMock();
 
         $this->expectException(SSOAuthenticationException::class);
@@ -239,7 +242,7 @@ class PluginSessionTest extends TestCase
 
         $mock = $this->getMockBuilder($this->classname)
             ->disableOriginalConstructor()
-            ->onlyMethods(array('openSession', 'closeSession'))
+            ->onlyMethods(['openSession', 'closeSession'])
             ->getMock();
 
         /** @var PluginSession $session */
@@ -275,7 +278,7 @@ class PluginSessionTest extends TestCase
 
         $mock = $this->getMockBuilder($this->classname)
             ->disableOriginalConstructor()
-            ->onlyMethods(array('openSession', 'closeSession'))
+            ->onlyMethods(['openSession', 'closeSession'])
             ->getMock();
 
         /** @var PluginSession $session */
@@ -321,7 +324,7 @@ class PluginSessionTest extends TestCase
 
         $mock = $this->getMockBuilder($this->classname)
             ->disableOriginalConstructor()
-            ->onlyMethods(array('openSession', 'closeSession'))
+            ->onlyMethods(['openSession', 'closeSession'])
             ->getMock();
 
         /** @var PluginSession $session */
@@ -329,7 +332,7 @@ class PluginSessionTest extends TestCase
 
         $sessionData = [
             'test1' => 'val1',
-            'test2' => 'val2'
+            'test2' => 'val2',
         ];
 
 
@@ -357,7 +360,7 @@ class PluginSessionTest extends TestCase
 
         // successfull remote call handler mock
         $handler = $this->getMockBuilder(DeleteInstanceCallHandlerInterface::class)
-            ->onlyMethods(array('deleteInstance', 'exitSuccess', 'exitFailure'))
+            ->onlyMethods(['deleteInstance', 'exitSuccess', 'exitFailure'])
             ->getMock();
 
         $handler->method('deleteInstance')
@@ -375,7 +378,7 @@ class PluginSessionTest extends TestCase
         // session mock
         $Session = $this->getMockBuilder($this->classname)
             ->disableOriginalConstructor()
-            ->onlyMethods(array('openSession', 'closeSession', 'exitRemoteCall'))
+            ->onlyMethods(['openSession', 'closeSession', 'exitRemoteCall'])
             ->getMock();
 
         new $Session($this->pluginId, $this->publicKey, null, 0, $handler);
@@ -398,7 +401,7 @@ class PluginSessionTest extends TestCase
 
         // successfull remote call handler mock
         $handler = $this->getMockBuilder(DeleteInstanceCallHandlerInterface::class)
-            ->onlyMethods(array('deleteInstance', 'exitSuccess', 'exitFailure'))
+            ->onlyMethods(['deleteInstance', 'exitSuccess', 'exitFailure'])
             ->getMock();
 
         $handler->method('deleteInstance')
@@ -416,7 +419,7 @@ class PluginSessionTest extends TestCase
         // session mock
         $Session = $this->getMockBuilder($this->classname)
             ->disableOriginalConstructor()
-            ->onlyMethods(array('openSession', 'closeSession', 'exitRemoteCall'))
+            ->onlyMethods(['openSession', 'closeSession', 'exitRemoteCall'])
             ->getMock();
 
         new $Session($this->pluginId, $this->publicKey, null, 0, $handler);
@@ -499,7 +502,7 @@ class PluginSessionTest extends TestCase
             ->method('write')
             ->with($this->logicalOr(
                 $this->equalTo($sessionId),
-                $this->equalTo($this->tokenData[SSODataClaimsInterface::CLAIM_SESSION_ID])
+                $this->equalTo($this->tokenData[SSODataClaimsInterface::CLAIM_SESSION_ID]),
             ));
 
         $handler->expects($this->exactly(2))

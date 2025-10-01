@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 /**
@@ -46,7 +47,7 @@ class SSOToken extends AbstractToken implements SharedClaimsInterface, SSODataCl
     {
         $constrains = [
             new StrictValidAt(SystemClock::fromUTC(), $this->getLeewayInterval((int) $leeway)),
-            new HasInstanceId()
+            new HasInstanceId(),
         ];
 
         $signer = new Sha256();

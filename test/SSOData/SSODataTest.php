@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * SSO data Test implementation, based on this doc:
  * https://developers.staffbase.com/guide/customplugin-overview
@@ -21,7 +23,6 @@ use Staffbase\plugins\test\SSOTestData;
 
 class SSODataTest extends TestCase
 {
-
     /**
      *
      * Test accessors deliver correct values.
@@ -79,7 +80,7 @@ class SSODataTest extends TestCase
                 $ssoData->$fn(),
                 $tokenData[$key],
                 "called $fn expected " .
-                is_array($tokenData[$key]) ? print_r($tokenData[$key], true) : $tokenData[$key]
+                is_array($tokenData[$key]) ? print_r($tokenData[$key], true) : $tokenData[$key],
             );
         }
     }
@@ -122,7 +123,7 @@ class SSODataTest extends TestCase
             $this->assertEquals(
                 $ssoData->isEditor(),
                 $expect,
-                "called isEditor on role [$arg] expected [$expect]"
+                "called isEditor on role [$arg] expected [$expect]",
             );
         }
     }
