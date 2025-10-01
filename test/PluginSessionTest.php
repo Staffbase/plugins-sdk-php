@@ -30,23 +30,20 @@ use Staffbase\plugins\sdk\RemoteCall\DeleteInstanceCallHandlerInterface;
 
 class PluginSessionTest extends TestCase
 {
-    private $token;
-    private $publicKey;
-    private $privateKey;
-    private $tokenData;
-    private $classname = PluginSession::class;
-    private $pluginId = 'testplugin';
-    private $pluginInstanceId;
+    private string $token;
+    private string $publicKey;
+    private string $privateKey;
+    private array $tokenData;
+    private string $classname = PluginSession::class;
+    private string $pluginId = 'testplugin';
+    private string $pluginInstanceId;
 
     /**
-     * Constructor
-     *
      * Create an RSA-256 key pair, and set up initial token.
      */
-    public function __construct()
+    public function setUp(): void
     {
 
-        parent::__construct();
         $rsa = new RSA();
         $keypair = $rsa->createKey(2048);
 
@@ -57,6 +54,14 @@ class PluginSessionTest extends TestCase
         $this->token = SSOTokenGenerator::createSignedTokenFromData($this->privateKey, $this->tokenData);
 
         $this->pluginInstanceId = $this->tokenData[SSODataClaimsInterface::CLAIM_INSTANCE_ID];
+    }
+
+
+    public function tearDown(): void
+    {
+        session_write_close();
+        session_abort();
+        $_SESSION = [];
     }
 
     /**
@@ -90,7 +95,7 @@ class PluginSessionTest extends TestCase
     public function testConstructorWorksAsExpected()
     {
 
-        $this->setupEnvironment(null, $this->token);
+        $this->setupEnvironment(queryParamJwt: $this->token);
 
         $mock = $this->getMockBuilder($this->classname)
             ->disableOriginalConstructor()
