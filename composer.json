@@ -21,6 +21,8 @@
 		"brainmaestro/composer-git-hooks": "^3.0",
 		"friendsofphp/php-cs-fixer": "^3.75",
 		"phpseclib/phpseclib": "^2.0",
+		"phpstan/extension-installer": "^1.4",
+		"phpstan/phpstan-phpunit": "^2.0",
 		"phpunit/phpunit": "^9.0"
 	},
 	"autoload": {
@@ -34,7 +36,10 @@
 		}
 	},
 	"config": {
-		"sort-packages": true
+		"sort-packages": true,
+		"allow-plugins": {
+			"phpstan/extension-installer": true
+		}
 	},
 	"scripts": {
 		"check": ["@cs-fixer:check", "@phpstan", "@test:coverage"],
