@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Staffbase\plugins\test\SSOData;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Staffbase\plugins\sdk\SSOData\SharedDataTrait;
 use Staffbase\plugins\sdk\SSOData\SSODataTrait;
@@ -25,31 +26,6 @@ class SSODataTest extends TestCase
      *
      * Test accessors deliver correct values.
      *
-     * @covers \Staffbase\plugins\sdk\SSOData\SharedDataTrait::getAudience()
-     * @covers \Staffbase\plugins\sdk\SSOData\SharedDataTrait::getExpireAtTime()
-     * @covers \Staffbase\plugins\sdk\SSOData\SharedDataTrait::getNotBeforeTime()
-     * @covers \Staffbase\plugins\sdk\SSOData\SharedDataTrait::getIssuedAtTime()
-     * @covers \Staffbase\plugins\sdk\SSOData\SharedDataTrait::getId()
-     * @covers \Staffbase\plugins\sdk\SSOData\SharedDataTrait::getIssuer()
-     * @covers \Staffbase\plugins\sdk\SSOData\SharedDataTrait::getSubject()
-     * @covers \Staffbase\plugins\sdk\SSOData\SharedDataTrait::getRole()
-     * @covers \Staffbase\plugins\sdk\SSOData\SSODataTrait::getInstanceId()
-     * @covers \Staffbase\plugins\sdk\SSOData\SSODataTrait::getInstanceName()
-     * @covers \Staffbase\plugins\sdk\SSOData\SSODataTrait::getUserId()
-     * @covers \Staffbase\plugins\sdk\SSOData\SSODataTrait::getUserExternalId()
-     * @covers \Staffbase\plugins\sdk\SSOData\SSODataTrait::getUserUsername()
-     * @covers \Staffbase\plugins\sdk\SSOData\SSODataTrait::getUserPrimaryEmailAddress()
-     * @covers \Staffbase\plugins\sdk\SSOData\SSODataTrait::getFullName()
-     * @covers \Staffbase\plugins\sdk\SSOData\SSODataTrait::getFirstName()
-     * @covers \Staffbase\plugins\sdk\SSOData\SSODataTrait::getLastName()
-     * @covers \Staffbase\plugins\sdk\SSOData\SSODataTrait::getType()
-     * @covers \Staffbase\plugins\sdk\SSOData\SSODataTrait::getThemeTextColor()
-     * @covers \Staffbase\plugins\sdk\SSOData\SSODataTrait::getThemeBackgroundColor()
-     * @covers \Staffbase\plugins\sdk\SSOData\SSODataTrait::getLocale()
-     * @covers \Staffbase\plugins\sdk\SSOData\SSODataTrait::getTags()
-     * @covers \Staffbase\plugins\sdk\SSOData\SSODataTrait::getBranchId()
-     * @covers \Staffbase\plugins\sdk\SSOData\SSODataTrait::getTags()
-     * @covers \Staffbase\plugins\sdk\SSOData\SSODataTrait::getSessionId()
      */
     public function testAccessorsGiveCorrectValues(): void
     {
@@ -86,12 +62,11 @@ class SSODataTest extends TestCase
     /**
      * Test isEditor return correct values.
      *
-     * @covers \Staffbase\plugins\sdk\SSOToken::isEditor
      */
     public function testIsEditorReturnsCorrectValues(): void
     {
-
         $map = [
+            /** @phpstan-ignore array.duplicateKey */
             null => false,
             '' => false,
             'use' => false,
@@ -129,7 +104,6 @@ class SSODataTest extends TestCase
     /**
      * Test getData return correct values.
      *
-     * @covers \Staffbase\plugins\sdk\SSOToken::getData
      */
     public function testGetDataReturnsCorrectValues(): void
     {
