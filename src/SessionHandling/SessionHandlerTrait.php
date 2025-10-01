@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 /**
@@ -16,7 +17,6 @@ namespace Staffbase\plugins\sdk\SessionHandling;
 
 trait SessionHandlerTrait
 {
-
     private static string $KEY_DATA = "data";
 
     private ?string $pluginInstanceId = null;

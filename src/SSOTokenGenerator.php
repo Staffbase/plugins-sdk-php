@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 /**
@@ -60,7 +61,7 @@ class SSOTokenGenerator
         }
 
         if (isset($tokenData[SSOData\SSODataClaimsInterface::CLAIM_USER_ID])) {
-           $token = $token->relatedTo($tokenData[SSOData\SSODataClaimsInterface::CLAIM_USER_ID]);
+            $token = $token->relatedTo($tokenData[SSOData\SSODataClaimsInterface::CLAIM_USER_ID]);
         }
 
         if (isset($tokenData[SSOData\SharedClaimsInterface::CLAIM_JWT_ID])) {
@@ -70,8 +71,8 @@ class SSOTokenGenerator
         // Remove all set keys as they throw an exception when used with withClaim
         $claims = array_filter(
             $tokenData,
-            static fn ($key) => !in_array($key, RegisteredClaims::ALL),
-            ARRAY_FILTER_USE_KEY
+            static fn($key) => !in_array($key, RegisteredClaims::ALL, true),
+            ARRAY_FILTER_USE_KEY,
         );
 
         foreach ($claims as $claim => $value) {

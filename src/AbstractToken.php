@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Staffbase\plugins\sdk;
@@ -18,7 +19,6 @@ use Staffbase\plugins\sdk\Exceptions\SSOException;
 
 abstract class AbstractToken
 {
-
     private Token $token;
 
     private Key $signerKey;
@@ -122,10 +122,10 @@ abstract class AbstractToken
     public static function base64ToPEMPublicKey(string $data): string
     {
 
-        $data = strtr($data, array(
+        $data = strtr($data, [
             "\r" => "",
-            "\n" => ""
-        ));
+            "\n" => "",
+        ]);
 
         return
             "-----BEGIN PUBLIC KEY-----\n" .

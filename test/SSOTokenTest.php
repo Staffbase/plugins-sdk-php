@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * SSO token Test implementation, based on this doc:
  * https://developers.staffbase.com/guide/customplugin-overview
@@ -9,6 +11,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0
  * @link      https://github.com/staffbase/plugins-sdk-php
  */
+
 namespace Staffbase\plugins\test;
 
 use DateTimeImmutable;
@@ -55,7 +58,7 @@ class SSOTokenTest extends TestCase
 
         $mock = $this->getMockBuilder($this->classname)
             ->disableOriginalConstructor()
-            ->onlyMethods(array('parseToken'))
+            ->onlyMethods(['parseToken'])
             ->getMock();
 
         $this->expectException(SSOException::class);
@@ -77,7 +80,7 @@ class SSOTokenTest extends TestCase
 
         $mock = $this->getMockBuilder($this->classname)
             ->disableOriginalConstructor()
-            ->onlyMethods(array('parseToken'))
+            ->onlyMethods(['parseToken'])
             ->getMock();
 
         $this->expectException(SSOException::class);
@@ -235,7 +238,7 @@ class SSOTokenTest extends TestCase
             $this->assertEquals(
                 $tokenData[$key],
                 $ssoToken->$fn(),
-                "called $fn expected $data"
+                "called $fn expected $data",
             );
         }
     }

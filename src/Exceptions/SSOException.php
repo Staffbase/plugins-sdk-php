@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * SSO Session implementation, based on this doc:
  * https://developers.staffbase.com/api/plugin-sso/
@@ -20,6 +22,4 @@ use Exception;
  * A general SSO Exception type to group
  * exceptions from this library.
  */
-class SSOException extends Exception
-{
-}
+class SSOException extends Exception {}
