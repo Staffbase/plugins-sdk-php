@@ -15,22 +15,45 @@
 	"require": {
 		"php": "~8.3.0",
 		"lcobucci/jwt": "^5.5",
- 		"lcobucci/clock": "^3.3"
-
+		"lcobucci/clock": "^3.3"
 	},
 	"require-dev": {
+		"brainmaestro/composer-git-hooks": "^3.0",
+		"friendsofphp/php-cs-fixer": "^3.75",
 		"phpseclib/phpseclib": "^2.0",
 		"phpunit/phpunit": "^9.0"
 	},
 	"autoload": {
 		"psr-4": {
-			"Staffbase\\plugins\\sdk\\": "src",
-			"Staffbase\\plugins\\test\\": "test"
+			"Staffbase\\plugins\\sdk\\": "src/"
 		}
 	},
+	"autoload-dev": {
+		"psr-4": {
+			"Staffbase\\plugins\\test\\": "test/"
+		}
+	},
+	"config": {
+		"sort-packages": true
+	},
 	"scripts": {
-		"test": "phpunit --colors='always' --debug $PHPUNIT_ARGS",
-		"lint": "phpcs --standard=PSR2 --extensions=php --ignore=*/vendor/* src test",
-		"fix": "phpcbf --standard=PSR2 --extensions=php --ignore=*/vendor/* src test"
+		"check": ["@cs-fixer:check", "@phpstan", "@test:coverage"],
+		"lint": ["@cs-fixer:check", "@phpstan"],
+		"fix": ["@cs-fixer:fix"],
+		"cs-fixer:check": "php-cs-fixer fix --dry-run --diff -v",
+		"cs-fixer:fix": "php-cs-fixer fix --diff -v",
+		"phpstan": "phpstan analyse --memory-limit=1G",
+		"test": "phpunit",
+		"test:coverage": "phpunit --coverage-text --coverage-clover=clover.xml",
+		"post-install-cmd": "cghooks add --ignore-lock",
+		"post-update-cmd": "cghooks update"
+	},
+	"extra": {
+		"hooks": {
+			"pre-commit": [
+				"composer -d packages/php fix",
+				"composer -d packages/php phpstan"
+			]
+		}
 	}
 }
