@@ -4,10 +4,8 @@ declare(strict_types=1);
 /**
  * Trait to store the data of a token in in a specific property.
  *
- * PHP version 7.4
- *
  * @category  SessionHandling
- * @copyright 2017-2022 Staffbase, GmbH.
+ * @copyright 2017-2025 Staffbase SE.
  * @author    Daniel Grosse
  * @license   http://www.apache.org/licenses/LICENSE-2.0
  * @link      https://github.com/staffbase/plugins-sdk-php

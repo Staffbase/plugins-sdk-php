@@ -5,10 +5,8 @@ declare(strict_types=1);
  * SSO token generator, based on this doc:
  * https://developers.staffbase.com/api/plugin-sso/
  *
- * PHP version 7.4.0
- *
  * @category  Authentication
- * @copyright 2017-2022 Staffbase, GmbH.
+ * @copyright 2017-2025 Staffbase SE.
  * @author    Daniel Grosse
  * @license   http://www.apache.org/licenses/LICENSE-2.0
  * @link      https://github.com/staffbase/plugins-sdk-php
