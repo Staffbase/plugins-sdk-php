@@ -17,7 +17,7 @@ composer require staffbase/plugins-sdk-php
 
 Dependencies are also managed by Composer. When using this repository keep the following dependencies in mind (cf. [composer.json](composer.json)):
 
-* php: ^8.0
+* php: ^8.3
 * lcobucci/jwt: ^5.5
 
 ## API Reference
@@ -122,6 +122,6 @@ To run the tests a simple `# composer test` command in the root directory will s
 
 ## License
 
-Copyright 2017-2022 Staffbase GmbH.
+Copyright 2017-2025 Staffbase GmbH.
 
 Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0

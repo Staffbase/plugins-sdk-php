@@ -2,10 +2,8 @@
 /**
  * JWT Token validation
  *
- * PHP version 7.4
- *
  * @category  Validation
- * @copyright 2017-2022 Staffbase, GmbH.
+ * @copyright 2017-2025 Staffbase SE.
  * @author    Daniel Grosse
  * @license   http://www.apache.org/licenses/LICENSE-2.0
  * @link      https://github.com/staffbase/plugins-sdk-php
