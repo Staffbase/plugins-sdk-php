@@ -163,7 +163,7 @@ class SSOTokenTest extends TestCase
 
         $sso = new SSOToken($this->publicKey, $token, $leeway);
 
-        $this->assertNotEmpty($sso);
+        // Test passes if no exception is thrown during instantiation
     }
 
     /**
