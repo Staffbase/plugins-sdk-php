@@ -64,7 +64,11 @@ abstract class AbstractToken
     protected function parseToken(): void
     {
         // parse text
-        $this->token = $this->config->parser()->parse($this->tokenData);
+        $token = $this->config->parser()->parse($this->tokenData);
+        if (!$token instanceof Plain) {
+            throw new \RuntimeException('Parsed token is not a Plain token');
+        }
+        $this->token = $token;
     }
 
     /**
