@@ -86,7 +86,8 @@ class PluginSession implements SharedClaimsInterface, SSODataClaimsInterface
         // delete the instance if the special sub is in the token data
         // exits the request
         if ($sso && $remoteCallHandler && $sso->isDeleteInstanceCall()) {
-            $this->deleteInstance($sso->getInstanceId(), $remoteCallHandler);
+            $instanceId = $sso->getInstanceId() ?: throw new SSOException('Instance id is required for deleteInstance');
+            $this->deleteInstance($instanceId, $remoteCallHandler);
         }
 
         // starts the session

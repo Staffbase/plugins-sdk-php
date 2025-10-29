@@ -68,7 +68,7 @@ class SSOTokenTest extends TestCase
         $this->expectExceptionMessage('Parameter appSecret for SSOToken is empty.');
 
         $reflectedClass = new ReflectionClass(SSOToken::class);
-        $constructor = $reflectedClass->getConstructor();
+        $constructor = $reflectedClass->getConstructor() ?: throw new \Exception('Constructor not found');
         $constructor->invoke($mock, ' ', 'fake token');
     }
 
@@ -91,7 +91,7 @@ class SSOTokenTest extends TestCase
         $this->expectExceptionMessage('Parameter tokenData for SSOToken is empty.');
 
         $reflectedClass = new ReflectionClass(SSOToken::class);
-        $constructor = $reflectedClass->getConstructor();
+        $constructor = $reflectedClass->getConstructor() ?: throw new \Exception('Constructor not found');
         $constructor->invoke($mock, 'fake secret', ' ');
     }
 

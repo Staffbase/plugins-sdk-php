@@ -115,7 +115,7 @@ class PluginSessionTest extends TestCase
             ->with($this->pluginId);
 
         $reflectedClass = new ReflectionClass($this->classname);
-        $constructor = $reflectedClass->getConstructor();
+        $constructor = $reflectedClass->getConstructor() ?: throw new \Exception('Constructor not found');
         $constructor->invoke($mock, $this->pluginId, $this->publicKey);
 
         $this->setupEnvironment($this->pluginInstanceId, null, false);
@@ -143,7 +143,7 @@ class PluginSessionTest extends TestCase
         $this->expectException(SSOException::class);
 
         $reflectedClass = new ReflectionClass($this->classname);
-        $constructor = $reflectedClass->getConstructor();
+        $constructor = $reflectedClass->getConstructor() ?: throw new \Exception('Constructor not found');
         $constructor->invoke($mock, $this->pluginId, $this->publicKey);
     }
 
@@ -168,7 +168,7 @@ class PluginSessionTest extends TestCase
         $this->expectExceptionMessage('Empty plugin ID.');
 
         $reflectedClass = new ReflectionClass($this->classname);
-        $constructor = $reflectedClass->getConstructor();
+        $constructor = $reflectedClass->getConstructor() ?: throw new \Exception('Constructor not found');
         $constructor->invoke($mock, '', $this->publicKey);
     }
 
@@ -193,7 +193,7 @@ class PluginSessionTest extends TestCase
         $this->expectExceptionMessage('Parameter appSecret for SSOToken is empty.');
 
         $reflectedClass = new ReflectionClass($this->classname);
-        $constructor = $reflectedClass->getConstructor();
+        $constructor = $reflectedClass->getConstructor() ?: throw new \Exception('Constructor not found');
         $constructor->invoke($mock, $this->pluginId, '');
     }
 
@@ -218,7 +218,7 @@ class PluginSessionTest extends TestCase
         $this->expectExceptionMessage('Missing PID or JWT query parameter in Request.');
 
         $reflectedClass = new ReflectionClass($this->classname);
-        $constructor = $reflectedClass->getConstructor();
+        $constructor = $reflectedClass->getConstructor() ?: throw new \Exception('Constructor not found');
         $constructor->invoke($mock, $this->pluginId, $this->publicKey);
     }
 
@@ -243,7 +243,7 @@ class PluginSessionTest extends TestCase
         $this->expectExceptionMessage('Tried to initialize the session with both PID and JWT provided.');
 
         $reflectedClass = new ReflectionClass($this->classname);
-        $constructor = $reflectedClass->getConstructor();
+        $constructor = $reflectedClass->getConstructor() ?: throw new \Exception('Constructor not found');
         $constructor->invoke($mock, $this->pluginId, $this->publicKey);
     }
 
