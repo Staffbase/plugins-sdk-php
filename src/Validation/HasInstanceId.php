@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Staffbase\plugins\sdk\Validation;
 
 use Lcobucci\JWT\Token;
+use Lcobucci\JWT\Token\Plain;
 use Lcobucci\JWT\UnencryptedToken;
 use Lcobucci\JWT\Validation\Constraint;
 use Lcobucci\JWT\Validation\ConstraintViolation;
@@ -35,7 +36,7 @@ final class HasInstanceId implements Constraint
         }
     }
 
-    private function hasInstanceId(Token $token): bool
+    private function hasInstanceId(Plain $token): bool
     {
         return (bool) $token->claims()->get(SSODataClaimsInterface::CLAIM_INSTANCE_ID);
     }
