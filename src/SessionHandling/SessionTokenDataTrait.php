@@ -44,7 +44,10 @@ trait SessionTokenDataTrait
      *
      * @return mixed
      */
-    protected function getClaim(string $claim)
+    /**
+     * @return mixed
+     */
+    protected function getClaim(string $claim): mixed
     {
         return $this->getSessionVar($claim, self::$keySso);
     }
@@ -54,17 +57,18 @@ trait SessionTokenDataTrait
      *
      * @return array
      */
+    /**
+     * @return array<string,mixed>
+     */
     protected function getAllClaims(): array
     {
         return $this->getSessionData(self::$keySso);
     }
 
     /**
-     *
-     * @param $data
-     * @return void
+     * @param array<string,mixed> $data
      */
-    protected function setClaims($data): void
+    protected function setClaims(array $data): void
     {
         $this->setSessionData($data, self::$keySso);
     }

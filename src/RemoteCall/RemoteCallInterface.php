@@ -31,12 +31,12 @@ interface RemoteCallInterface
      *
      * This will tell Staffbase that everything went OK.
      */
-    public function exitSuccess();
+    public function exitSuccess(): void;
 
     /**
      * Stop the execution by providing a non 2XX HTTP response
      *
      * This will tell Staffbase that it should try again later.
      */
-    public function exitFailure();
+    public function exitFailure(): void;
 }

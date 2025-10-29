@@ -93,7 +93,15 @@ class SSODataTest extends TestCase
 class SSODataMock
 {
     use SSODataTrait;
-    private $claims;
+
+    /**
+     * @var array<string,mixed>
+     */
+    private array $claims;
+
+    /**
+     * @param array<string,mixed> $claims
+     */
     public function __construct(array $claims = [])
     {
         $this->claims = $claims;
@@ -102,10 +110,14 @@ class SSODataMock
     {
         return isset($this->claims[$claim]);
     }
-    public function getClaim(string $claim)
+    public function getClaim(string $claim): mixed
     {
         return $this->claims[$claim];
     }
+
+    /**
+     * @return array<string,mixed>
+     */
     public function getAllClaims(): array
     {
         return $this->claims;

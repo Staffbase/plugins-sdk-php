@@ -37,12 +37,17 @@ trait ClaimAccessTrait
      *
      * @return mixed
      */
+    /**
+     * @return mixed
+     */
     abstract protected function getClaim(string $claim);
-
     /**
      * Get an array of all available claims and their values.
      *
      * @return array
+     */
+    /**
+     * @return array<string, mixed>
      */
     abstract protected function getAllClaims(): array;
 

@@ -52,12 +52,12 @@ trait SessionHandlerTrait
     /**
      * Checks if the given key is set
      *
-     * @param mixed $key
+     * @param string $key
      * @param string|null $parentKey
      *
      * @return bool
      */
-    public function hasSessionVar($key, ?string $parentKey = null): bool
+    public function hasSessionVar(string $key, ?string $parentKey = null): bool
     {
         return isset($_SESSION[$this->pluginInstanceId][$parentKey ?? self::$KEY_DATA][$key]);
     }
@@ -65,12 +65,12 @@ trait SessionHandlerTrait
     /**
      * Get a previously set session variable.
      *
-     * @param mixed $key
+     * @param string $key
      * @param string|null $parentKey
      *
      * @return mixed|null
      */
-    public function getSessionVar($key, ?string $parentKey = null)
+    public function getSessionVar(string $key, ?string $parentKey = null)
     {
         return $_SESSION[$this->pluginInstanceId][$parentKey ?? self::$KEY_DATA][$key] ?? null;
     }
@@ -80,7 +80,7 @@ trait SessionHandlerTrait
      *
      * @param string|null $parentKey
      *
-     * @return array
+     * @return array<string,mixed>
      */
     public function getSessionData(?string $parentKey = null): array
     {
@@ -94,7 +94,10 @@ trait SessionHandlerTrait
      * @param string|null $parentKey
      *
      */
-    public function setSessionData($data, ?string $parentKey = null): void
+    /**
+     * @param array<string,mixed> $data
+     */
+    public function setSessionData(array $data, ?string $parentKey = null): void
     {
         $_SESSION[$this->pluginInstanceId][$parentKey ?? self::$KEY_DATA] = $data;
     }
@@ -106,7 +109,11 @@ trait SessionHandlerTrait
      * @param mixed $val
      * @param string|null $parentKey
      */
-    public function setSessionVar($key, $val, ?string $parentKey = null): void
+    /**
+     * @param string $key
+     * @param mixed $val
+     */
+    public function setSessionVar(string $key, mixed $val, ?string $parentKey = null): void
     {
         $_SESSION[$this->pluginInstanceId][$parentKey ?? self::$KEY_DATA][$key] = $val;
     }
@@ -118,7 +125,7 @@ trait SessionHandlerTrait
      * @param String|null $sessionId
      * @return bool true on success or false on failure.
      */
-    public function destroySession(String $sessionId = null): bool
+    public function destroySession(?string $sessionId = null): bool
     {
         $sessionId = $sessionId ?: $this->sessionId;
 
@@ -140,7 +147,7 @@ trait SessionHandlerTrait
         return $result;
     }
 
-    private function createCompatibleSessionId(String $string): String
+    private function createCompatibleSessionId(string $string): string
     {
         $notAllowedCharsPattern = '/[^a-zA-Z0-9,-]/';
         return preg_replace($notAllowedCharsPattern, '-', $string);

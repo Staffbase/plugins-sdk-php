@@ -37,6 +37,9 @@ class SSOTokenGenerator
      *
      * @return string Encoded token.
      */
+    /**
+     * @param array<string,mixed> $tokenData
+     */
     public static function createSignedTokenFromData(string $privateKey, array $tokenData, Signer $signer = null): string
     {
 
@@ -48,6 +51,9 @@ class SSOTokenGenerator
      * @param Configuration $config
      * @param array $tokenData
      * @return Token
+     */
+    /**
+     * @param array<string,mixed> $tokenData
      */
     private static function buildToken(Configuration $config, array $tokenData): Token
     {

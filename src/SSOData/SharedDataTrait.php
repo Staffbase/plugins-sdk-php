@@ -38,7 +38,7 @@ trait SharedDataTrait
      */
     public function getAudience(): ?string
     {
-        /** @var array|string|null $audience */
+        /** @var array<string>|string|null $audience */
         $audience = $this->getClaimSafe(SharedClaimsInterface::CLAIM_AUDIENCE);
 
         if (is_array($audience)) {
@@ -129,7 +129,7 @@ trait SharedDataTrait
     /**
      * Get all stored data.
      *
-     * @return array
+     * @return array<string,mixed>
      */
     public function getData(): array
     {
