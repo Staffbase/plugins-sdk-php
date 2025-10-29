@@ -47,6 +47,9 @@ class SSOTestData
      * @return array Associative array of claims.
      * @throws Exception
      */
+    /**
+     * @return array<string,mixed>
+     */
     public static function getTokenData(?string $exp = '10 minutes', ?string $npf = '-1 minutes', ?string $iat = 'now'): array
     {
         $exp = $exp ?? '10 minutes';
@@ -89,6 +92,9 @@ class SSOTestData
      * Get accessors map for supported tokens.
      *
      * @return array Associative array of claim accessors.
+     */
+    /**
+     * @return array<string,string>
      */
     public static function getTokenAccessors(): array
     {

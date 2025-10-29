@@ -25,6 +25,9 @@ abstract class AbstractToken
 
     private Configuration $config;
 
+    /**
+     * @var Constraint[]
+     */
     private array $constraints;
 
     /**
@@ -102,13 +105,22 @@ abstract class AbstractToken
      *
      * @return mixed
      */
-    protected function getClaim(string $claim)
+    /**
+     * Get a claim without checking for existence.
+     *
+     * @param string $claim name.
+     *
+     * @return mixed
+     */
+    protected function getClaim(string $claim): mixed
     {
         return $this->token->claims()->get($claim);
     }
 
     /**
      * Get an array of all available claims and their values.
+     *
+     * @return array<string, mixed>
      */
     protected function getAllClaims(): array
     {
