@@ -38,7 +38,7 @@ class SSODataTest extends TestCase
                 $tokenData[$key],
                 $ssoData->$fn(),
                 "called $fn expected " .
-                is_array($tokenData[$key]) ? print_r($tokenData[$key], true) : $tokenData[$key],
+                (is_array($tokenData[$key]) ? print_r($tokenData[$key], true) : (string) $tokenData[$key]),
             );
         }
     }
