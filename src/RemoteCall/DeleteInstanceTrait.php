@@ -17,7 +17,7 @@ trait DeleteInstanceTrait
         exit;
     }
 
-    private function deleteInstance(string $instanceId, RemoteCallInterface $remoteCallHandler): void
+    private function deleteInstance(string $instanceId, RemoteCallInterface $remoteCallHandler): never
     {
         if ($remoteCallHandler instanceof DeleteInstanceCallHandlerInterface) {
             $result = $remoteCallHandler->deleteInstance($instanceId);
