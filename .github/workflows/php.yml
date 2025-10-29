@@ -31,5 +31,8 @@ jobs:
       if: steps.composer-cache.outputs.cache-hit != 'true'
       run: composer update --prefer-dist --no-progress
 
+    - name: Linting
+      run: composer lint
+
     - name: Run test suite
       run: composer test
