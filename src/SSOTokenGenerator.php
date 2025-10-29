@@ -64,22 +64,52 @@ class SSOTokenGenerator
     private static function buildToken(Configuration $config, array $tokenData): Token
     {
         $builder = $config->builder();
+        // Validate and coerce required registered claims to the expected types
+        $audience = $tokenData[SSOData\SharedClaimsInterface::CLAIM_AUDIENCE] ?? '';
+        if (!is_string($audience) || $audience === '') {
+            throw new \InvalidArgumentException('aud claim must be a non-empty string for token generation');
+        }
+
+        $issuedAt = $tokenData[SSOData\SharedClaimsInterface::CLAIM_ISSUED_AT] ?? null;
+        if (!($issuedAt instanceof \DateTimeImmutable)) {
+            throw new \InvalidArgumentException('iat claim must be a DateTimeImmutable for token generation');
+        }
+
+        $notBefore = $tokenData[SSOData\SharedClaimsInterface::CLAIM_NOT_BEFORE] ?? null;
+        if (!($notBefore instanceof \DateTimeImmutable)) {
+            throw new \InvalidArgumentException('nbf claim must be a DateTimeImmutable for token generation');
+        }
+
+        $expiresAt = $tokenData[SSOData\SharedClaimsInterface::CLAIM_EXPIRE_AT] ?? null;
+        if (!($expiresAt instanceof \DateTimeImmutable)) {
+            throw new \InvalidArgumentException('exp claim must be a DateTimeImmutable for token generation');
+        }
+
         $token = $builder
-            ->permittedFor($tokenData[SSOData\SharedClaimsInterface::CLAIM_AUDIENCE])
-            ->issuedAt($tokenData[SSOData\SharedClaimsInterface::CLAIM_ISSUED_AT])
-            ->canOnlyBeUsedAfter($tokenData[SSOData\SharedClaimsInterface::CLAIM_NOT_BEFORE])
-            ->expiresAt($tokenData[SSOData\SharedClaimsInterface::CLAIM_EXPIRE_AT]);
+            ->permittedFor($audience)
+            ->issuedAt($issuedAt)
+            ->canOnlyBeUsedAfter($notBefore)
+            ->expiresAt($expiresAt);
 
         if (isset($tokenData[SSOData\SharedClaimsInterface::CLAIM_ISSUER])) {
-            $token = $token->issuedBy($tokenData[SSOData\SharedClaimsInterface::CLAIM_ISSUER]);
+            $issuer = $tokenData[SSOData\SharedClaimsInterface::CLAIM_ISSUER];
+            if (is_string($issuer) && $issuer !== '') {
+                $token = $token->issuedBy($issuer);
+            }
         }
 
         if (isset($tokenData[SSOData\SSODataClaimsInterface::CLAIM_USER_ID])) {
-            $token = $token->relatedTo($tokenData[SSOData\SSODataClaimsInterface::CLAIM_USER_ID]);
+            $subject = $tokenData[SSOData\SSODataClaimsInterface::CLAIM_USER_ID];
+            if (is_string($subject) && $subject !== '') {
+                $token = $token->relatedTo($subject);
+            }
         }
 
         if (isset($tokenData[SSOData\SharedClaimsInterface::CLAIM_JWT_ID])) {
-            $token = $token->identifiedBy($tokenData[SSOData\SharedClaimsInterface::CLAIM_JWT_ID]);
+            $jwtId = $tokenData[SSOData\SharedClaimsInterface::CLAIM_JWT_ID];
+            if (is_string($jwtId) && $jwtId !== '') {
+                $token = $token->identifiedBy($jwtId);
+            }
         }
 
         // Remove all set keys as they throw an exception when used with withClaim

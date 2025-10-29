@@ -62,9 +62,11 @@ trait ClaimAccessTrait
      */
     protected function getClaimSafe(string $name)
     {
-
         if ($this->hasClaim($name)) {
-            return $this->getClaim($name);
+            $value = $this->getClaim($name);
+
+            // Return the value as-is. Type safety is handled by individual getters.
+            return $value;
         }
 
         return null;

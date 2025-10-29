@@ -154,12 +154,28 @@ class PluginSession implements SharedClaimsInterface, SSODataClaimsInterface
      */
     private function validateParams(): ?string
     {
-        $pid = $_REQUEST[self::QUERY_PARAM_PID] ?? null;
-        $jwt = $_REQUEST[self::QUERY_PARAM_JWT] ?? null;
-        $sid = $_REQUEST[self::QUERY_PARAM_SID] ?? null;
+        $rawPid = $_REQUEST[self::QUERY_PARAM_PID] ?? null;
+        $rawJwt = $_REQUEST[self::QUERY_PARAM_JWT] ?? null;
+        $rawSid = $_REQUEST[self::QUERY_PARAM_SID] ?? null;
+
+        // Normalize values to string|null while avoiding casting arrays/objects to string
+        $pid = null;
+        if (is_string($rawPid)) {
+            $pid = $rawPid;
+        }
+
+        $jwt = null;
+        if (is_string($rawJwt)) {
+            $jwt = $rawJwt;
+        }
+
+        $sid = null;
+        if (is_string($rawSid)) {
+            $sid = $rawSid;
+        }
 
         // lets hint to bad class usage, as these cases should never happen.
-        if ($pid && $jwt) {
+        if ($pid !== null && $jwt !== null) {
             throw new SSOAuthenticationException('Tried to initialize the session with both PID and JWT provided.');
         }
 

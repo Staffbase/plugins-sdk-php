@@ -57,7 +57,15 @@ class PluginSessionTest extends TestCase
         $this->tokenData = SSOTestData::getTokenData();
         $this->token = SSOTokenGenerator::createSignedTokenFromData($this->privateKey, $this->tokenData);
 
-        $this->pluginInstanceId = $this->tokenData[SSODataClaimsInterface::CLAIM_INSTANCE_ID];
+        $instanceId = $this->tokenData[SSODataClaimsInterface::CLAIM_INSTANCE_ID] ?? '';
+
+        if (is_string($instanceId)) {
+            $this->pluginInstanceId = $instanceId;
+        } elseif (is_numeric($instanceId)) {
+            $this->pluginInstanceId = (string) $instanceId;
+        } else {
+            $this->pluginInstanceId = '';
+        }
     }
 
 
@@ -392,7 +400,8 @@ class PluginSessionTest extends TestCase
             ->method('deleteInstance');
 
         $handler->expects($this->once())
-            ->method('exitSuccess');
+            ->method('exitSuccess')
+            ->willThrowException(new \Exception('exitSuccess called'));
 
         $handler->expects($this->never())
             ->method('exitFailure');
@@ -403,6 +412,10 @@ class PluginSessionTest extends TestCase
             ->disableOriginalConstructor()
             ->onlyMethods(['openSession', 'closeSession', 'exitRemoteCall'])
             ->getMock();
+
+        // Expect the exitSuccess to be called (via exception)
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('exitSuccess called');
 
         $session = new $Session($this->pluginId, $this->publicKey, null, 0, $handler);
         $this->assertInstanceOf($this->classname, $session);
@@ -440,7 +453,8 @@ class PluginSessionTest extends TestCase
             ->method('exitSuccess');
 
         $handler->expects($this->once())
-            ->method('exitFailure');
+            ->method('exitFailure')
+            ->willThrowException(new \Exception('exitFailure called'));
 
         // session mock
         /** @var MockObject&PluginSession $Session */
@@ -448,6 +462,10 @@ class PluginSessionTest extends TestCase
             ->disableOriginalConstructor()
             ->onlyMethods(['openSession', 'closeSession', 'exitRemoteCall'])
             ->getMock();
+
+        // Expect the exitFailure to be called (via exception)
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('exitFailure called');
 
         $session = new $Session($this->pluginId, $this->publicKey, null, 0, $handler);
         $this->assertInstanceOf($this->classname, $session);

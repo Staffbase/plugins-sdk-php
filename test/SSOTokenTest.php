@@ -210,7 +210,8 @@ class SSOTokenTest extends TestCase
                 $data = $data->getTimestamp();
             }
 
-            $data = is_array($data) ? print_r($data, true) : $data;
+            $data = is_array($data) ? print_r($data, true) :
+                (is_scalar($data) || is_null($data) ? (string) ($data ?? '') : '[complex_type]');
 
             $this->assertEquals(
                 $tokenData[$key],
