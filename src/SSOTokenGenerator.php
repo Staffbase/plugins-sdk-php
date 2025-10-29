@@ -35,7 +35,7 @@ class SSOTokenGenerator
      *
      * @return string Encoded token.
      */
-    public static function createSignedTokenFromData(string $privateKey, array $tokenData, Signer $signer = null): string
+    public static function createSignedTokenFromData(string $privateKey, array $tokenData, ?Signer $signer = null): string
     {
 
         $config = Configuration::forSymmetricSigner($signer ?: new Sha256(), InMemory::plainText($privateKey));

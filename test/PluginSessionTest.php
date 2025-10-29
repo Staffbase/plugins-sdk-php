@@ -69,7 +69,7 @@ class PluginSessionTest extends TestCase
      * @param string|null $queryParamJwt JWT query param emulation
      * @param boolean $clearSession optionally clear out the $_SESSION array
      */
-    private function setupEnvironment(string $queryParamPid = null, string $queryParamJwt = null, bool $clearSession = true)
+    private function setupEnvironment(?string $queryParamPid = null, ?string $queryParamJwt = null, bool $clearSession = true)
     {
 
         $_REQUEST[PluginSession::QUERY_PARAM_PID] = $queryParamPid;

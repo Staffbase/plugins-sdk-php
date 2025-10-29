@@ -116,7 +116,7 @@ trait SessionHandlerTrait
      * @param String|null $sessionId
      * @return bool true on success or false on failure.
      */
-    public function destroySession(String $sessionId = null): bool
+    public function destroySession(?String $sessionId = null): bool
     {
         $sessionId = $sessionId ?: $this->sessionId;
 
