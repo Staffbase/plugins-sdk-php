@@ -37,6 +37,7 @@ class PluginSessionTest extends TestCase
      * @var array<string,mixed>
      */
     private array $tokenData;
+    /** @var class-string<object> */
     private string $classname = PluginSession::class;
     private string $pluginId = 'testplugin';
     private string $pluginInstanceId;
