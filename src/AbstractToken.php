@@ -10,7 +10,7 @@ use Lcobucci\JWT\Configuration;
 use Lcobucci\JWT\Signer;
 use Lcobucci\JWT\Signer\Key;
 use Lcobucci\JWT\Signer\Key\InMemory;
-use Lcobucci\JWT\Token;
+use Lcobucci\JWT\Token\Plain;
 use Lcobucci\JWT\Validation\Constraint;
 use Lcobucci\JWT\Validation\Constraint\SignedWith;
 use Lcobucci\JWT\Validation\RequiredConstraintsViolated;
@@ -19,7 +19,7 @@ use Staffbase\plugins\sdk\Exceptions\SSOException;
 
 abstract class AbstractToken
 {
-    private Token $token;
+    private Plain $token;
 
     private Key $signerKey;
 
@@ -31,7 +31,7 @@ abstract class AbstractToken
      * Constructor
      *
      * @param string $appSecret Either a PEM key or a file:// URL.
-     * @param string $tokenData The token text.
+     * @param non-empty-string $tokenData The token text.
      * @param Signer $signer The algorithm which is used to sign the token
      * @param Constraint[] $constrains constrains
      *

@@ -16,9 +16,7 @@ declare(strict_types=1);
 
 namespace Staffbase\plugins\test\SSOData;
 
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Staffbase\plugins\sdk\SSOData\SharedDataTrait;
 use Staffbase\plugins\sdk\SSOData\SSODataTrait;
 use Staffbase\plugins\test\SSOTestData;
 
@@ -35,26 +33,12 @@ class SSODataTest extends TestCase
         $tokenData = SSOTestData::getTokenData();
         $accessors = SSOTestData::getTokenAccessors();
 
-        $ssoData = $this->getMockForTrait(SSODataTrait::class);
-
-        $ssoData
-            ->expects($this->exactly(count($accessors)))
-            ->method('hasClaim')
-            ->willReturnCallback(function ($key) use ($tokenData) {
-                return isset($tokenData[$key]);
-            });
-
-        $ssoData
-            ->expects($this->exactly(count($accessors)))
-            ->method('getClaim')
-            ->willReturnCallback(function ($key) use ($tokenData) {
-                return $tokenData[$key];
-            });
+        $ssoData = new SSODataMock($tokenData);
 
         foreach ($accessors as $key => $fn) {
             $this->assertEquals(
-                $ssoData->$fn(),
                 $tokenData[$key],
+                $ssoData->$fn(),
                 "called $fn expected " .
                 is_array($tokenData[$key]) ? print_r($tokenData[$key], true) : $tokenData[$key],
             );
@@ -81,20 +65,7 @@ class SSODataTest extends TestCase
             $tokenData = SSOTestData::getTokenData();
             $tokenData[SSOTestData::CLAIM_USER_ROLE] = $arg;
 
-            $ssoData = $this->getMockForTrait(SSODataTrait::class);
-
-            $ssoData
-                ->method('hasClaim')
-                ->willReturnCallback(function ($key) use ($tokenData) {
-                    return isset($tokenData[$key]);
-                });
-
-            $ssoData
-                ->method('getClaim')
-                ->willReturnCallback(function ($key) use ($tokenData) {
-                    return $tokenData[$key];
-                });
-
+            $ssoData = new SSODataMock($tokenData);
             $this->assertEquals(
                 $ssoData->isEditor(),
                 $expect,
@@ -112,14 +83,31 @@ class SSODataTest extends TestCase
 
         $tokenData = SSOTestData::getTokenData();
 
-        $ssoData = $this->getMockForTrait(SharedDataTrait::class);
+        $ssoData = new SSODataMock($tokenData);
 
-        $ssoData
-            ->method('getAllClaims')
-            ->willReturnCallback(function () use ($tokenData) {
-                return $tokenData;
-            });
 
         $this->assertEquals($ssoData->getData(), $tokenData, "comparing data array to token");
+    }
+}
+
+class SSODataMock
+{
+    use SSODataTrait;
+    private $claims;
+    public function __construct(array $claims = [])
+    {
+        $this->claims = $claims;
+    }
+    public function hasClaim(string $claim): bool
+    {
+        return isset($this->claims[$claim]);
+    }
+    public function getClaim(string $claim)
+    {
+        return $this->claims[$claim];
+    }
+    public function getAllClaims(): array
+    {
+        return $this->claims;
     }
 }

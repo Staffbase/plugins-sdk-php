@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Staffbase\plugins\test;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use ReflectionClass;
 use phpseclib\Crypt\RSA;
 use PHPUnit\Framework\TestCase;
@@ -250,7 +251,7 @@ class PluginSessionTest extends TestCase
             ->onlyMethods(['openSession', 'closeSession'])
             ->getMock();
 
-        /** @var PluginSession $session */
+        /** @var PluginSession&MockObject $session */
         $session = new $mock($this->pluginId, $this->publicKey);
 
         $this->assertEquals($this->tokenData[SharedClaimsInterface::CLAIM_USER_ROLE], $session->getRole());
@@ -261,7 +262,7 @@ class PluginSessionTest extends TestCase
 
         $this->setupEnvironment(null, $newToken, false);
 
-        /** @var PluginSession $newSession */
+        /** @var PluginSession&MockObject $newSession */
         $newSession = new $mock($this->pluginId, $this->publicKey);
 
         $this->assertEquals($newSession->getRole(), $tokenData[SharedClaimsInterface::CLAIM_USER_ROLE]);
@@ -286,7 +287,7 @@ class PluginSessionTest extends TestCase
             ->onlyMethods(['openSession', 'closeSession'])
             ->getMock();
 
-        /** @var PluginSession $session */
+        /** @var PluginSession&MockObject $session */
         $session = new $mock($this->pluginId, $this->publicKey);
 
 
@@ -297,7 +298,7 @@ class PluginSessionTest extends TestCase
 
         $this->setupEnvironment(null, $newToken, false);
 
-        /** @var PluginSession $newSession */
+        /** @var PluginSession&MockObject $newSession */
         $newSession = new $mock($this->pluginId, $this->publicKey);
 
         $this->assertEquals($tokenData[SharedClaimsInterface::CLAIM_USER_ROLE], $newSession->getRole());
@@ -332,7 +333,7 @@ class PluginSessionTest extends TestCase
             ->onlyMethods(['openSession', 'closeSession'])
             ->getMock();
 
-        /** @var PluginSession $session */
+        /** @var PluginSession&MockObject $session */
         $session = new $mock($this->pluginId, $this->publicKey);
 
         $sessionData = [
