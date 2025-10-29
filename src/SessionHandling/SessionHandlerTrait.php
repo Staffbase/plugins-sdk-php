@@ -31,13 +31,18 @@ trait SessionHandlerTrait
     /**
      * Open a session.
      *
-     * @param string|null $name of the session
-     * @param string|null $sessionId
+     * @param string $name of the session
+     * @param string $sessionId
      */
-    protected function openSession(?string $name, ?string $sessionId): void
+    protected function openSession(string $name = '', string $sessionId = ''): void
     {
         session_id($sessionId);
-        session_name($name);
+
+        // session_name expects a non-empty string; only set it when provided
+        if ($name !== '') {
+            session_name($name);
+        }
+
         session_start();
     }
 
@@ -130,7 +135,7 @@ trait SessionHandlerTrait
         $sessionId = $sessionId ?: $this->sessionId;
 
         // save the current session
-        $currentId = session_id();
+        $currentId = session_id() ?: '';
         session_write_close();
 
         // switch to the target session and removes it
@@ -147,9 +152,11 @@ trait SessionHandlerTrait
         return $result;
     }
 
-    private function createCompatibleSessionId(string $string): string
+    private function createCompatibleSessionId(?string $input = ''): string
     {
+        $string = $input ?? '';
         $notAllowedCharsPattern = '/[^a-zA-Z0-9,-]/';
-        return preg_replace($notAllowedCharsPattern, '-', $string);
+        $replaced = preg_replace($notAllowedCharsPattern, '-', $string);
+        return (string) $replaced;
     }
 }

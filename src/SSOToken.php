@@ -45,6 +45,10 @@ class SSOToken extends AbstractToken implements SharedClaimsInterface, SSODataCl
      */
     public function __construct(string $appSecret, string $tokenData, ?int $leeway = 0)
     {
+        if (empty($tokenData)) {
+            throw new SSOException('Parameter tokenData for SSOToken is empty.');
+        }
+
         $constrains = [
             new StrictValidAt(SystemClock::fromUTC(), $this->getLeewayInterval((int) $leeway)),
             new HasInstanceId(),

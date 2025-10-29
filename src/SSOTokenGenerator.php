@@ -43,6 +43,12 @@ class SSOTokenGenerator
     public static function createSignedTokenFromData(string $privateKey, array $tokenData, Signer $signer = null): string
     {
 
+        if (!trim($privateKey)) {
+            throw new \InvalidArgumentException('Parameter privateKey for token generation is empty.');
+        }
+
+        // After validation, we know $privateKey is non-empty
+        /** @var non-empty-string $privateKey */
         $config = Configuration::forSymmetricSigner($signer ?: new Sha256(), InMemory::plainText($privateKey));
         return self::buildToken($config, $tokenData)->toString();
     }
@@ -84,6 +90,9 @@ class SSOTokenGenerator
         );
 
         foreach ($claims as $claim => $value) {
+            if (empty($claim)) {
+                continue;
+            }
             $token = $token->withClaim($claim, $value);
         }
 

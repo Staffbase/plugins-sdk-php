@@ -95,6 +95,9 @@ abstract class AbstractToken
      */
     protected function hasClaim(string $claim): bool
     {
+        if (empty($claim)) {
+            return false;
+        }
         return $this->token->claims()->has($claim);
     }
 
@@ -114,6 +117,9 @@ abstract class AbstractToken
      */
     protected function getClaim(string $claim): mixed
     {
+        if (empty($claim)) {
+            return null;
+        }
         return $this->token->claims()->get($claim);
     }
 
@@ -137,11 +143,18 @@ abstract class AbstractToken
      */
     public static function base64ToPEMPublicKey(string $data): string
     {
+        if (empty($data)) {
+            throw new SSOException('Empty base64 data provided for PEM conversion.');
+        }
 
         $data = strtr($data, [
             "\r" => "",
             "\n" => "",
         ]);
+
+        if (empty($data)) {
+            throw new SSOException('Base64 data is empty after cleanup.');
+        }
 
         return
             "-----BEGIN PUBLIC KEY-----\n" .
@@ -191,12 +204,26 @@ abstract class AbstractToken
      */
     private function getKey(string $appSecret): Key
     {
+        // Ensure the app secret is not empty to satisfy strict non-empty-string requirements
+        if (!trim($appSecret)) {
+            throw new SSOException('Empty appSecret provided when creating signer key.');
+        }
+
         if (strpos($appSecret, '-----') === 0) {
+            if (empty($appSecret)) {
+                throw new SSOException('Empty PEM key provided.');
+            }
             $key = InMemory::plainText($appSecret);
         } elseif (strpos($appSecret, 'file://') === 0) {
+            if (empty($appSecret)) {
+                throw new SSOException('Empty file path provided.');
+            }
             $key = InMemory::file($appSecret);
         } else {
-            $key = InMemory::plainText(self::base64ToPEMPublicKey($appSecret));
+            $pem = self::base64ToPEMPublicKey($appSecret);
+            // After our validation in base64ToPEMPublicKey, we know $pem is non-empty
+            /** @var non-empty-string $pem */
+            $key = InMemory::plainText($pem);
         }
         return $key;
     }
