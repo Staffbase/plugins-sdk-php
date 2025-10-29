@@ -39,7 +39,8 @@ class SSODataTest extends TestCase
             $this->assertEquals(
                 $tokenData[$key],
                 $ssoData->$fn(),
-                "called $fn expected " . print_r($tokenData[$key], true),
+                "called $fn expected " .
+                (is_array($tokenData[$key]) ? print_r($tokenData[$key], true) : (string) $tokenData[$key]),
             );
         }
     }
