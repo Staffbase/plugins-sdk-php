@@ -5,10 +5,8 @@ declare(strict_types=1);
 /**
  * Interface with specific claims of a JWT token as url parameter.
  *
- * PHP version 7.4
- *
  * @category  Token
- * @copyright 2017-2022 Staffbase, GmbH.
+ * @copyright 2017-2025 Staffbase SE.
  * @author    Daniel Grosse
  * @license   http://www.apache.org/licenses/LICENSE-2.0
  * @link      https://github.com/staffbase/plugins-sdk-php
