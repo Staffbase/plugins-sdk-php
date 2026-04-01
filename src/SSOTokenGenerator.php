@@ -46,11 +46,8 @@ class SSOTokenGenerator
 
     /**
      * @param Configuration $config
-     * @param array $tokenData
-     * @return Token
-     */
-    /**
      * @param array<string,mixed> $tokenData
+     * @return Token
      */
     private static function buildToken(Configuration $config, array $tokenData): Token
     {
