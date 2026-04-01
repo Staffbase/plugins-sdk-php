@@ -136,9 +136,7 @@ trait SessionHandlerTrait
         $parent = $parentKey ?? self::$KEY_DATA;
         $sessionInstance = $this->getSessionInstance($instance);
         /** @var array<string,mixed> $bucket */
-        $bucket = isset($sessionInstance[$parent]) && is_array($sessionInstance[$parent])
-            ? $sessionInstance[$parent]
-            : [];
+        $bucket = $this->getSessionBucket($parent, default: []) ?? [];
         $bucket[$key] = $val;
         $sessionInstance[$parent] = $bucket;
         $_SESSION[$instance] = $sessionInstance;
@@ -154,13 +152,18 @@ trait SessionHandlerTrait
     }
 
     /**
-     * Return $_SESSION[$instance] as a typed array, or $default if missing/invalid.
+     * Return $_SESSION[$instance] as a typed array, or $default if instance is
+     * null/empty or the session entry is missing/invalid.
      *
      * @param array<string,mixed> $default
      * @return array<string,mixed>
      */
-    private function getSessionInstance(string $instance, array $default = []): array
+    private function getSessionInstance(?string $instance, array $default = []): array
     {
+        if ($instance === null || $instance === '') {
+            return $default;
+        }
+
         /** @var array<string,mixed> $result */
         $result = isset($_SESSION[$instance]) && is_array($_SESSION[$instance])
             ? $_SESSION[$instance]
@@ -177,12 +180,7 @@ trait SessionHandlerTrait
      */
     private function getSessionBucket(string $parentKey, ?array $default = null): ?array
     {
-        $instance = $this->getValidInstance();
-        if ($instance === null) {
-            return $default;
-        }
-
-        $sessionInstance = $this->getSessionInstance($instance, []);
+        $sessionInstance = $this->getSessionInstance($this->getValidInstance(), $default ?? []);
         $bucket = $sessionInstance[$parentKey] ?? null;
         /** @var array<string,mixed>|null */
         return is_array($bucket) ? $bucket : $default;
