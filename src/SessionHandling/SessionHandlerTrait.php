@@ -64,23 +64,10 @@ trait SessionHandlerTrait
      */
     public function hasSessionVar(string $key, ?string $parentKey = null): bool
     {
-        $instance = $this->pluginInstanceId;
-        if ($instance === null || $instance === '') {
-            return false;
-        }
-
         $parent = $parentKey ?? self::$KEY_DATA;
+        $bucket = $this->getSessionBucket($parent);
 
-        // Ensure $_SESSION has the expected structure
-        if (!isset($_SESSION[$instance]) || !is_array($_SESSION[$instance])) {
-            return false;
-        }
-
-        if (!isset($_SESSION[$instance][$parent]) || !is_array($_SESSION[$instance][$parent])) {
-            return false;
-        }
-
-        return isset($_SESSION[$instance][$parent][$key]);
+        return $bucket !== null && isset($bucket[$key]);
     }
 
     /**
@@ -93,23 +80,10 @@ trait SessionHandlerTrait
      */
     public function getSessionVar(string $key, ?string $parentKey = null)
     {
-        $instance = $this->pluginInstanceId;
-        if ($instance === null || $instance === '') {
-            return null;
-        }
-
         $parent = $parentKey ?? self::$KEY_DATA;
+        $bucket = $this->getSessionBucket($parent);
 
-        // Ensure $_SESSION has the expected structure
-        if (!isset($_SESSION[$instance]) || !is_array($_SESSION[$instance])) {
-            return null;
-        }
-
-        if (!isset($_SESSION[$instance][$parent]) || !is_array($_SESSION[$instance][$parent])) {
-            return null;
-        }
-
-        return $_SESSION[$instance][$parent][$key] ?? null;
+        return $bucket[$key] ?? null;
     }
 
     /**
@@ -121,81 +95,96 @@ trait SessionHandlerTrait
      */
     public function getSessionData(?string $parentKey = null): array
     {
-        $instance = $this->pluginInstanceId;
-        if ($instance === null || $instance === '') {
-            return [];
-        }
-
         $parent = $parentKey ?? self::$KEY_DATA;
 
-        // Ensure $_SESSION has the expected structure
-        if (!isset($_SESSION[$instance]) || !is_array($_SESSION[$instance])) {
-            return [];
-        }
-
-        $data = $_SESSION[$instance][$parent] ?? [];
-        return is_array($data) ? $data : [];
+        return $this->getSessionBucket($parent) ?? [];
     }
 
     /**
      * Set all session variables.
      *
-     * @param mixed $data
-     * @param string|null $parentKey
-     *
-     */
-    /**
      * @param array<string,mixed> $data
+     * @param string|null $parentKey
      */
     public function setSessionData(array $data, ?string $parentKey = null): void
     {
-        $instance = $this->pluginInstanceId;
-        if ($instance === null || $instance === '') {
+        $instance = $this->getValidInstance();
+        if ($instance === null) {
             return;
         }
 
         $parent = $parentKey ?? self::$KEY_DATA;
 
-        // Ensure $_SESSION has the expected structure
-        if (!isset($_SESSION[$instance]) || !is_array($_SESSION[$instance])) {
-            $_SESSION[$instance] = [];
-        }
-
-        $_SESSION[$instance][$parent] = $data;
+        /** @var array<string,mixed> $sessionInstance */
+        $sessionInstance = isset($_SESSION[$instance]) && is_array($_SESSION[$instance])
+            ? $_SESSION[$instance]
+            : [];
+        $sessionInstance[$parent] = $data;
+        $_SESSION[$instance] = $sessionInstance;
     }
 
     /**
      * Set a session variable.
      *
-     * @param mixed $key
+     * @param string $key
      * @param mixed $val
      * @param string|null $parentKey
      */
-    /**
-     * @param string $key
-     * @param mixed $val
-     */
     public function setSessionVar(string $key, mixed $val, ?string $parentKey = null): void
     {
-        $instance = $this->pluginInstanceId;
-        if ($instance === null || $instance === '') {
+        $instance = $this->getValidInstance();
+        if ($instance === null) {
             return;
         }
 
         $parent = $parentKey ?? self::$KEY_DATA;
 
-        // Ensure $_SESSION has the expected structure
-        if (!isset($_SESSION[$instance]) || !is_array($_SESSION[$instance])) {
-            $_SESSION[$instance] = [];
-        }
+        /** @var array<string,mixed> $sessionInstance */
+        $sessionInstance = isset($_SESSION[$instance]) && is_array($_SESSION[$instance])
+            ? $_SESSION[$instance]
+            : [];
 
-        if (!isset($_SESSION[$instance][$parent]) || !is_array($_SESSION[$instance][$parent])) {
-            $_SESSION[$instance][$parent] = [];
-        }
-
-        $_SESSION[$instance][$parent][$key] = $val;
+        /** @var array<string,mixed> $bucket */
+        $bucket = isset($sessionInstance[$parent]) && is_array($sessionInstance[$parent])
+            ? $sessionInstance[$parent]
+            : [];
+        $bucket[$key] = $val;
+        $sessionInstance[$parent] = $bucket;
+        $_SESSION[$instance] = $sessionInstance;
     }
 
+    /**
+     * Return the validated plugin instance ID, or null if unset/empty.
+     */
+    private function getValidInstance(): ?string
+    {
+        $instance = $this->pluginInstanceId;
+        return ($instance !== null && $instance !== '') ? $instance : null;
+    }
+
+    /**
+     * Return the session bucket array for the given instance and parent key,
+     * or null if the session structure is missing or invalid.
+     *
+     * @return array<string,mixed>|null
+     */
+    private function getSessionBucket(string $parentKey): ?array
+    {
+        $instance = $this->getValidInstance();
+        if ($instance === null) {
+            return null;
+        }
+
+        if (!isset($_SESSION[$instance]) || !is_array($_SESSION[$instance])) {
+            return null;
+        }
+
+        /** @var array<string,mixed> $sessionInstance */
+        $sessionInstance = $_SESSION[$instance];
+        $bucket = $sessionInstance[$parentKey] ?? null;
+        /** @var array<string,mixed>|null */
+        return is_array($bucket) ? $bucket : null;
+    }
 
     /**
      * Destroy the session with the given id
