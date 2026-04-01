@@ -469,13 +469,80 @@ class PluginSessionTest extends TestCase
         $this->assertEquals($sessionId, session_id());
     }
 
+    /**
+     *
+     * Test that destroying another session works correctly.
+     *
+     * @covers \Staffbase\plugins\sdk\PluginSession::__construct
+     * @covers \Staffbase\plugins\sdk\SessionHandling\SessionHandlerTrait::destroySession
+     */
     public function testDestroyOtherSession()
     {
-        $this->markTestSkipped('must be revisited.');
+        $sessionHash = 'HOjLTR6+D5YIY0/waqJQp3Bg=';
+        $sessionId = 'HOjLTR6-D5YIY0-waqJQp3Bg-';
+
+        $tokenData = $this->tokenData;
+        $tokenData[SSODataClaimsInterface::CLAIM_SESSION_ID] = $sessionHash;
+        $token = SSOTokenGenerator::createSignedTokenFromData($this->privateKey, $tokenData);
+
+        // First: create the "other" session (no handler, uses real session)
+        $this->setupEnvironment(null, $token);
+        new PluginSession($this->pluginId, $this->publicKey);
+
+        // Second: create a session with the default token using a session handler mock
+        $this->setupEnvironment(null, $this->token, false);
+
+        /** @var \SessionHandlerInterface&\PHPUnit\Framework\MockObject\MockObject $handler */
+        $handler = $this->getMockBuilder(\SessionHandlerInterface::class)
+            ->getMock();
+
+        $handler->method('close')->willReturn(true);
+        $handler->method('open')->willReturn(true);
+        $handler->method('write')->willReturn(true);
+        $handler->method('gc')->willReturn(1);
+        $handler->method('read')->willReturn('');
+        $handler->method('destroy')->willReturn(true);
+
+        $session = new PluginSession($this->pluginId, $this->publicKey, $handler);
+
+        // After construction, set the expectation: destroy must be called with the compatible session id
+        $handler->expects($this->once())
+            ->method('destroy')
+            ->with($sessionId);
+
+        $session->destroySession($sessionHash);
     }
 
+    /**
+     *
+     * Test that destroying the own session works correctly.
+     *
+     * @covers \Staffbase\plugins\sdk\PluginSession::__construct
+     * @covers \Staffbase\plugins\sdk\SessionHandling\SessionHandlerTrait::destroySession
+     */
     public function testDestroyOwnSession()
     {
-        $this->markTestSkipped('must be revisited.');
+        $sessionId = $this->tokenData[SSODataClaimsInterface::CLAIM_SESSION_ID];
+        $this->setupEnvironment(null, $this->token, false);
+
+        /** @var \SessionHandlerInterface&\PHPUnit\Framework\MockObject\MockObject $handler */
+        $handler = $this->getMockBuilder(\SessionHandlerInterface::class)
+            ->getMock();
+
+        $handler->method('close')->willReturn(true);
+        $handler->method('open')->willReturn(true);
+        $handler->method('write')->willReturn(true);
+        $handler->method('gc')->willReturn(1);
+        $handler->method('read')->willReturn('');
+        $handler->method('destroy')->willReturn(true);
+
+        $session = new PluginSession($this->pluginId, $this->publicKey, $handler);
+
+        // After construction, set the expectation: destroy must be called with the session id
+        $handler->expects($this->once())
+            ->method('destroy')
+            ->with($sessionId);
+
+        $session->destroySession($sessionId);
     }
 }
