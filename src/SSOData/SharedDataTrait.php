@@ -121,7 +121,7 @@ trait SharedDataTrait
      *
      * If this is set to "editor", the requesting user may manage the contents
      * of the plugin instance, i.e. she has administration rights.
-     * The type of the accessing entity can be either a "user" or a "editor".
+     * The type of the accessing entity can be either a "user" or an "editor".
      *
      * @return null|string
      */

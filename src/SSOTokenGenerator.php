@@ -54,8 +54,22 @@ class SSOTokenGenerator
         $builder = $config->builder();
         // Validate and coerce required registered claims to the expected types
         $audience = $tokenData[SSOData\SharedClaimsInterface::CLAIM_AUDIENCE] ?? '';
-        if (!is_string($audience) || $audience === '') {
-            throw new \InvalidArgumentException('aud claim must be a non-empty string for token generation');
+        if (is_string($audience)) {
+            if ($audience === '') {
+                throw new \InvalidArgumentException('aud claim must be a non-empty string or array for token generation');
+            }
+            /** @var non-empty-list<non-empty-string> $audiences */
+            $audiences = [$audience];
+        } elseif (is_array($audience) && $audience !== []) {
+            foreach ($audience as $aud) {
+                if (!is_string($aud) || $aud === '') {
+                    throw new \InvalidArgumentException('aud claim array must contain only non-empty strings for token generation');
+                }
+            }
+            /** @var non-empty-list<non-empty-string> $audiences */
+            $audiences = array_values($audience);
+        } else {
+            throw new \InvalidArgumentException('aud claim must be a non-empty string or array for token generation');
         }
 
         $issuedAt = $tokenData[SSOData\SharedClaimsInterface::CLAIM_ISSUED_AT] ?? null;
@@ -74,7 +88,7 @@ class SSOTokenGenerator
         }
 
         $token = $builder
-            ->permittedFor($audience)
+            ->permittedFor(...$audiences)
             ->issuedAt($issuedAt)
             ->canOnlyBeUsedAfter($notBefore)
             ->expiresAt($expiresAt);

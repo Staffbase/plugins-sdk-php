@@ -207,8 +207,8 @@ trait SSODataTrait
      */
     public function getLocale(): string
     {
-        $val = $this->getClaimSafe(SSODataClaimsInterface::CLAIM_USER_LOCALE);
-        return is_string($val) ? $val : '';
+        $value = $this->getClaimSafe(SSODataClaimsInterface::CLAIM_USER_LOCALE);
+        return is_string($value) ? $value : '';
     }
 
     /**
@@ -218,7 +218,7 @@ trait SSODataTrait
      */
     public function getTags(): ?array
     {
-        $val = $this->getClaimSafe(SSODataClaimsInterface::CLAIM_USER_TAGS);
-        return is_array($val) ? $val : null;
+        $value = $this->getClaimSafe(SSODataClaimsInterface::CLAIM_USER_TAGS);
+        return is_array($value) ? $value : null;
     }
 }
