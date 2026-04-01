@@ -50,17 +50,16 @@ class SSODataTest extends TestCase
      */
     public function testIsEditorReturnsCorrectValues(): void
     {
-        $map = [
-            /** @phpstan-ignore array.invalidKey, array.duplicateKey */
-            null => false,
-            '' => false,
-            'use' => false,
-            'edito' => false,
-            'user' => false,
-            'editor' => true,
+        $cases = [
+            [null, false],
+            ['', false],
+            ['use', false],
+            ['edito', false],
+            ['user', false],
+            ['editor', true],
         ];
 
-        foreach ($map as $arg => $expect) {
+        foreach ($cases as [$arg, $expect]) {
             $tokenData = SSOTestData::getTokenData();
             $tokenData[SSOTestData::CLAIM_USER_ROLE] = $arg;
 
