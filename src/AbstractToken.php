@@ -157,9 +157,9 @@ abstract class AbstractToken
         }
 
         return
-            "-----BEGIN PUBLIC KEY-----\n" .
-            chunk_split($data, 64) .
-            "-----END PUBLIC KEY-----\n";
+            "-----BEGIN PUBLIC KEY-----\n"
+            . chunk_split($data, 64)
+            . "-----END PUBLIC KEY-----\n";
     }
 
     /**

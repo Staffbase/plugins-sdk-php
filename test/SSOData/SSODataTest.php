@@ -39,8 +39,7 @@ class SSODataTest extends TestCase
             $this->assertEquals(
                 $tokenData[$key],
                 $ssoData->$fn(),
-                "called $fn expected " .
-                (is_array($tokenData[$key]) ? print_r($tokenData[$key], true) : (string) $tokenData[$key]),
+                "called $fn expected " . print_r($tokenData[$key], true),
             );
         }
     }
@@ -51,17 +50,16 @@ class SSODataTest extends TestCase
      */
     public function testIsEditorReturnsCorrectValues(): void
     {
-        $map = [
-            /** @phpstan-ignore array.duplicateKey */
-            null => false,
-            '' => false,
-            'use' => false,
-            'edito' => false,
-            'user' => false,
-            'editor' => true,
+        $cases = [
+            [null, false],
+            ['', false],
+            ['use', false],
+            ['edito', false],
+            ['user', false],
+            ['editor', true],
         ];
 
-        foreach ($map as $arg => $expect) {
+        foreach ($cases as [$arg, $expect]) {
             $tokenData = SSOTestData::getTokenData();
             $tokenData[SSOTestData::CLAIM_USER_ROLE] = $arg;
 
