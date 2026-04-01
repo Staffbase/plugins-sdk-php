@@ -5,8 +5,10 @@ declare(strict_types=1);
  * SSO data Test implementation, based on this doc:
  * https://developers.staffbase.com/guide/customplugin-overview
  *
+ * PHP version 7.4.0
+ *
  * @category  Authentication
- * @copyright 2017-2025 Staffbase SE.
+ * @copyright 2017-2022 Staffbase, GmbH.
  * @author    Vitaliy Ivanov
  * @license   http://www.apache.org/licenses/LICENSE-2.0
  * @link      https://github.com/staffbase/plugins-sdk-php
@@ -48,17 +50,16 @@ class SSODataTest extends TestCase
      */
     public function testIsEditorReturnsCorrectValues(): void
     {
-        $map = [
-            /** @phpstan-ignore array.duplicateKey */
-            null => false,
-            '' => false,
-            'use' => false,
-            'edito' => false,
-            'user' => false,
-            'editor' => true,
+        $cases = [
+            [null, false],
+            ['', false],
+            ['use', false],
+            ['edito', false],
+            ['user', false],
+            ['editor', true],
         ];
 
-        foreach ($map as $arg => $expect) {
+        foreach ($cases as [$arg, $expect]) {
             $tokenData = SSOTestData::getTokenData();
             $tokenData[SSOTestData::CLAIM_USER_ROLE] = $arg;
 
@@ -90,7 +91,15 @@ class SSODataTest extends TestCase
 class SSODataMock
 {
     use SSODataTrait;
-    private $claims;
+
+    /**
+     * @var array<string,mixed>
+     */
+    private array $claims;
+
+    /**
+     * @param array<string,mixed> $claims
+     */
     public function __construct(array $claims = [])
     {
         $this->claims = $claims;
@@ -99,10 +108,14 @@ class SSODataMock
     {
         return isset($this->claims[$claim]);
     }
-    public function getClaim(string $claim)
+    public function getClaim(string $claim): mixed
     {
         return $this->claims[$claim];
     }
+
+    /**
+     * @return array<string,mixed>
+     */
     public function getAllClaims(): array
     {
         return $this->claims;

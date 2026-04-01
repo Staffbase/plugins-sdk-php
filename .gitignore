@@ -40,4 +40,3 @@ phpcs.xml
 /vendor/*
 /wpcs/*
 
-!/.gitignore

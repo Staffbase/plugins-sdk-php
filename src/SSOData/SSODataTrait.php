@@ -198,7 +198,7 @@ trait SSODataTrait
     /**
      * Get the user tags.
      *
-     * @return array|null
+     * @return array<mixed>|null
      */
     public function getTags(): ?array
     {

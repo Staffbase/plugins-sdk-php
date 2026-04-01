@@ -25,12 +25,8 @@ use Lcobucci\JWT\Token\RegisteredClaims;
 class SSOTokenGenerator
 {
     /**
-     * Create a signed token from an array.
-     *
-     * Can be used in development in conjunction with getTokenData.
-     *
      * @param string $privateKey private key
-     * @param array $tokenData associative array of claims
+     * @param array<string,mixed> $tokenData associative array of claims
      * @param Signer|null $signer the Signer instance to sign the token, defaults to SHA256
      *
      * @return string Encoded token.
@@ -38,13 +34,19 @@ class SSOTokenGenerator
     public static function createSignedTokenFromData(string $privateKey, array $tokenData, ?Signer $signer = null): string
     {
 
+        if (!trim($privateKey)) {
+            throw new \InvalidArgumentException('Parameter privateKey for token generation is empty.');
+        }
+
+        // After validation, we know $privateKey is non-empty
+        /** @var non-empty-string $privateKey */
         $config = Configuration::forSymmetricSigner($signer ?: new Sha256(), InMemory::plainText($privateKey));
         return self::buildToken($config, $tokenData)->toString();
     }
 
     /**
      * @param Configuration $config
-     * @param array $tokenData
+     * @param array<string,mixed> $tokenData
      * @return Token
      */
     private static function buildToken(Configuration $config, array $tokenData): Token
@@ -76,6 +78,9 @@ class SSOTokenGenerator
         );
 
         foreach ($claims as $claim => $value) {
+            if (empty($claim)) {
+                continue;
+            }
             $token = $token->withClaim($claim, $value);
         }
 

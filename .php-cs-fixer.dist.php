@@ -6,7 +6,6 @@ $finder = PhpCsFixer\Finder::create()
 
 return (new PhpCsFixer\Config())
     ->setRules([
-        '@PHP8x4Migration' => true,
         '@PER-CS' => true,
         'array_syntax' => ['syntax' => 'short'],
         'declare_strict_types' => true,

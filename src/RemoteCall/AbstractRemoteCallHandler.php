@@ -30,7 +30,7 @@ abstract class AbstractRemoteCallHandler implements RemoteCallInterface
      *
      * This will tell Staffbase that everything went OK.
      */
-    public function exitSuccess()
+    public function exitSuccess(): void
     {
         header("HTTP/1.1 200 OK");
         exit;
@@ -41,7 +41,7 @@ abstract class AbstractRemoteCallHandler implements RemoteCallInterface
      *
      * This will tell Staffbase that it should try again later.
      */
-    public function exitFailure()
+    public function exitFailure(): void
     {
         header('HTTP/1.1 500 Internal Server Error');
         exit;
