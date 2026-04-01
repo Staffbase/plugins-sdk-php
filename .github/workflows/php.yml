@@ -2,9 +2,14 @@ name: PHP Composer
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - 'main'
+      - '**/**'
+
   pull_request:
-    branches: [ main ]
+    branches:
+      - 'main'
+      - '**/**'
 
 jobs:
   run:
@@ -29,7 +34,10 @@ jobs:
 
     - name: Install dependencies
       if: steps.composer-cache.outputs.cache-hit != 'true'
-      run: composer update --prefer-dist --no-progress
+      run: composer install --prefer-dist --no-progress
+
+    - name: Linting
+      run: composer lint
 
     - name: Run test suite
       run: composer test

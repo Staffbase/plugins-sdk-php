@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Staffbase\plugins\sdk;
@@ -9,7 +10,7 @@ use Lcobucci\JWT\Configuration;
 use Lcobucci\JWT\Signer;
 use Lcobucci\JWT\Signer\Key;
 use Lcobucci\JWT\Signer\Key\InMemory;
-use Lcobucci\JWT\Token;
+use Lcobucci\JWT\Token\Plain;
 use Lcobucci\JWT\Validation\Constraint;
 use Lcobucci\JWT\Validation\Constraint\SignedWith;
 use Lcobucci\JWT\Validation\RequiredConstraintsViolated;
@@ -18,8 +19,7 @@ use Staffbase\plugins\sdk\Exceptions\SSOException;
 
 abstract class AbstractToken
 {
-
-    private Token $token;
+    private Plain $token;
 
     private Key $signerKey;
 
@@ -31,7 +31,7 @@ abstract class AbstractToken
      * Constructor
      *
      * @param string $appSecret Either a PEM key or a file:// URL.
-     * @param string $tokenData The token text.
+     * @param non-empty-string $tokenData The token text.
      * @param Signer $signer The algorithm which is used to sign the token
      * @param Constraint[] $constrains constrains
      *
@@ -64,7 +64,11 @@ abstract class AbstractToken
     protected function parseToken(): void
     {
         // parse text
-        $this->token = $this->config->parser()->parse($this->tokenData);
+        $token = $this->config->parser()->parse($this->tokenData);
+        if (!$token instanceof Plain) {
+            throw new \RuntimeException('Parsed token is not a Plain token');
+        }
+        $this->token = $token;
     }
 
     /**
@@ -122,15 +126,15 @@ abstract class AbstractToken
     public static function base64ToPEMPublicKey(string $data): string
     {
 
-        $data = strtr($data, array(
+        $data = strtr($data, [
             "\r" => "",
-            "\n" => ""
-        ));
+            "\n" => "",
+        ]);
 
         return
-            "-----BEGIN PUBLIC KEY-----\n" .
-            chunk_split($data, 64) .
-            "-----END PUBLIC KEY-----\n";
+            "-----BEGIN PUBLIC KEY-----\n"
+            . chunk_split($data, 64)
+            . "-----END PUBLIC KEY-----\n";
     }
 
     /**

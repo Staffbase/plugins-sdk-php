@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * SSO plugin session Test implementation, based on this doc:
  * https://developers.staffbase.com/api/plugin-sso/
@@ -9,12 +11,13 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0
  * @link      https://github.com/staffbase/plugins-sdk-php
  */
+
 namespace Staffbase\plugins\test;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use ReflectionClass;
 use phpseclib\Crypt\RSA;
 use PHPUnit\Framework\TestCase;
-use SessionHandlerInterface;
 use Staffbase\plugins\sdk\Exceptions\SSOAuthenticationException;
 use Staffbase\plugins\sdk\Exceptions\SSOException;
 use Staffbase\plugins\sdk\SSOData\SharedClaimsInterface;
@@ -25,23 +28,20 @@ use Staffbase\plugins\sdk\RemoteCall\DeleteInstanceCallHandlerInterface;
 
 class PluginSessionTest extends TestCase
 {
-    private $token;
-    private $publicKey;
-    private $privateKey;
-    private $tokenData;
-    private $classname = PluginSession::class;
-    private $pluginId = 'testplugin';
-    private $pluginInstanceId;
+    private string $token;
+    private string $publicKey;
+    private string $privateKey;
+    private array $tokenData;
+    private string $classname = PluginSession::class;
+    private string $pluginId = 'testplugin';
+    private string $pluginInstanceId;
 
     /**
-     * Constructor
-     *
      * Create an RSA-256 key pair, and set up initial token.
      */
-    public function __construct()
+    public function setUp(): void
     {
 
-        parent::__construct();
         $rsa = new RSA();
         $keypair = $rsa->createKey(2048);
 
@@ -54,6 +54,14 @@ class PluginSessionTest extends TestCase
         $this->pluginInstanceId = $this->tokenData[SSODataClaimsInterface::CLAIM_INSTANCE_ID];
     }
 
+
+    public function tearDown(): void
+    {
+        session_write_close();
+        session_abort();
+        $_SESSION = [];
+    }
+
     /**
      * Setup the environment for PluginSession.
      *
@@ -61,7 +69,7 @@ class PluginSessionTest extends TestCase
      * @param string|null $queryParamJwt JWT query param emulation
      * @param boolean $clearSession optionally clear out the $_SESSION array
      */
-    private function setupEnvironment(string $queryParamPid = null, string $queryParamJwt = null, bool $clearSession = true)
+    private function setupEnvironment(?string $queryParamPid = null, ?string $queryParamJwt = null, bool $clearSession = true)
     {
 
         $_REQUEST[PluginSession::QUERY_PARAM_PID] = $queryParamPid;
@@ -85,11 +93,11 @@ class PluginSessionTest extends TestCase
     public function testConstructorWorksAsExpected()
     {
 
-        $this->setupEnvironment(null, $this->token);
+        $this->setupEnvironment(queryParamJwt: $this->token);
 
         $mock = $this->getMockBuilder($this->classname)
             ->disableOriginalConstructor()
-            ->onlyMethods(array('openSession', 'closeSession'))
+            ->onlyMethods(['openSession', 'closeSession'])
             ->getMock();
 
         $mock->expects($this->exactly(2))
@@ -116,10 +124,10 @@ class PluginSessionTest extends TestCase
 
         $mock = $this->getMockBuilder($this->classname)
             ->disableOriginalConstructor()
-            ->onlyMethods(array('openSession', 'closeSession'))
+            ->onlyMethods(['openSession', 'closeSession'])
             ->getMock();
 
-        $this->setupEnvironment($this->pluginInstanceId. 'spoof', null, false);
+        $this->setupEnvironment($this->pluginInstanceId . 'spoof', null, false);
 
         $this->expectException(SSOException::class);
 
@@ -141,7 +149,7 @@ class PluginSessionTest extends TestCase
 
         $mock = $this->getMockBuilder($this->classname)
             ->disableOriginalConstructor()
-            ->onlyMethods(array('openSession', 'closeSession'))
+            ->onlyMethods(['openSession', 'closeSession'])
             ->getMock();
 
         $this->expectException(SSOException::class);
@@ -165,7 +173,7 @@ class PluginSessionTest extends TestCase
 
         $mock = $this->getMockBuilder($this->classname)
             ->disableOriginalConstructor()
-            ->onlyMethods(array('openSession', 'closeSession'))
+            ->onlyMethods(['openSession', 'closeSession'])
             ->getMock();
 
         $this->expectException(SSOException::class);
@@ -189,7 +197,7 @@ class PluginSessionTest extends TestCase
 
         $mock = $this->getMockBuilder($this->classname)
             ->disableOriginalConstructor()
-            ->onlyMethods(array('openSession', 'closeSession'))
+            ->onlyMethods(['openSession', 'closeSession'])
             ->getMock();
 
         $this->expectException(SSOAuthenticationException::class);
@@ -213,7 +221,7 @@ class PluginSessionTest extends TestCase
 
         $mock = $this->getMockBuilder($this->classname)
             ->disableOriginalConstructor()
-            ->onlyMethods(array('openSession', 'closeSession'))
+            ->onlyMethods(['openSession', 'closeSession'])
             ->getMock();
 
         $this->expectException(SSOAuthenticationException::class);
@@ -237,10 +245,10 @@ class PluginSessionTest extends TestCase
 
         $mock = $this->getMockBuilder($this->classname)
             ->disableOriginalConstructor()
-            ->onlyMethods(array('openSession', 'closeSession'))
+            ->onlyMethods(['openSession', 'closeSession'])
             ->getMock();
 
-        /** @var PluginSession $session */
+        /** @var PluginSession&MockObject $session */
         $session = new $mock($this->pluginId, $this->publicKey);
 
         $this->assertEquals($this->tokenData[SharedClaimsInterface::CLAIM_USER_ROLE], $session->getRole());
@@ -251,7 +259,7 @@ class PluginSessionTest extends TestCase
 
         $this->setupEnvironment(null, $newToken, false);
 
-        /** @var PluginSession $newSession */
+        /** @var PluginSession&MockObject $newSession */
         $newSession = new $mock($this->pluginId, $this->publicKey);
 
         $this->assertEquals($newSession->getRole(), $tokenData[SharedClaimsInterface::CLAIM_USER_ROLE]);
@@ -273,10 +281,10 @@ class PluginSessionTest extends TestCase
 
         $mock = $this->getMockBuilder($this->classname)
             ->disableOriginalConstructor()
-            ->onlyMethods(array('openSession', 'closeSession'))
+            ->onlyMethods(['openSession', 'closeSession'])
             ->getMock();
 
-        /** @var PluginSession $session */
+        /** @var PluginSession&MockObject $session */
         $session = new $mock($this->pluginId, $this->publicKey);
 
 
@@ -287,7 +295,7 @@ class PluginSessionTest extends TestCase
 
         $this->setupEnvironment(null, $newToken, false);
 
-        /** @var PluginSession $newSession */
+        /** @var PluginSession&MockObject $newSession */
         $newSession = new $mock($this->pluginId, $this->publicKey);
 
         $this->assertEquals($tokenData[SharedClaimsInterface::CLAIM_USER_ROLE], $newSession->getRole());
@@ -319,15 +327,15 @@ class PluginSessionTest extends TestCase
 
         $mock = $this->getMockBuilder($this->classname)
             ->disableOriginalConstructor()
-            ->onlyMethods(array('openSession', 'closeSession'))
+            ->onlyMethods(['openSession', 'closeSession'])
             ->getMock();
 
-        /** @var PluginSession $session */
+        /** @var PluginSession&MockObject $session */
         $session = new $mock($this->pluginId, $this->publicKey);
 
         $sessionData = [
             'test1' => 'val1',
-            'test2' => 'val2'
+            'test2' => 'val2',
         ];
 
 
@@ -355,7 +363,7 @@ class PluginSessionTest extends TestCase
 
         // successfull remote call handler mock
         $handler = $this->getMockBuilder(DeleteInstanceCallHandlerInterface::class)
-            ->onlyMethods(array('deleteInstance', 'exitSuccess', 'exitFailure'))
+            ->onlyMethods(['deleteInstance', 'exitSuccess', 'exitFailure'])
             ->getMock();
 
         $handler->method('deleteInstance')
@@ -373,10 +381,12 @@ class PluginSessionTest extends TestCase
         // session mock
         $Session = $this->getMockBuilder($this->classname)
             ->disableOriginalConstructor()
-            ->onlyMethods(array('openSession', 'closeSession', 'exitRemoteCall'))
+            ->onlyMethods(['openSession', 'closeSession', 'exitRemoteCall'])
             ->getMock();
 
-        new $Session($this->pluginId, $this->publicKey, null, 0, $handler);
+        $session = new $Session($this->pluginId, $this->publicKey, null, 0, $handler);
+        $this->assertInstanceOf($this->classname, $session);
+
     }
 
     /**
@@ -396,7 +406,7 @@ class PluginSessionTest extends TestCase
 
         // successfull remote call handler mock
         $handler = $this->getMockBuilder(DeleteInstanceCallHandlerInterface::class)
-            ->onlyMethods(array('deleteInstance', 'exitSuccess', 'exitFailure'))
+            ->onlyMethods(['deleteInstance', 'exitSuccess', 'exitFailure'])
             ->getMock();
 
         $handler->method('deleteInstance')
@@ -414,10 +424,12 @@ class PluginSessionTest extends TestCase
         // session mock
         $Session = $this->getMockBuilder($this->classname)
             ->disableOriginalConstructor()
-            ->onlyMethods(array('openSession', 'closeSession', 'exitRemoteCall'))
+            ->onlyMethods(['openSession', 'closeSession', 'exitRemoteCall'])
             ->getMock();
 
-        new $Session($this->pluginId, $this->publicKey, null, 0, $handler);
+        $session = new $Session($this->pluginId, $this->publicKey, null, 0, $handler);
+        $this->assertInstanceOf($this->classname, $session);
+
     }
 
     /**
@@ -457,10 +469,15 @@ class PluginSessionTest extends TestCase
         $this->assertEquals($sessionId, session_id());
     }
 
+    /**
+     *
+     * Test that destroying another session works correctly.
+     *
+     * @covers \Staffbase\plugins\sdk\PluginSession::__construct
+     * @covers \Staffbase\plugins\sdk\SessionHandling\SessionHandlerTrait::destroySession
+     */
     public function testDestroyOtherSession()
     {
-        $this->markTestSkipped('must be revisited.');
-
         $sessionHash = 'HOjLTR6+D5YIY0/waqJQp3Bg=';
         $sessionId = 'HOjLTR6-D5YIY0-waqJQp3Bg-';
 
@@ -468,75 +485,63 @@ class PluginSessionTest extends TestCase
         $tokenData[SSODataClaimsInterface::CLAIM_SESSION_ID] = $sessionHash;
         $token = SSOTokenGenerator::createSignedTokenFromData($this->privateKey, $tokenData);
 
-        // successfull remote call handler mock
-        $handler = $this->getMockBuilder(SessionHandlerInterface::class)
-            ->setMethodsExcept()
+        // First: create the "other" session (no handler, uses real session)
+        $this->setupEnvironment(null, $token);
+        new PluginSession($this->pluginId, $this->publicKey);
+
+        // Second: create a session with the default token using a session handler mock
+        $this->setupEnvironment(null, $this->token, false);
+
+        /** @var \SessionHandlerInterface&\PHPUnit\Framework\MockObject\MockObject $handler */
+        $handler = $this->getMockBuilder(\SessionHandlerInterface::class)
             ->getMock();
 
         $handler->method('close')->willReturn(true);
-        $handler->method('destroy')->willReturn(true);
         $handler->method('open')->willReturn(true);
         $handler->method('write')->willReturn(true);
-        $handler->method('read')->willReturn($sessionId);
+        $handler->method('gc')->willReturn(1);
+        $handler->method('read')->willReturn('');
+        $handler->method('destroy')->willReturn(true);
 
-        $this->setupEnvironment(null, $token);
-
-        /** @var SessionHandlerInterface $handler */
-        new PluginSession($this->pluginId, $this->publicKey);
-
-        $this->setupEnvironment(null, $this->token, false);
-
-        /** @var PluginSession $session */
         $session = new PluginSession($this->pluginId, $this->publicKey, $handler);
 
+        // After construction, set the expectation: destroy must be called with the compatible session id
         $handler->expects($this->once())
             ->method('destroy')
             ->with($sessionId);
-
-        $handler->expects($this->exactly(2))
-            ->method('write')
-            ->with($this->logicalOr(
-                $this->equalTo($sessionId),
-                $this->equalTo($this->tokenData[SSODataClaimsInterface::CLAIM_SESSION_ID])
-            ));
-
-        $handler->expects($this->exactly(2))
-            ->method('open');
 
         $session->destroySession($sessionHash);
     }
 
+    /**
+     *
+     * Test that destroying the own session works correctly.
+     *
+     * @covers \Staffbase\plugins\sdk\PluginSession::__construct
+     * @covers \Staffbase\plugins\sdk\SessionHandling\SessionHandlerTrait::destroySession
+     */
     public function testDestroyOwnSession()
     {
-
-        $this->markTestSkipped('must be revisited.');
         $sessionId = $this->tokenData[SSODataClaimsInterface::CLAIM_SESSION_ID];
         $this->setupEnvironment(null, $this->token, false);
 
-        // successfull remote call handler mock
-        $handler = $this->getMockBuilder(SessionHandlerInterface::class)
-            ->setMethodsExcept()
+        /** @var \SessionHandlerInterface&\PHPUnit\Framework\MockObject\MockObject $handler */
+        $handler = $this->getMockBuilder(\SessionHandlerInterface::class)
             ->getMock();
 
         $handler->method('close')->willReturn(true);
-        $handler->method('destroy')->willReturn(true);
         $handler->method('open')->willReturn(true);
         $handler->method('write')->willReturn(true);
-        $handler->method('read')->willReturn($sessionId);
+        $handler->method('gc')->willReturn(1);
+        $handler->method('read')->willReturn('');
+        $handler->method('destroy')->willReturn(true);
 
-        /** @var PluginSession $session */
         $session = new PluginSession($this->pluginId, $this->publicKey, $handler);
 
+        // After construction, set the expectation: destroy must be called with the session id
         $handler->expects($this->once())
             ->method('destroy')
             ->with($sessionId);
-
-        $handler->expects($this->once())
-            ->method('write')
-            ->with($sessionId);
-
-        $handler->expects($this->once())
-            ->method('open');
 
         $session->destroySession($sessionId);
     }

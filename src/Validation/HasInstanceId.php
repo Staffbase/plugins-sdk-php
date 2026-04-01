@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * JWT Token validation
  *
@@ -33,7 +35,7 @@ final class HasInstanceId implements Constraint
         }
     }
 
-    private function hasInstanceId(Token $token): bool
+    private function hasInstanceId(UnencryptedToken $token): bool
     {
         return (bool) $token->claims()->get(SSODataClaimsInterface::CLAIM_INSTANCE_ID);
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Staffbase\plugins\test;
 
 use DateTimeImmutable;
@@ -47,9 +49,9 @@ class SSOTestData
      */
     public static function getTokenData(?string $exp = '10 minutes', ?string $npf = '-1 minutes', ?string $iat = 'now'): array
     {
-        $exp = $exp ?? '10 minutes';
-        $npf = $npf ?? '-1 minutes';
-        $iat = $iat ?? 'now';
+        $exp ??= '10 minutes';
+        $npf ??= '-1 minutes';
+        $iat ??= 'now';
 
         $date = new DateTimeImmutable($iat);
 

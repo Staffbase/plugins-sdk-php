@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 /**
@@ -18,7 +19,6 @@ namespace Staffbase\plugins\sdk\SSOData;
  */
 trait ClaimAccessTrait
 {
-
     /**
      * Test if a claim is set.
      *

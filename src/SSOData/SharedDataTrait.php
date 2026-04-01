@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 /**
@@ -21,7 +22,6 @@ use TypeError;
  */
 trait SharedDataTrait
 {
-
     use ClaimAccessTrait;
 
     private static string $userRoleEditor = 'editor';

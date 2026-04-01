@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * SSO token Test implementation, based on this doc:
  * https://developers.staffbase.com/guide/customplugin-overview
@@ -9,6 +11,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0
  * @link      https://github.com/staffbase/plugins-sdk-php
  */
+
 namespace Staffbase\plugins\test;
 
 use DateTimeImmutable;
@@ -55,7 +58,7 @@ class SSOTokenTest extends TestCase
 
         $mock = $this->getMockBuilder($this->classname)
             ->disableOriginalConstructor()
-            ->onlyMethods(array('parseToken'))
+            ->onlyMethods(['parseToken'])
             ->getMock();
 
         $this->expectException(SSOException::class);
@@ -77,7 +80,7 @@ class SSOTokenTest extends TestCase
 
         $mock = $this->getMockBuilder($this->classname)
             ->disableOriginalConstructor()
-            ->onlyMethods(array('parseToken'))
+            ->onlyMethods(['parseToken'])
             ->getMock();
 
         $this->expectException(SSOException::class);
@@ -158,7 +161,7 @@ class SSOTokenTest extends TestCase
 
         $sso = new SSOToken($this->publicKey, $token, $leeway);
 
-        $this->assertNotEmpty($sso);
+        $this->assertEquals("testPlugin", $sso->getAudience());
     }
 
     /**
@@ -186,33 +189,6 @@ class SSOTokenTest extends TestCase
      *
      * Test accessors deliver correct values.
      *
-     * @covers \Staffbase\plugins\sdk\SSOToken::__construct
-     * @covers \Staffbase\plugins\sdk\SSOToken::getAudience()
-     * @covers \Staffbase\plugins\sdk\SSOToken::getExpireAtTime()
-     * @covers \Staffbase\plugins\sdk\SSOToken::getNotBeforeTime()
-     * @covers \Staffbase\plugins\sdk\SSOToken::getIssuedAtTime()
-     * @covers \Staffbase\plugins\sdk\SSOToken::getIssuer()
-     * @covers \Staffbase\plugins\sdk\SSOToken::getId()
-     * @covers \Staffbase\plugins\sdk\SSOToken::getInstanceId()
-     * @covers \Staffbase\plugins\sdk\SSOToken::getInstanceName()
-     * @covers \Staffbase\plugins\sdk\SSOToken::getUserId()
-     * @covers \Staffbase\plugins\sdk\SSOToken::getUserExternalId()
-     * @covers \Staffbase\plugins\sdk\SSOToken::getUserUsername()
-     * @covers \Staffbase\plugins\sdk\SSOToken::getUserPrimaryEmailAddress()
-     * @covers \Staffbase\plugins\sdk\SSOToken::getFullName()
-     * @covers \Staffbase\plugins\sdk\SSOToken::getFirstName()
-     * @covers \Staffbase\plugins\sdk\SSOToken::getLastName()
-     * @covers \Staffbase\plugins\sdk\SSOToken::getRole()
-     * @covers \Staffbase\plugins\sdk\SSOToken::getType()
-     * @covers \Staffbase\plugins\sdk\SSOToken::getThemeTextColor()
-     * @covers \Staffbase\plugins\sdk\SSOToken::getThemeBackgroundColor()
-     * @covers \Staffbase\plugins\sdk\SSOToken::getLocale()
-     * @covers \Staffbase\plugins\sdk\SSOToken::getTags()
-     * @covers \Staffbase\plugins\sdk\SSOToken::hasClaim()
-     * @covers \Staffbase\plugins\sdk\SSOToken::getClaim()
-     * @covers \Staffbase\plugins\sdk\SSOToken::getBranchId()
-     * @covers \Staffbase\plugins\sdk\SSOToken::getBranchSlug()
-     * @covers \Staffbase\plugins\sdk\SSOToken::getSessionId()
      */
     public function testAccessorsGiveCorrectValues()
     {
@@ -235,7 +211,7 @@ class SSOTokenTest extends TestCase
             $this->assertEquals(
                 $tokenData[$key],
                 $ssoToken->$fn(),
-                "called $fn expected $data"
+                "called $fn expected $data",
             );
         }
     }

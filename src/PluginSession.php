@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 /**
@@ -29,7 +30,9 @@ use Staffbase\plugins\sdk\SSOData\SSODataTrait;
  */
 class PluginSession implements SharedClaimsInterface, SSODataClaimsInterface
 {
-    use SSODataTrait, SessionTokenDataTrait, DeleteInstanceTrait;
+    use SSODataTrait;
+    use SessionTokenDataTrait;
+    use DeleteInstanceTrait;
 
     public const QUERY_PARAM_JWT = 'jwt';
     public const QUERY_PARAM_PID = 'pid';
@@ -64,7 +67,7 @@ class PluginSession implements SharedClaimsInterface, SSODataClaimsInterface
         string $appSecret,
         ?SessionHandlerInterface $sessionHandler = null,
         int $leeway = 0,
-        ?RemoteCallInterface $remoteCallHandler = null
+        ?RemoteCallInterface $remoteCallHandler = null,
     ) {
         if (empty($pluginId)) {
             throw new SSOException('Empty plugin ID.');

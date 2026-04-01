@@ -1,13 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" colors="true" bootstrap="vendor/autoload.php" stderr="true" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd">
-  <coverage processUncoveredFiles="true">
-    <include>
-      <directory suffix=".php">src</directory>
-    </include>
-  </coverage>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" colors="true" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.3/phpunit.xsd" cacheDirectory=".phpunit.cache"
+         bootstrap="vendor/autoload.php"
+>
+  <coverage />
+
   <testsuites>
     <testsuite name="Plugins SDK unit test suite">
       <directory>test</directory>
     </testsuite>
   </testsuites>
+
+  <source>
+    <include>
+      <directory>./src</directory>
+    </include>
+  </source>
+
 </phpunit>

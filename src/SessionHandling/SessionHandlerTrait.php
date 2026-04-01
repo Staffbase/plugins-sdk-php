@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 /**
@@ -16,7 +17,6 @@ namespace Staffbase\plugins\sdk\SessionHandling;
 
 trait SessionHandlerTrait
 {
-
     private static string $KEY_DATA = "data";
 
     private ?string $pluginInstanceId = null;
@@ -116,7 +116,7 @@ trait SessionHandlerTrait
      * @param String|null $sessionId
      * @return bool true on success or false on failure.
      */
-    public function destroySession(String $sessionId = null): bool
+    public function destroySession(?String $sessionId = null): bool
     {
         $sessionId = $sessionId ?: $this->sessionId;
 
