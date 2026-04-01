@@ -114,11 +114,7 @@ trait SessionHandlerTrait
         }
 
         $parent = $parentKey ?? self::$KEY_DATA;
-
-        /** @var array<string,mixed> $sessionInstance */
-        $sessionInstance = isset($_SESSION[$instance]) && is_array($_SESSION[$instance])
-            ? $_SESSION[$instance]
-            : [];
+        $sessionInstance = $this->getSessionInstance($instance);
         $sessionInstance[$parent] = $data;
         $_SESSION[$instance] = $sessionInstance;
     }
@@ -138,12 +134,7 @@ trait SessionHandlerTrait
         }
 
         $parent = $parentKey ?? self::$KEY_DATA;
-
-        /** @var array<string,mixed> $sessionInstance */
-        $sessionInstance = isset($_SESSION[$instance]) && is_array($_SESSION[$instance])
-            ? $_SESSION[$instance]
-            : [];
-
+        $sessionInstance = $this->getSessionInstance($instance);
         /** @var array<string,mixed> $bucket */
         $bucket = isset($sessionInstance[$parent]) && is_array($sessionInstance[$parent])
             ? $sessionInstance[$parent]
@@ -163,27 +154,38 @@ trait SessionHandlerTrait
     }
 
     /**
-     * Return the session bucket array for the given instance and parent key,
-     * or null if the session structure is missing or invalid.
+     * Return $_SESSION[$instance] as a typed array, or $default if missing/invalid.
      *
+     * @param array<string,mixed> $default
+     * @return array<string,mixed>
+     */
+    private function getSessionInstance(string $instance, array $default = []): array
+    {
+        /** @var array<string,mixed> $result */
+        $result = isset($_SESSION[$instance]) && is_array($_SESSION[$instance])
+            ? $_SESSION[$instance]
+            : $default;
+        return $result;
+    }
+
+    /**
+     * Return the session bucket array for the given parent key,
+     * or $default if the session structure is missing or invalid.
+     *
+     * @param array<string,mixed>|null $default
      * @return array<string,mixed>|null
      */
-    private function getSessionBucket(string $parentKey): ?array
+    private function getSessionBucket(string $parentKey, ?array $default = null): ?array
     {
         $instance = $this->getValidInstance();
         if ($instance === null) {
-            return null;
+            return $default;
         }
 
-        if (!isset($_SESSION[$instance]) || !is_array($_SESSION[$instance])) {
-            return null;
-        }
-
-        /** @var array<string,mixed> $sessionInstance */
-        $sessionInstance = $_SESSION[$instance];
+        $sessionInstance = $this->getSessionInstance($instance, []);
         $bucket = $sessionInstance[$parentKey] ?? null;
         /** @var array<string,mixed>|null */
-        return is_array($bucket) ? $bucket : null;
+        return is_array($bucket) ? $bucket : $default;
     }
 
     /**
