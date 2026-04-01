@@ -78,7 +78,7 @@ class PluginSessionTest extends TestCase
     /**
      * @return void
      */
-    private function setupEnvironment(string $queryParamPid = null, string $queryParamJwt = null, bool $clearSession = true): void
+    private function setupEnvironment(?string $queryParamPid = null, ?string $queryParamJwt = null, bool $clearSession = true): void
     {
 
         $_REQUEST[PluginSession::QUERY_PARAM_PID] = $queryParamPid;

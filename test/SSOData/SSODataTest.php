@@ -51,7 +51,7 @@ class SSODataTest extends TestCase
     public function testIsEditorReturnsCorrectValues(): void
     {
         $map = [
-            /** @phpstan-ignore array.duplicateKey */
+            /** @phpstan-ignore array.invalidKey, array.duplicateKey */
             null => false,
             '' => false,
             'use' => false,
