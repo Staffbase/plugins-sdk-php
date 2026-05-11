@@ -7,6 +7,8 @@ updates:
       interval: "weekly"
       time: "08:00"
       timezone: "Europe/Berlin"
+    cooldown:
+      default-days: 7
     open-pull-requests-limit: 5
 
   - package-ecosystem: "composer"
@@ -15,6 +17,8 @@ updates:
       interval: "weekly"
       time: "08:00"
       timezone: "Europe/Berlin"
+    cooldown:
+      default-days: 7
     open-pull-requests-limit: 5
     groups:
       composer-prod-updates:
