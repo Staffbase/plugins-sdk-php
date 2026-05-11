@@ -58,9 +58,9 @@ class SSOTokenTest extends TestCase
 
         /** @var MockObject&SSOToken $mock */
         $mock = $this->getMockBuilder(SSOToken::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['parseToken'])
-            ->getMock();
+           ->disableOriginalConstructor()
+           ->onlyMethods(['parseToken'])
+           ->getMock();
 
         $this->expectException(SSOException::class);
         $this->expectExceptionMessage('Parameter appSecret for SSOToken is empty.');
@@ -81,9 +81,9 @@ class SSOTokenTest extends TestCase
 
         /** @var MockObject&SSOToken $mock */
         $mock = $this->getMockBuilder(SSOToken::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['parseToken'])
-            ->getMock();
+           ->disableOriginalConstructor()
+           ->onlyMethods(['parseToken'])
+           ->getMock();
 
         $this->expectException(SSOException::class);
         $this->expectExceptionMessage('Parameter tokenData for SSOToken is empty.');
@@ -163,7 +163,7 @@ class SSOTokenTest extends TestCase
 
         $sso = new SSOToken($this->publicKey, $token, $leeway);
 
-        // Test passes if no exception is thrown during instantiation
+        $this->assertNotEmpty($sso->getInstanceId());
     }
 
     /**
@@ -209,7 +209,7 @@ class SSOTokenTest extends TestCase
             }
 
             $data = is_array($data) ? print_r($data, true)
-                : (is_scalar($data) || is_null($data) ? (string) ($data ?? '') : '[complex_type]');
+               : (is_scalar($data) || is_null($data) ? (string) ($data ?? '') : '[complex_type]');
 
             $this->assertEquals(
                 $tokenData[$key],

@@ -114,13 +114,13 @@ class PluginSessionTest extends TestCase
 
         /** @var MockObject&PluginSession $mock */
         $mock = $this->getMockBuilder(PluginSession::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['openSession', 'closeSession'])
-            ->getMock();
+           ->disableOriginalConstructor()
+           ->onlyMethods(['openSession', 'closeSession'])
+           ->getMock();
 
         $mock->expects($this->exactly(2))
-            ->method('openSession')
-            ->with($this->pluginId);
+           ->method('openSession')
+           ->with($this->pluginId);
 
         $reflectedClass = new ReflectionClass($this->classname);
         $constructor = $reflectedClass->getConstructor() ?: throw new \Exception('Constructor not found');
@@ -142,9 +142,9 @@ class PluginSessionTest extends TestCase
 
         /** @var MockObject&PluginSession $mock */
         $mock = $this->getMockBuilder(PluginSession::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['openSession', 'closeSession'])
-            ->getMock();
+           ->disableOriginalConstructor()
+           ->onlyMethods(['openSession', 'closeSession'])
+           ->getMock();
 
         $this->setupEnvironment($this->pluginInstanceId . 'spoof', null, false);
 
@@ -168,9 +168,9 @@ class PluginSessionTest extends TestCase
 
         /** @var MockObject&PluginSession $mock */
         $mock = $this->getMockBuilder(PluginSession::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['openSession', 'closeSession'])
-            ->getMock();
+           ->disableOriginalConstructor()
+           ->onlyMethods(['openSession', 'closeSession'])
+           ->getMock();
 
         $this->expectException(SSOException::class);
         $this->expectExceptionMessage('Empty plugin ID.');
@@ -193,9 +193,9 @@ class PluginSessionTest extends TestCase
 
         /** @var MockObject&PluginSession $mock */
         $mock = $this->getMockBuilder(PluginSession::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['openSession', 'closeSession'])
-            ->getMock();
+           ->disableOriginalConstructor()
+           ->onlyMethods(['openSession', 'closeSession'])
+           ->getMock();
 
         $this->expectException(SSOException::class);
         $this->expectExceptionMessage('Parameter appSecret for SSOToken is empty.');
@@ -218,9 +218,9 @@ class PluginSessionTest extends TestCase
 
         /** @var MockObject&PluginSession $mock */
         $mock = $this->getMockBuilder(PluginSession::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['openSession', 'closeSession'])
-            ->getMock();
+           ->disableOriginalConstructor()
+           ->onlyMethods(['openSession', 'closeSession'])
+           ->getMock();
 
         $this->expectException(SSOAuthenticationException::class);
         $this->expectExceptionMessage('Missing PID or JWT query parameter in Request.');
@@ -243,9 +243,9 @@ class PluginSessionTest extends TestCase
 
         /** @var MockObject&PluginSession $mock */
         $mock = $this->getMockBuilder(PluginSession::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['openSession', 'closeSession'])
-            ->getMock();
+           ->disableOriginalConstructor()
+           ->onlyMethods(['openSession', 'closeSession'])
+           ->getMock();
 
         $this->expectException(SSOAuthenticationException::class);
         $this->expectExceptionMessage('Tried to initialize the session with both PID and JWT provided.');
@@ -268,9 +268,9 @@ class PluginSessionTest extends TestCase
 
         /** @var MockObject&PluginSession $mock */
         $mock = $this->getMockBuilder(PluginSession::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['openSession', 'closeSession'])
-            ->getMock();
+           ->disableOriginalConstructor()
+           ->onlyMethods(['openSession', 'closeSession'])
+           ->getMock();
 
         /** @var PluginSession&MockObject $session */
         $session = new $mock($this->pluginId, $this->publicKey);
@@ -305,9 +305,9 @@ class PluginSessionTest extends TestCase
 
         /** @var MockObject&PluginSession $mock */
         $mock = $this->getMockBuilder(PluginSession::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['openSession', 'closeSession'])
-            ->getMock();
+           ->disableOriginalConstructor()
+           ->onlyMethods(['openSession', 'closeSession'])
+           ->getMock();
 
         /** @var PluginSession&MockObject $session */
         $session = new $mock($this->pluginId, $this->publicKey);
@@ -352,9 +352,9 @@ class PluginSessionTest extends TestCase
 
         /** @var MockObject&PluginSession $mock */
         $mock = $this->getMockBuilder(PluginSession::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['openSession', 'closeSession'])
-            ->getMock();
+           ->disableOriginalConstructor()
+           ->onlyMethods(['openSession', 'closeSession'])
+           ->getMock();
 
         /** @var PluginSession&MockObject $session */
         $session = new $mock($this->pluginId, $this->publicKey);
@@ -390,36 +390,34 @@ class PluginSessionTest extends TestCase
         // successfull remote call handler mock
         /** @var MockObject&DeleteInstanceCallHandlerInterface $handler */
         $handler = $this->getMockBuilder(DeleteInstanceCallHandlerInterface::class)
-            ->onlyMethods(['deleteInstance', 'exitSuccess', 'exitFailure'])
-            ->getMock();
+           ->onlyMethods(['deleteInstance', 'exitSuccess', 'exitFailure'])
+           ->getMock();
 
         $handler->method('deleteInstance')
-            ->willReturn(true);
+           ->willReturn(true);
 
         $handler->expects($this->once())
-            ->method('deleteInstance');
+           ->method('deleteInstance');
 
         $handler->expects($this->once())
-            ->method('exitSuccess')
-            ->willThrowException(new \Exception('exitSuccess called'));
+           ->method('exitSuccess')
+           ->willThrowException(new \Exception('exitSuccess called'));
 
         $handler->expects($this->never())
-            ->method('exitFailure');
+           ->method('exitFailure');
 
         // session mock
         /** @var MockObject&PluginSession $Session */
         $Session = $this->getMockBuilder(PluginSession::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['openSession', 'closeSession', 'exitRemoteCall'])
-            ->getMock();
+           ->disableOriginalConstructor()
+           ->onlyMethods(['openSession', 'closeSession', 'exitRemoteCall'])
+           ->getMock();
 
         // Expect the exitSuccess to be called (via exception)
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('exitSuccess called');
 
-        $session = new $Session($this->pluginId, $this->publicKey, null, 0, $handler);
-        $this->assertInstanceOf($this->classname, $session);
-
+        new $Session($this->pluginId, $this->publicKey, null, 0, $handler);
     }
 
     /**
@@ -440,36 +438,34 @@ class PluginSessionTest extends TestCase
         // successfull remote call handler mock
         /** @var MockObject&DeleteInstanceCallHandlerInterface $handler */
         $handler = $this->getMockBuilder(DeleteInstanceCallHandlerInterface::class)
-            ->onlyMethods(['deleteInstance', 'exitSuccess', 'exitFailure'])
-            ->getMock();
+           ->onlyMethods(['deleteInstance', 'exitSuccess', 'exitFailure'])
+           ->getMock();
 
         $handler->method('deleteInstance')
-            ->willReturn(false);
+           ->willReturn(false);
 
         $handler->expects($this->once())
-            ->method('deleteInstance');
+           ->method('deleteInstance');
 
         $handler->expects($this->never())
-            ->method('exitSuccess');
+           ->method('exitSuccess');
 
         $handler->expects($this->once())
-            ->method('exitFailure')
-            ->willThrowException(new \Exception('exitFailure called'));
+           ->method('exitFailure')
+           ->willThrowException(new \Exception('exitFailure called'));
 
         // session mock
         /** @var MockObject&PluginSession $Session */
         $Session = $this->getMockBuilder(PluginSession::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['openSession', 'closeSession', 'exitRemoteCall'])
-            ->getMock();
+           ->disableOriginalConstructor()
+           ->onlyMethods(['openSession', 'closeSession', 'exitRemoteCall'])
+           ->getMock();
 
         // Expect the exitFailure to be called (via exception)
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('exitFailure called');
 
-        $session = new $Session($this->pluginId, $this->publicKey, null, 0, $handler);
-        $this->assertInstanceOf($this->classname, $session);
-
+        new $Session($this->pluginId, $this->publicKey, null, 0, $handler);
     }
 
     /**
