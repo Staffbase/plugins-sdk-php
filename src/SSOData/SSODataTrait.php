@@ -30,7 +30,8 @@ trait SSODataTrait
      */
     public function getBranchId(): ?string
     {
-        return $this->getClaimSafe(SSODataClaimsInterface::CLAIM_BRANCH_ID);
+        $value = $this->getClaimSafe(SSODataClaimsInterface::CLAIM_BRANCH_ID);
+        return is_string($value) ? $value : null;
     }
 
     /**
@@ -40,7 +41,8 @@ trait SSODataTrait
      */
     public function getBranchSlug(): ?string
     {
-        return $this->getClaimSafe(SSODataClaimsInterface::CLAIM_BRANCH_SLUG);
+        $value = $this->getClaimSafe(SSODataClaimsInterface::CLAIM_BRANCH_SLUG);
+        return is_string($value) ? $value : null;
     }
 
     /**
@@ -50,7 +52,8 @@ trait SSODataTrait
      */
     public function getSessionId(): ?string
     {
-        return $this->getClaimSafe(SSODataClaimsInterface::CLAIM_SESSION_ID);
+        $value = $this->getClaimSafe(SSODataClaimsInterface::CLAIM_SESSION_ID);
+        return is_string($value) ? $value : null;
     }
 
     /**
@@ -62,7 +65,8 @@ trait SSODataTrait
      */
     public function getInstanceId(): ?string
     {
-        return $this->getClaimSafe(SSODataClaimsInterface::CLAIM_INSTANCE_ID);
+        $value = $this->getClaimSafe(SSODataClaimsInterface::CLAIM_INSTANCE_ID);
+        return is_string($value) ? $value : null;
     }
 
     /**
@@ -72,7 +76,8 @@ trait SSODataTrait
      */
     public function getInstanceName(): ?string
     {
-        return $this->getClaimSafe(SSODataClaimsInterface::CLAIM_INSTANCE_NAME);
+        $value = $this->getClaimSafe(SSODataClaimsInterface::CLAIM_INSTANCE_NAME);
+        return is_string($value) ? $value : null;
     }
 
     /**
@@ -82,7 +87,8 @@ trait SSODataTrait
      */
     public function getUserId(): ?string
     {
-        return $this->getClaimSafe(SSODataClaimsInterface::CLAIM_USER_ID);
+        $value = $this->getClaimSafe(SSODataClaimsInterface::CLAIM_USER_ID);
+        return is_string($value) ? $value : null;
     }
 
     /**
@@ -95,7 +101,8 @@ trait SSODataTrait
      */
     public function getUserExternalId(): ?string
     {
-        return $this->getClaimSafe(SSODataClaimsInterface::CLAIM_USER_EXTERNAL_ID);
+        $value = $this->getClaimSafe(SSODataClaimsInterface::CLAIM_USER_EXTERNAL_ID);
+        return is_string($value) ? $value : null;
     }
 
     /**
@@ -105,7 +112,8 @@ trait SSODataTrait
      */
     public function getUserUsername(): ?string
     {
-        return $this->getClaimSafe(SSODataClaimsInterface::CLAIM_USER_USERNAME);
+        $value = $this->getClaimSafe(SSODataClaimsInterface::CLAIM_USER_USERNAME);
+        return is_string($value) ? $value : null;
     }
 
     /**
@@ -115,7 +123,8 @@ trait SSODataTrait
      */
     public function getUserPrimaryEmailAddress(): ?string
     {
-        return $this->getClaimSafe(SSODataClaimsInterface::CLAIM_USER_PRIMARY_EMAIL_ADDRESS);
+        $value = $this->getClaimSafe(SSODataClaimsInterface::CLAIM_USER_PRIMARY_EMAIL_ADDRESS);
+        return is_string($value) ? $value : null;
     }
 
     /**
@@ -125,7 +134,8 @@ trait SSODataTrait
      */
     public function getFullName(): ?string
     {
-        return $this->getClaimSafe(SSODataClaimsInterface::CLAIM_USER_FULL_NAME);
+        $value = $this->getClaimSafe(SSODataClaimsInterface::CLAIM_USER_FULL_NAME);
+        return is_string($value) ? $value : null;
     }
 
     /**
@@ -135,7 +145,8 @@ trait SSODataTrait
      */
     public function getFirstName(): ?string
     {
-        return $this->getClaimSafe(SSODataClaimsInterface::CLAIM_USER_FIRST_NAME);
+        $value = $this->getClaimSafe(SSODataClaimsInterface::CLAIM_USER_FIRST_NAME);
+        return is_string($value) ? $value : null;
     }
 
     /**
@@ -145,20 +156,22 @@ trait SSODataTrait
      */
     public function getLastName(): ?string
     {
-        return $this->getClaimSafe(SSODataClaimsInterface::CLAIM_USER_LAST_NAME);
+        $value = $this->getClaimSafe(SSODataClaimsInterface::CLAIM_USER_LAST_NAME);
+        return is_string($value) ? $value : null;
     }
 
 
     /**
      * Get the type of the token.
      *
-     * The type of the accessing entity can be either a “user” or a “token”.
+     * The type of the accessing entity can be either a "user" or a "token".
      *
      * @return null|string
      */
     public function getType(): ?string
     {
-        return $this->getClaimSafe(SSODataClaimsInterface::CLAIM_ENTITY_TYPE);
+        $value = $this->getClaimSafe(SSODataClaimsInterface::CLAIM_ENTITY_TYPE);
+        return is_string($value) ? $value : null;
     }
 
     /**
@@ -170,7 +183,8 @@ trait SSODataTrait
      */
     public function getThemeTextColor(): ?string
     {
-        return $this->getClaimSafe(SSODataClaimsInterface::CLAIM_THEME_TEXT_COLOR);
+        $value = $this->getClaimSafe(SSODataClaimsInterface::CLAIM_THEME_TEXT_COLOR);
+        return is_string($value) ? $value : null;
     }
 
     /**
@@ -182,7 +196,8 @@ trait SSODataTrait
      */
     public function getThemeBackgroundColor(): ?string
     {
-        return $this->getClaimSafe(SSODataClaimsInterface::CLAIM_THEME_BACKGROUND_COLOR);
+        $value = $this->getClaimSafe(SSODataClaimsInterface::CLAIM_THEME_BACKGROUND_COLOR);
+        return is_string($value) ? $value : null;
     }
 
     /**
@@ -192,7 +207,8 @@ trait SSODataTrait
      */
     public function getLocale(): string
     {
-        return $this->getClaimSafe(SSODataClaimsInterface::CLAIM_USER_LOCALE);
+        $value = $this->getClaimSafe(SSODataClaimsInterface::CLAIM_USER_LOCALE);
+        return is_string($value) ? $value : '';
     }
 
     /**
@@ -202,6 +218,7 @@ trait SSODataTrait
      */
     public function getTags(): ?array
     {
-        return $this->getClaimSafe(SSODataClaimsInterface::CLAIM_USER_TAGS);
+        $value = $this->getClaimSafe(SSODataClaimsInterface::CLAIM_USER_TAGS);
+        return is_array($value) ? $value : null;
     }
 }

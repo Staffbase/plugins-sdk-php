@@ -64,7 +64,10 @@ trait SessionHandlerTrait
      */
     public function hasSessionVar(string $key, ?string $parentKey = null): bool
     {
-        return isset($_SESSION[$this->pluginInstanceId][$parentKey ?? self::$KEY_DATA][$key]);
+        $parent = $parentKey ?? self::$KEY_DATA;
+        $bucket = $this->getSessionBucket($parent);
+
+        return $bucket !== null && isset($bucket[$key]);
     }
 
     /**
@@ -77,7 +80,10 @@ trait SessionHandlerTrait
      */
     public function getSessionVar(string $key, ?string $parentKey = null)
     {
-        return $_SESSION[$this->pluginInstanceId][$parentKey ?? self::$KEY_DATA][$key] ?? null;
+        $parent = $parentKey ?? self::$KEY_DATA;
+        $bucket = $this->getSessionBucket($parent);
+
+        return $bucket[$key] ?? null;
     }
 
     /**
@@ -89,40 +95,96 @@ trait SessionHandlerTrait
      */
     public function getSessionData(?string $parentKey = null): array
     {
-        return $_SESSION[$this->pluginInstanceId][$parentKey ?? self::$KEY_DATA] ?? [];
+        $parent = $parentKey ?? self::$KEY_DATA;
+
+        return $this->getSessionBucket($parent) ?? [];
     }
 
     /**
      * Set all session variables.
      *
-     * @param mixed $data
-     * @param string|null $parentKey
-     *
-     */
-    /**
      * @param array<string,mixed> $data
+     * @param string|null $parentKey
      */
     public function setSessionData(array $data, ?string $parentKey = null): void
     {
-        $_SESSION[$this->pluginInstanceId][$parentKey ?? self::$KEY_DATA] = $data;
+        $instance = $this->getValidInstance();
+        if ($instance === null) {
+            return;
+        }
+
+        $parent = $parentKey ?? self::$KEY_DATA;
+        $sessionInstance = $this->getSessionInstance($instance);
+        $sessionInstance[$parent] = $data;
+        $_SESSION[$instance] = $sessionInstance;
     }
 
     /**
      * Set a session variable.
      *
-     * @param mixed $key
+     * @param string $key
      * @param mixed $val
      * @param string|null $parentKey
      */
-    /**
-     * @param string $key
-     * @param mixed $val
-     */
     public function setSessionVar(string $key, mixed $val, ?string $parentKey = null): void
     {
-        $_SESSION[$this->pluginInstanceId][$parentKey ?? self::$KEY_DATA][$key] = $val;
+        $instance = $this->getValidInstance();
+        if ($instance === null) {
+            return;
+        }
+
+        $parent = $parentKey ?? self::$KEY_DATA;
+        $sessionInstance = $this->getSessionInstance($instance);
+        /** @var array<string,mixed> $bucket */
+        $bucket = $this->getSessionBucket($parent, default: []) ?? [];
+        $bucket[$key] = $val;
+        $sessionInstance[$parent] = $bucket;
+        $_SESSION[$instance] = $sessionInstance;
     }
 
+    /**
+     * Return the validated plugin instance ID, or null if unset/empty.
+     */
+    private function getValidInstance(): ?string
+    {
+        $instance = $this->pluginInstanceId;
+        return ($instance !== null && $instance !== '') ? $instance : null;
+    }
+
+    /**
+     * Return $_SESSION[$instance] as a typed array, or $default if instance is
+     * null/empty or the session entry is missing/invalid.
+     *
+     * @param array<string,mixed> $default
+     * @return array<string,mixed>
+     */
+    private function getSessionInstance(?string $instance, array $default = []): array
+    {
+        if ($instance === null || $instance === '') {
+            return $default;
+        }
+
+        /** @var array<string,mixed> $result */
+        $result = isset($_SESSION[$instance]) && is_array($_SESSION[$instance])
+            ? $_SESSION[$instance]
+            : $default;
+        return $result;
+    }
+
+    /**
+     * Return the session bucket array for the given parent key,
+     * or $default if the session structure is missing or invalid.
+     *
+     * @param array<string,mixed>|null $default
+     * @return array<string,mixed>|null
+     */
+    private function getSessionBucket(string $parentKey, ?array $default = null): ?array
+    {
+        $sessionInstance = $this->getSessionInstance($this->getValidInstance(), $default ?? []);
+        $bucket = $sessionInstance[$parentKey] ?? null;
+        /** @var array<string,mixed>|null */
+        return is_array($bucket) ? $bucket : $default;
+    }
 
     /**
      * Destroy the session with the given id

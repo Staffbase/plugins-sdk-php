@@ -57,7 +57,8 @@ trait SharedDataTrait
      */
     public function getExpireAtTime(): ?DateTimeImmutable
     {
-        return $this->getClaimSafe(SharedClaimsInterface::CLAIM_EXPIRE_AT);
+        $value = $this->getClaimSafe(SharedClaimsInterface::CLAIM_EXPIRE_AT);
+        return $value instanceof DateTimeImmutable ? $value : null;
     }
 
     /**
@@ -67,7 +68,8 @@ trait SharedDataTrait
      */
     public function getNotBeforeTime(): ?DateTimeImmutable
     {
-        return $this->getClaimSafe(SharedClaimsInterface::CLAIM_NOT_BEFORE);
+        $value = $this->getClaimSafe(SharedClaimsInterface::CLAIM_NOT_BEFORE);
+        return $value instanceof DateTimeImmutable ? $value : null;
     }
 
     /**
@@ -77,7 +79,8 @@ trait SharedDataTrait
      */
     public function getIssuedAtTime(): ?DateTimeImmutable
     {
-        return $this->getClaimSafe(SharedClaimsInterface::CLAIM_ISSUED_AT);
+        $value = $this->getClaimSafe(SharedClaimsInterface::CLAIM_ISSUED_AT);
+        return $value instanceof DateTimeImmutable ? $value : null;
     }
 
     /**
@@ -87,7 +90,8 @@ trait SharedDataTrait
      */
     public function getIssuer(): ?string
     {
-        return $this->getClaimSafe(SharedClaimsInterface::CLAIM_ISSUER);
+        $value = $this->getClaimSafe(SharedClaimsInterface::CLAIM_ISSUER);
+        return is_string($value) ? $value : null;
     }
 
     /**
@@ -97,7 +101,8 @@ trait SharedDataTrait
      */
     public function getId(): ?string
     {
-        return $this->getClaimSafe(SharedClaimsInterface::CLAIM_JWT_ID);
+        $value = $this->getClaimSafe(SharedClaimsInterface::CLAIM_JWT_ID);
+        return is_string($value) ? $value : null;
     }
 
     /**
@@ -107,21 +112,23 @@ trait SharedDataTrait
      */
     public function getSubject(): ?string
     {
-        return $this->getClaimSafe(SharedClaimsInterface::CLAIM_SUBJECT);
+        $value = $this->getClaimSafe(SharedClaimsInterface::CLAIM_SUBJECT);
+        return is_string($value) ? $value : null;
     }
 
     /**
      * Get the role of the accessing user.
      *
-     * If this is set to “editor”, the requesting user may manage the contents
+     * If this is set to "editor", the requesting user may manage the contents
      * of the plugin instance, i.e. she has administration rights.
-     * The type of the accessing entity can be either a “user” or a “editor”.
+     * The type of the accessing entity can be either a "user" or an "editor".
      *
      * @return null|string
      */
     public function getRole(): ?string
     {
-        return $this->getClaimSafe(SharedClaimsInterface::CLAIM_USER_ROLE);
+        $value = $this->getClaimSafe(SharedClaimsInterface::CLAIM_USER_ROLE);
+        return is_string($value) ? $value : null;
     }
 
     /**
