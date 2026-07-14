@@ -33,3 +33,28 @@ jobs:
 
     - name: Run test suite
       run: composer test
+      env:
+        PHPUNIT_ARGS: --log-junit junit-report/results.xml
+
+    - name: Upload test report
+      if: ${{ always() }}
+      uses: actions/upload-artifact@v7
+      with:
+        name: junit-xml-${{ matrix.php-versions }}
+        path: junit-report/*.xml
+        retention-days: 1
+        if-no-files-found: warn
+
+  push-test-results:
+    name: Push test results
+    if: ${{ always() }}
+    needs: [run]
+    uses: Staffbase/test-monitoring-connector-junit/.github/workflows/connector-junit.yml@a695b35c6b678742bc696a378dc9a307e96cebcd # includes module-fetch retry fix (test-monitoring-connector-junit#12)
+    with:
+      artifact-pattern: junit-xml-*
+      glob: 'junit-report/*.xml'
+      connector-version: a695b35c6b678742bc696a378dc9a307e96cebcd # v2026.28.2 (per-test started_at fix)
+      app-id: ${{ vars.STAFFBASE_ACTIONS_APP_ID }}
+    secrets:
+      service-secret: ${{ secrets.TEST_MONITORING_SERVICE_SECRET }}
+      app-private-key: ${{ secrets.STAFFBASE_ACTIONS_PRIVATE_KEY }}
