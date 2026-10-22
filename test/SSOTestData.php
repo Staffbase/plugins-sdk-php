@@ -34,6 +34,22 @@ class SSOTestData
     private const CLAIM_USER_TAGS                   = 'tags';
 
     /**
+     * Create an RSA-256 key pair in PEM format.
+     *
+     * @return array{0: string, 1: string} public key and private key
+     */
+    public static function createKeyPair(): array
+    {
+        $key = openssl_pkey_new([
+            'private_key_bits' => 2048,
+            'private_key_type' => OPENSSL_KEYTYPE_RSA,
+        ]);
+        openssl_pkey_export($key, $privateKey);
+
+        return [openssl_pkey_get_details($key)['key'], $privateKey];
+    }
+
+    /**
      * Create test data for a token.
      *
      * Can be used in development in conjunction with

@@ -12,7 +12,6 @@
 namespace Staffbase\plugins\test;
 
 use ReflectionClass;
-use phpseclib\Crypt\RSA;
 use PHPUnit\Framework\TestCase;
 use SessionHandlerInterface;
 use Staffbase\plugins\sdk\Exceptions\SSOAuthenticationException;
@@ -42,11 +41,7 @@ class PluginSessionTest extends TestCase
     {
 
         parent::__construct();
-        $rsa = new RSA();
-        $keypair = $rsa->createKey(2048);
-
-        $this->publicKey  = $keypair['publickey'];
-        $this->privateKey = $keypair['privatekey'];
+        [$this->publicKey, $this->privateKey] = SSOTestData::createKeyPair();
 
         $this->tokenData = SSOTestData::getTokenData();
         $this->token = SSOTokenGenerator::createSignedTokenFromData($this->privateKey, $this->tokenData);
