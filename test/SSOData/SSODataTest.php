@@ -91,15 +91,15 @@ class SSODataTest extends TestCase
     {
 
         $map = [
-            null => false,
-            '' => false,
-            'use' => false,
-            'edito' => false,
-            'user' => false,
-            'editor' => true,
+            [null, false],
+            ['', false],
+            ['use', false],
+            ['edito', false],
+            ['user', false],
+            ['editor', true],
         ];
 
-        foreach ($map as $arg => $expect) {
+        foreach ($map as [$arg, $expect]) {
             $tokenData = SSOTestData::getTokenData();
             $tokenData[SSOTestData::CLAIM_USER_ROLE] = $arg;
 

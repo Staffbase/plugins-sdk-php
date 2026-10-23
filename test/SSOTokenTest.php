@@ -12,7 +12,6 @@
 namespace Staffbase\plugins\test;
 
 use DateTimeImmutable;
-use phpseclib\Crypt\RSA;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use Staffbase\plugins\sdk\Exceptions\SSOAuthenticationException;
@@ -37,11 +36,7 @@ class SSOTokenTest extends TestCase
     public function setUp(): void
     {
 
-        $rsa = new RSA();
-        $keypair = $rsa->createKey(2048);
-
-        $this->publicKey  = $keypair['publickey'];
-        $this->privateKey = $keypair['privatekey'];
+        [$this->publicKey, $this->privateKey] = SSOTestData::createKeyPair();
     }
 
     /**
